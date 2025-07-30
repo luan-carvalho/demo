@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <div th:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0" th:text="${pet.id == null} ? 'Novo Pet' : 'Editar Pet'"></h1>
+            <a th:href="@{/tutor/{id}(id=${tutorId})}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Voltar para o Tutor
+            </a>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Informações do Pet</h5>
+            </div>
+            <form th:action="@{/tutor/{tutorId}/pet/save (tutorId=${tutorId})}" method="post" th:object="${pet}">
+                <div class="card-body">
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:if="${pet.id}" th:field="*{status}">
+                    <div class="row">
+                        <!-- Text and Date inputs (Reliable) -->
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="birthDate" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="birthDate" name="birthDate"
+                                th:value="${pet.birthDate}"
+                                required>
+                        </div>
+
+                        <!--
+                    ================================================================
+                    THE DEFINITIVE FIX IS HERE
+                    ================================================================
+                    -->
+                        <!-- Species -->
+                        <div class="col-md-6 mb-3">
+                            <label for="specie" class="form-label">Espécie</label>
+                            <!-- We use `name` for submission and a crash-proof `th:selected` -->
+                            <select class="form-select" id="specie" name="specie" required>
+                                <option value="" hidden>-- Selecione --</option>
+                                <option th:each="s : ${species}" th:value="${s.id}" th:text="${s.description}"
+                                    th:selected="${pet.specie != null and s.id == pet.specie.id}"></option>
+                            </select>
+                        </div>
+
+                        <!-- Breed (Populated by JavaScript) -->
+                        <div class="col-md-6 mb-3">
+                            <label for="breed" class="form-label">Raça</label>
+                            <select class="form-select" name="breed" id="breed" th:data-selected="${pet.breed?.id}"
+                                required>
+                                <option value="" hidden>-- Selecione a espécie primeiro --</option>
+                            </select>
+                        </div>
+
+                        <!-- Other Selects -->
+                        <div class="col-md-6 mb-3">
+                            <label for="gender" class="form-label">Sexo</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="" hidden>-- Selecione --</option>
+                                <option th:each="g : ${genders}" th:value="${g}" th:text="#{${'genders.' + g.name()}}"
+                                    th:selected="${pet.gender != null and g == pet.gender}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="coatColor" class="form-label">Pelagem</label>
+                            <select class="form-select" id="coatColor" name="coatColor" required>
+                                <option value="" hidden>-- Selecione --</option>
+                                <option th:each="cc : ${coatColors}" th:value="${cc.id}" th:text="${cc.description}"
+                                    th:selected="${pet.coatColor != null and cc.id == pet.coatColor.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- Form Footer -->
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <div> <!-- Actions... --> </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle-fill me-2"></i><span
+                            th:text="${pet.id != null} ? 'Salvar Alterações' : 'Cadastrar Pet'"></span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- The JavaScript block is unchanged and will now work -->
+    <th:block th:fragment="page-scripts">
+        <script th:inline="javascript">
+            function loadBreeds(specieId, selectedBreedId) {
+                const breedSelect = document.getElementById("breed");
+                if (!specieId) {
+                    breedSelect.innerHTML = '<option value="" hidden>-- Selecione a espécie primeiro --</option>';
+                    return;
+                }
+                breedSelect.innerHTML = '<option value="">Carregando...</option>';
+                breedSelect.disabled = true;
+
+                fetch(`/breed/fetch?specieId=${specieId}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`Network error: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(breeds => {
+                        breedSelect.innerHTML = '<option value="" hidden>-- Selecione a raça --</option>';
+                        breeds.forEach(breed => {
+                            const option = document.createElement("option");
+                            option.value = breed.id;
+                            option.textContent = breed.description;
+                            if (selectedBreedId && selectedBreedId.toString() == breed.id.toString()) {
+                                option.selected = true;
+                            }
+                            breedSelect.appendChild(option);
+                        });
+                        breedSelect.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error loading breeds:', error);
+                        breedSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+                    });
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const specieSelect = document.getElementById("specie");
+                const breedSelect = document.getElementById("breed");
+                const initialSpecieId = specieSelect.value;
+                const breedToSelect = breedSelect.getAttribute('data-selected');
+
+                if (initialSpecieId) {
+                    loadBreeds(initialSpecieId, breedToSelect);
+                }
+            });
+
+            // The 'change' listener is implicitly part of the above block,
+            // just make sure it's inside the DOMContentLoaded
+            document.getElementById("specie").addEventListener("change", (event) => {
+                loadBreeds(event.target.value, null);
+            });
+        </script>
+    </th:block>
+
+</body>
+
+</html>

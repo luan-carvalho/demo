@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/head :: head}"></head>
+
+<!-- We use flex utilities to perfectly center the login card in the viewport -->
+
+<body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
+
+    <div class="container">
+        <!-- The card uses a shadow and rounded corners for a soft, modern look -->
+        <div class="row g-0 shadow-lg rounded-3 overflow-hidden mx-auto" style="max-width: 900px;">
+
+            <!-- Image Side: This column is hidden on mobile (d-none) and visible on medium screens and up (d-md-block) -->
+            <!-- Pro-tip: Use a high-quality, welcoming photo of a happy pet for this image! -->
+            <div class="col-md-6 d-none d-md-block"
+                style="background-image: url('/images/login-side.png'); background-size: cover; background-position: center;">
+            </div>
+
+            <!-- Login Form Side -->
+            <div class="col-md-6 bg-white p-4 p-md-5">
+
+                <!-- 1. Enhanced Branding: Matches the sidebar logo -->
+                <div class="text-center mb-4">
+                    <a href="/" class="d-inline-flex align-items-center text-dark text-decoration-none">
+                        <i class="bi bi-heptagon-fill fs-2 me-2 text-primary"></i>
+                        <span class="fs-3 fw-bold">PetCare</span>
+                    </a>
+                </div>
+
+                <form th:action="@{/login}" method="post">
+
+                    <!-- 2. Input with Icons: For a modern UX -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                            <input type="text" class="form-control" id="username" name="username" required
+                                placeholder="Insira seu email">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Senha</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" required
+                                placeholder="Insira sua senha">
+                        </div>
+                    </div>
+
+                    <!-- Error Message: Unchanged, but still important -->
+                    <div th:if="${param.error}" class="alert alert-danger text-center p-2">
+                        Usuário ou senha incorretos.
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="/forgot-password" class="text-decoration-none small">Esqueceu sua senha?</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

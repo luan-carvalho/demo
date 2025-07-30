@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/addons/cleave-phone.br.js"></script>
+
+</head>
+
+<body class="bg-gray-100">
+
+    <h1 class="text-3xl font-semibold text-gray-800">Cadastro de Grupos de Serviço</h1>
+
+    <form th:action="@{/petCareGroup}" method="post" th:object="${petCareGroup}">
+
+        <input type="hidden" th:field="*{id}" />
+        <input type="hidden" th:field="*{status}">
+
+        <h2>Descrição</h2>
+        <input id="description" th:field="*{description}" />
+
+        <button type="submit" th:text="*{id} != null ? 'Salvar' : 'Cadastrar'">Cadastrar</button>
+
+    </form>
+
+
+</body>
+
+</script>
+
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/head :: head}"></head>
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+    <main class="container d-flex flex-column justify-content-center align-items-center flex-grow-1">
+        <div class="col-md-6">
+            <div class="card shadow-lg w-100 text-center">
+                <div class="card-body">
+                    <h1 class="text-danger">Oops! Something went wrong.</h1>
+                    <p class="lead">An unexpected error occurred. Please try again later.</p>
+                    <p th:if="${errorMessage}" class="text-muted" th:text="'Error details: ' + ${errorMessage}"></p>
+                    <a th:href="@{/home}" class="btn btn-danger mt-3" sec:authorize="!hasRole('ROLE_ADMIN')">Go Back to Home</a>
+                    <a th:href="@{/admin}" class="btn btn-danger mt-3" sec:authorize="hasRole('ROLE_ADMIN')">Go Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+
+</html>

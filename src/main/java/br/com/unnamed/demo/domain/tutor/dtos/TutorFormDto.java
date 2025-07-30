@@ -1,0 +1,43 @@
+package br.com.unnamed.demo.domain.tutor.dtos;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.unnamed.demo.domain.tutor.model.Pet;
+import br.com.unnamed.demo.domain.tutor.model.enums.Status;
+import jakarta.validation.Valid;
+
+public record TutorFormDto(
+                Long id,
+                @Valid PersonInfoDto info,
+                List<Pet> pets,
+                Status status) {
+
+        public static TutorFormDto empty() {
+
+                AddressDto addressDto = new AddressDto(null, null, null, null, null, null);
+
+                PersonInfoDto info = new PersonInfoDto(
+                                null,
+                                addressDto,
+                                null,
+                                null,
+                                null);
+
+                return new TutorFormDto(
+                                null,
+                                info,
+                                new ArrayList<>(),
+                                null);
+
+        }
+
+        public boolean isActive() {
+                return status == Status.ACTIVE;
+        }
+
+        public boolean isInactive() {
+                return status == Status.INACTIVE;
+        }
+
+}

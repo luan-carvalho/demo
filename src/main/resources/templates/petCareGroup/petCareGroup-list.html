@@ -1,0 +1,37 @@
+<html lang="en" th:replace="~{layout/base-layout :: base-layout(~{::main})}">
+
+<main>
+    <div class="px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-semibold text-gray-800">Grupos de Serviços</h2>
+            <a th:href="@{/petCareGroup/new}" 
+               class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+               Novo Grupo de Serviço
+            </a>
+        </div>
+
+        <div class="overflow-x-auto bg-white shadow rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50 text-left text-sm font-medium text-gray-700">
+                    <tr>
+                        <th class="px-4 py-3">Descrição</th>
+                        <th class="px-4 py-3">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-sm text-gray-800">
+                    <tr th:each="petCareGroup : ${petCareGroups}" class="hover:bg-gray-50">
+                        <td class="px-4 py-3" th:text="${petCareGroup.description}"></td>
+                        <td class="px-4 py-3">
+                            <a th:href="@{/petCareGroup/{id}(id=${petCareGroup.id})}" 
+                               class="text-blue-600 hover:underline text-sm">
+                               Editar
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+</html>

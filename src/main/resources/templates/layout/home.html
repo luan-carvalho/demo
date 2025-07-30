@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <div th:fragment="content">
+        <h1>Bem-vindo ao Sistema de Banho e Tosa!</h1>
+        <p class="lead">Utilize o menu ao lado para navegar pelas funcionalidades do sistema.</p>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Novos Agendamentos</h5>
+                        <p class="card-text">Veja os próximos agendamentos e gerencie a sua agenda.</p>
+                        <a href="#" class="btn btn-primary">Ver Agenda</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Cadastrar Novo Cliente</h5>
+                        <p class="card-text">Adicione novos clientes e seus pets ao sistema.</p>
+                        <a th:href="@{/tutor/new}" class="btn btn-success">Novo Cliente</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

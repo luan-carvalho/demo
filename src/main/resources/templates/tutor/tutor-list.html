@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <div th:fragment="content">
+
+        <!-- Page Header: Title and "New Client" button -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">Clientes</h1>
+            <a th:href="@{/tutor/new}" class="btn btn-primary d-flex align-items-center">
+                <i class="bi bi-person-plus-fill me-2"></i>
+                Novo Tutor
+            </a>
+        </div>
+
+        <!-- The main content card -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="min-width: 200px;">Nome</th>
+                                <th scope="col" style="min-width: 150px;">Pets</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- DYNAMIC LOOP: Iterates over the 'tutors' list -->
+                            <tr th:each="tutor : ${tutors}">
+
+                                <!-- 1. Clickable Tutor Name -->
+                                <td>
+                                    <a th:href="@{/tutor/{id}(id=${tutor.id})}" th:text="${tutor.name}"
+                                        class="fw text-dark text-decoration-none">
+                                    </a>
+                                </td>
+                                
+                                <td>
+                                    <a th:each="pet : ${tutor.pets}"
+                                        th:href="@{/tutor/{tutorId}/pet/{petId}(tutorId=${tutor.id}, petId=${pet.id})}"
+                                        th:text="${pet.name}"
+                                        class="badge bg-primary text-decoration-none fw-normal me-1">
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <!-- EMPTY STATE: This row will only appear if the 'tutors' list is empty -->
+                            <!-- 3. Colspan updated to 3 -->
+                            <tr th:if="${tutors.isEmpty()}">
+                                <td colspan="3" class="text-center text-muted py-4">
+                                    Nenhum cliente cadastrado.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
