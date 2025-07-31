@@ -40,4 +40,20 @@ public class PetCareGroupService {
 
     }
 
+    public void deactivate(Long id) {
+
+        PetCareGroup toBeDeactivated = findById(id);
+        toBeDeactivated.deactivate();
+        save(toBeDeactivated);
+
+    }
+
+    public void activate(Long id) {
+
+        PetCareGroup toBeActivated = findById(id);
+        toBeActivated.activate();
+        save(toBeActivated);
+
+    }
+
 }

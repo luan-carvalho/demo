@@ -26,7 +26,10 @@ public class PetCareGroupController {
     public String getAllpetCareGroups(Model model) {
 
         model.addAttribute("petCareGroups", PetCareGroupMapper.toDtoList(petCareGroupService.findAllActive()));
-        return "petCareGroup/petCareGroup-list";
+
+        model.addAttribute("view", "petCareGroup/petCareGroup-list");
+        model.addAttribute("activePage", "service-groups");
+        return "layout/base-layout";
 
     }
 
@@ -34,7 +37,9 @@ public class PetCareGroupController {
     public String newPetCareGroupForm(Model model) {
 
         model.addAttribute("petCareGroup", PetCareGroupDto.empty());
-        return "petCareGroup/petCareGroup";
+        model.addAttribute("view", "petCareGroup/petCareGroup");
+        model.addAttribute("activePage", "service-groups");
+        return "layout/base-layout";
 
     }
 
@@ -42,7 +47,9 @@ public class PetCareGroupController {
     public String getPetCareGroup(@PathVariable Long id, Model model) {
 
         model.addAttribute("petCareGroup", petCareGroupService.findById(id));
-        return "petCareGroup/petCareGroup";
+        model.addAttribute("view", "petCareGroup/petCareGroup");
+        model.addAttribute("activePage", "service-groups");
+        return "layout/base-layout";
     }
 
     @PostMapping
@@ -57,8 +64,27 @@ public class PetCareGroupController {
 
         }
 
-        petCareGroupService.save(PetCareGroupMapper.toEntity(petCareGroup));
+        PetCareGroup p = PetCareGroupMapper.toEntity(petCareGroup);
+        p.activate();
 
+        petCareGroupService.save(p);
+
+        return "redirect:/petCareGroup";
+
+    }
+
+    @GetMapping("/{id}/inactivate")
+    public String deactivatePetCareGroup(@PathVariable Long id) {
+
+        petCareGroupService.deactivate(id);
+        return "redirect:/petCareGroup";
+
+    }
+
+    @GetMapping("/{id}/activate")
+    public String activatePetCareGroup(@PathVariable Long id) {
+
+        petCareGroupService.activate(id);
         return "redirect:/petCareGroup";
 
     }

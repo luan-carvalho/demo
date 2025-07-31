@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import br.com.unnamed.demo.domain.shared.model.Email;
 import br.com.unnamed.demo.domain.shared.model.PersonInfo;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import jakarta.persistence.Entity;
@@ -29,7 +30,9 @@ public class UserImpl implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private PersonInfo person;
+    private String name;
+
+    private Email email;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -57,23 +60,15 @@ public class UserImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return person.getEmail().getValue();
+        return this.email.getValue();
     }
 
     public Long getId() {
         return id;
     }
 
-    public PersonInfo getPerson() {
-        return person;
-    }
-
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setPerson(PersonInfo person) {
-        this.person = person;
     }
 
     public void deactivate() {
@@ -102,6 +97,14 @@ public class UserImpl implements UserDetails {
 
         return status == Status.INACTIVE;
 
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public List<Role> getUserRoles() {
+        return userRoles;
     }
 
 }

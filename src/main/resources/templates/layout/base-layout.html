@@ -34,6 +34,25 @@
             padding: 1.5em;
         }
     </style>
+
+    <style>
+        .sidebar-desktop .nav-link,
+        .offcanvas-body .nav-link {
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .sidebar-desktop .nav-pills .nav-link.active,
+        .sidebar-desktop .nav-pills .show>.nav-link,
+        .offcanvas-body .nav-pills .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .sidebar-desktop .nav-link:not(.active):hover,
+        .offcanvas-body .nav-link:not(.active):hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
 
 <body>

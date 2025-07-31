@@ -10,7 +10,7 @@ import br.com.unnamed.demo.authentication.model.UserImpl;
 
 public interface UserRepository extends JpaRepository<UserImpl, Long> {
 
-    @Query("SELECT u FROM UserImpl u WHERE u.person.email.email = :username")
+    @Query("SELECT u FROM UserImpl u WHERE u.email.email = :username AND u.status = 'ACTIVE'")
     Optional<UserImpl> findByUsername(String username);
 
     @Query("SELECT u FROM UserImpl u WHERE u.status = 'ACTIVE'")

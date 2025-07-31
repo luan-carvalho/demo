@@ -6,7 +6,7 @@ public record PetCareGroupDto(Long id, String description, Status status) {
 
     public static PetCareGroupDto empty() {
 
-        return new PetCareGroupDto(null, null, Status.ACTIVE);
+        return new PetCareGroupDto(null, null, null);
 
     }
 

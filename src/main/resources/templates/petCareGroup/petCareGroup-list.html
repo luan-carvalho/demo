@@ -1,37 +1,53 @@
-<html lang="en" th:replace="~{layout/base-layout :: base-layout(~{::main})}">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<main>
-    <div class="px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-semibold text-gray-800">Grupos de Serviços</h2>
-            <a th:href="@{/petCareGroup/new}" 
-               class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
-               Novo Grupo de Serviço
+<body>
+    <div th:fragment="content">
+
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">Grupos de Serviços</h1>
+            <a th:href="@{/petCareGroup/new}" class="btn btn-primary d-flex align-items-center">
+                <i class="bi bi-plus-lg me-2"></i>
+                Novo Grupo
             </a>
         </div>
 
-        <div class="overflow-x-auto bg-white shadow rounded-lg">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50 text-left text-sm font-medium text-gray-700">
-                    <tr>
-                        <th class="px-4 py-3">Descrição</th>
-                        <th class="px-4 py-3">Ações</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 text-sm text-gray-800">
-                    <tr th:each="petCareGroup : ${petCareGroups}" class="hover:bg-gray-50">
-                        <td class="px-4 py-3" th:text="${petCareGroup.description}"></td>
-                        <td class="px-4 py-3">
-                            <a th:href="@{/petCareGroup/{id}(id=${petCareGroup.id})}" 
-                               class="text-blue-600 hover:underline text-sm">
-                               Editar
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- The main content card -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Descrição</th>
+                                <th scope="col" class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loop through each group -->
+                            <tr th:each="group : ${petCareGroups}">
+                                <td class="fw" th:text="${group.description}"></td>
+                                <td class="text-center">
+                                    <a th:href="@{/petCareGroup/{id}(id=${group.id})}"
+                                        class="btn btn-sm btn-outline-secondary" title="Editar Grupo">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <!-- Empty state message -->
+                            <tr th:if="${#lists.isEmpty(petCareGroups)}">
+                                <td colspan="2" class="text-center text-muted py-4">
+                                    Nenhum grupo de serviço cadastrado.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-</main>
+</body>
 
 </html>
