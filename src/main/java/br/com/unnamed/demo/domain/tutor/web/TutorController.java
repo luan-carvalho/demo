@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import br.com.unnamed.demo.authentication.model.valueObjects.Email;
 import br.com.unnamed.demo.domain.shared.service.ReferenceDataService;
 import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
-import br.com.unnamed.demo.domain.tutor.mapper.AddressMapper;
 import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
 import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
@@ -77,9 +75,7 @@ public class TutorController {
 
             existingTutor.updateTutorInfo(
                     new Phone(tutorDto.info().phone()),
-                    tutorDto.info().name(),
-                    AddressMapper.toEntity(tutorDto.info().address()),
-                    tutorDto.info().birthDate());
+                    tutorDto.info().name());
 
             tutorService.save(existingTutor);
             return "redirect:/tutor";

@@ -15,11 +15,7 @@ public record TutorFormDto(
 
         public static TutorFormDto empty() {
 
-                AddressDto addressDto = new AddressDto(null, null, null, null, null, null);
-
                 PersonInfoDto info = new PersonInfoDto(
-                                null,
-                                addressDto,
                                 null,
                                 null);
 

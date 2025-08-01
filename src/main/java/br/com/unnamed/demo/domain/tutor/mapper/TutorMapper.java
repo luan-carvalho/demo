@@ -14,9 +14,7 @@ public class TutorMapper {
 
         return TutorFactory.create(
                 dto.info().name(),
-                AddressMapper.toEntity(dto.info().address()),
-                dto.info().phone(),
-                dto.info().birthDate());
+                dto.info().phone());
 
     }
 
@@ -25,9 +23,7 @@ public class TutorMapper {
         return new TutorFormDto(
                 tutor.getId(),
                 new PersonInfoDto(tutor.getName(),
-                        AddressMapper.toDto(tutor.getAddress()),
-                        tutor.getPhone().getValue(),
-                        tutor.getBirthDate()),
+                        tutor.getPhone().getValue()),
                 tutor.getAllPets(),
                 tutor.getStatus());
 

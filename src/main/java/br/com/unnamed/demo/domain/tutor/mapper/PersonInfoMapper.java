@@ -11,9 +11,7 @@ public class PersonInfoMapper {
 
         return new PersonInfo(
                 info.name(),
-                new Phone(info.phone()),
-                AddressMapper.toEntity(info.address()),
-                info.birthDate());
+                new Phone(info.phone()));
 
     }
 
@@ -21,9 +19,7 @@ public class PersonInfoMapper {
 
         return new PersonInfoDto(
                 info.getName(),
-                AddressMapper.toDto(info.getAddress()),
-                info.getPhone().getValue(),
-                info.getBirthDate());
+                info.getPhone().getValue());
 
     }
     

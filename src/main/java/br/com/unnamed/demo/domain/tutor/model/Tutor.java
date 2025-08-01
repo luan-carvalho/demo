@@ -1,13 +1,10 @@
 package br.com.unnamed.demo.domain.tutor.model;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import br.com.unnamed.demo.authentication.model.valueObjects.Email;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
-import br.com.unnamed.demo.domain.tutor.model.valueObjects.Address;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.PersonInfo;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
 import jakarta.persistence.CascadeType;
@@ -58,26 +55,9 @@ public class Tutor {
 
     }
 
-    public Address getAddress() {
-
-        return info.getAddress();
-
-    }
-
     public Phone getPhone() {
 
         return info.getPhone();
-
-    }
-    public LocalDate getBirthDate() {
-
-        return info.getBirthDate();
-
-    }
-
-    public long getAge() {
-
-        return info.getAge();
 
     }
 
@@ -156,9 +136,9 @@ public class Tutor {
 
     }
 
-    public void updateTutorInfo(Phone phone, String name, Address address, LocalDate birthDate) {
+    public void updateTutorInfo(Phone phone, String name) {
 
-        this.info = new PersonInfo(name, phone, address, birthDate);
+        this.info = new PersonInfo(name, phone);
 
     }
 

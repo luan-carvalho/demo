@@ -3,185 +3,123 @@
 
 <body>
     <div th:fragment="content">
+        <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0" th:text="${tutor.id == null} ? 'Novo Tutor' : 'Editar Tutor'"></h1>
             <a th:href="@{/tutor}" class="btn btn-secondary">Voltar para a Lista</a>
         </div>
 
         <form id="tutorForm" th:action="@{/tutor}" method="post" th:object="${tutor}">
-            <input type="hidden" th:if="${tutor.id}" th:field="*{id}" />
+            <input type="hidden" th:field="*{id}" />
+            <input type="hidden" th:if="${tutor.id}" th:field="*{status}" />
 
-            <div class="row">
+            <!--
+            ================================================================
+            THE FIX: The main two-column grid is re-established here.
+            The "Pets Card" is now correctly placed inside the left column.
+            ================================================================
+            -->
+            <div class="row g-4">
+
+                <!-- LEFT COLUMN: Main Form and Pets List -->
                 <div class="col-lg-8">
-                    <div class="card shadow-sm">
+                    <!-- Tutor Details Card -->
+                    <div class="card shadow-sm mb-4">
                         <div class="card-header">
-                            <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Dados Pessoais e Endereço
-                            </h5>
+                            <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Dados do Tutor</h5>
                         </div>
                         <div class="card-body">
-                            <h6 class="text-primary">DADOS PESSOAIS</h6>
-                            <hr class="mt-0">
                             <div class="row">
-                                <div class="col-12 mb-3">
+                                <div class="col-md-8 mb-3">
                                     <label for="name" class="form-label">Nome Completo</label>
                                     <input type="text" class="form-control" id="name" th:field="*{info.name}"
                                         required />
                                 </div>
-                                <!-- <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" th:field="*{info.email}"
-                                        placeholder="seuemail@seudominio.com" required />
-                                </div> -->
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="phone" class="form-label">Telefone</label>
                                     <input type="tel" class="form-control" id="phone" th:field="*{info.phone}"
                                         placeholder="(99) 99999-9999" required />
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="birthDate" class="form-label">Data de Nascimento</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="birthDate" name="birthDate"
-                                            th:value="${tutor.info.birthDate != null ? #dates.format(tutor.info.birthDate, 'dd/MM/yyyy') : ''}"
-                                            placeholder="DD/MM/AAAA" required />
-                                        <span class="input-group-text">
-                                            <i class="bi bi-calendar-event"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <h6 class="text-primary mt-3">ENDEREÇO</h6>
-                            <hr class="mt-0">
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label for="zipCode" class="form-label">CEP</label>
-                                    <input type="text" class="form-control" id="zipCode"
-                                        th:field="*{info.address.zipCode}" onblur="getCepData()" required />
-                                </div>
-                                <div class="col-md-8 mb-3">
-                                    <label for="street" class="form-label">Logradouro</label>
-                                    <input type="text" class="form-control" id="street"
-                                        th:field="*{info.address.street}" />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label for="number" class="form-label">Número</label>
-                                    <input type="text" class="form-control" id="number"
-                                        th:field="*{info.address.number}" />
-                                </div>
-                                <div class="col-md-8 mb-3">
-                                    <label for="neighborhood" class="form-label">Bairro</label>
-                                    <input type="text" class="form-control" id="neighborhood"
-                                        th:field="*{info.address.neighborhood}" />
-                                </div>
-                                <div class="col-md-8 mb-3">
-                                    <label for="city" class="form-label">Cidade</label>
-                                    <input type="text" class="form-control" id="city" th:field="*{info.address.city}"
-                                        readonly />
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label for="state" class="form-label">Estado</label>
-                                    <input type="text" class="form-control" id="state" th:field="*{info.address.state}"
-                                        readonly />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="card shadow-sm mb-4">
-                        <div class="card-body">
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-circle-fill me-2"></i>Salvar Alterações
-                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card shadow-sm mb-4" th:if="${tutor.id != null}">
+                    <!-- Pets Card (now correctly inside the left column) -->
+                    <div class="card shadow-sm" th:if="${tutor.id != null}">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-heart-fill me-2"></i>Pets</h5>
                             <a th:href="@{/tutor/{tutorId}/pet/new (tutorId=${tutor.id})}"
                                 class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-plus-lg"></i> Novo
+                                <i class="bi bi-plus-lg"></i> Novo Pet
                             </a>
                         </div>
                         <div class="list-group list-group-flush">
+                            <!--
+                            ================================================================
+                            THE FIX: The pet list item is now structured with divs
+                            for better control over spacing and alignment.
+                            ================================================================
+                            -->
                             <a th:each="pet : ${tutor.pets}"
                                 th:href="@{/tutor/{tutorId}/pet/{petId}(tutorId=${tutor.id}, petId=${pet.id})}"
-                                th:text="${pet.name}" class="list-group-item list-group-item-action"
+                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                                 th:classappend="${pet.isInactive()} ? 'text-muted text-decoration-line-through' : ''">
+
+                                <div class="w-50" th:text="${pet.name}"></div> <!-- Name takes up 50% width -->
+
+                                <div class="w-50 text-end text-muted small">
+                                    <!-- Details take up 50% width, right-aligned -->
+                                    <span th:text="${pet.breed?.description} ?: 'Raça não definida'"></span>
+                                    <span class="mx-1">|</span>
+                                    <span th:text="${pet.coatColor?.description} ?: 'Pelagem não definida'"></span>
+                                </div>
                             </a>
+
                             <div th:if="${#lists.isEmpty(tutor.pets)}"
                                 class="list-group-item text-muted text-center p-3">
                                 Nenhum pet cadastrado.
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="card shadow-sm" th:if="${tutor.id != null}">
-                        <div class="card-body text-center">
-                            <a th:if="${tutor.isActive()}" th:href="@{/tutor/{id}/inactivate (id=${tutor.id})}"
-                                class="btn btn-sm btn-outline-danger">Inativar Cadastro do Tutor</a>
-                            <a th:if="${tutor.isInactive()}" th:href="@{/tutor/{id}/activate (id=${tutor.id})}"
-                                class="btn btn-sm btn-outline-success">Reativar Cadastro do Tutor</a>
+                <!-- RIGHT COLUMN: Actions (now correctly positioned) -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-gear-fill me-2"></i>Ações</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <span
+                                        th:text="${tutor.id != null} ? 'Salvar Alterações' : 'Cadastrar Tutor'"></span>
+                                </button>
+                            </div>
+                            <div th:if="${tutor.id != null}" class="text-center mt-3">
+                                <hr class="my-3">
+                                <a th:if="${tutor.isActive()}" th:href="@{/tutor/{id}/inactivate (id=${tutor.id})}"
+                                    class="btn btn-sm btn-outline-danger">Inativar Cadastro do Tutor</a>
+                                <a th:if="${tutor.isInactive()}" th:href="@{/tutor/{id}/activate (id=${tutor.id})}"
+                                    class="btn btn-sm btn-outline-success">Reativar Cadastro do Tutor</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
 
+        <!-- JavaScript -->
         <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
         <script th:inline="javascript">
-
             document.addEventListener("DOMContentLoaded", function () {
-
-                // 1. Cleave.js for phone masking
                 if (document.getElementById('phone')) {
                     new Cleave('#phone', {
                         delimiters: ['(', ') ', '-'], blocks: [0, 2, 5, 4], numericOnly: true
                     });
                 }
-
-                // 2. Cleave.js for CEP masking
-                if (document.getElementById('zipCode')) {
-                    new Cleave('#zipCode', {
-                        delimiters: ['-'], blocks: [5, 3], numericOnly: true
-                    });
-                }
-
-                // 3. THE FIX: Initialize Flatpickr for the date field
-                if (document.getElementById('birthDate')) {
-                    flatpickr("#birthDate", {
-                        dateFormat: "d/m/Y", // How the date is displayed to the user
-                        allowInput: true     // Allows users to type the date manually
-                    });
-                }
             });
-
-            function getCepData() {
-                const cepInput = document.getElementById('zipCode');
-                const cep = cepInput.value.replace(/\D/g, '');
-                if (cep.length !== 8) return;
-                fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.erro) {
-                            console.warn("CEP not found.");
-                            return;
-                        }
-                        document.getElementById('street').value = data.logradouro;
-                        document.getElementById('neighborhood').value = data.bairro;
-                        document.getElementById('city').value = data.localidade;
-                        document.getElementById('state').value = data.uf;
-                        document.getElementById('number').focus();
-                    })
-                    .catch(error => console.error("Error fetching CEP:", error));
-            }
         </script>
     </div>
 </body>

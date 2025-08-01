@@ -30,17 +30,6 @@
                             <label for="name" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="name" th:field="*{name}" required>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="birthDate" class="form-label">Data de Nascimento</label>
-                            <div class="input-group">
-                                <!-- Changed type to "text" and added a placeholder -->
-                                <input type="text" class="form-control" id="birthDate" name="birthDate"
-                                    th:value="${pet.birthDate}" placeholder="DD/MM/AAAA" required>
-                                <span class="input-group-text">
-                                    <i class="bi bi-calendar-event"></i>
-                                </span>
-                            </div>
-                        </div>
 
                         <div class="col-md-6 mb-3">
                             <label for="specie" class="form-label">Espécie</label>
@@ -122,13 +111,6 @@
 
 
             $(document).ready(function () {
-                
-                flatpickr("#birthDate", {
-                    dateFormat: "Y-m-d", // Reads/writes standard YYYY-MM-DD for the server
-                    altInput: true,      // Creates a user-friendly alternate input
-                    altFormat: "d/m/Y",  // The user sees and types DD/MM/YYYY
-                    allowInput: true
-                });
                 $('.select2-searchable').each(function () {
                     $(this).select2({
                         theme: "bootstrap-5",

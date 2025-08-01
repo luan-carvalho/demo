@@ -1,3 +1,0 @@
-2025-08-01 11:54:52.384960-03:00 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TUTOR" not found (this database is empty); SQL statement:
-select t1_0.id,t1_0.city,t1_0.neighborhood,t1_0.number,t1_0.state,t1_0.street,t1_0.zip_code,t1_0.birth_date,t1_0.email,t1_0.name,t1_0.phone,t1_0.status from tutor t1_0 where t1_0.status='ACTIVE' order by t1_0.name fetch first ? rows only [42104-232]

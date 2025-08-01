@@ -83,6 +83,19 @@ INSERT INTO role (description) VALUES ('ROLE_ADMIN');
 INSERT INTO role (description) VALUES ('ROLE_USER');
 
 INSERT INTO users (name, email, password, status) VALUES ('Luan Carvalho', 'ita.luan12@gmail.com', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'ACTIVE')
-INSERT INTO users (name, email, password, status) VALUES ('Luan Carvalho', 'luan@gmail.com', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'INACTIVE')
+
+INSERT INTO tutor (name, phone, status) VALUES ('Luan Carvalho de Souza', '63992932615', 'ACTIVE')
+INSERT INTO pet (name, gender, specie_id, breed_id, coat_color_id, tutor_id) VALUES ('Dox', 'MALE', 1, 5, 19, 1)
+
+INSERT INTO pet_care_group (description) VALUES ('Banho');
+INSERT INTO pet_care_group (description) VALUES ('Tosa');
+INSERT INTO pet_care_group (description) VALUES ('Outros serviços');
+
+INSERT INTO pet_care (description, pet_care_group_id, price) VALUES ('Banho - Pequeno porte', 1, 45.00);
+INSERT INTO pet_care (description, pet_care_group_id, price) VALUES ('Banho - Médio porte', 1, 60.00);
+INSERT INTO pet_care (description, pet_care_group_id, price) VALUES ('Banho - Grande porte', 1, 75.00);
+INSERT INTO pet_care (description, pet_care_group_id, price) VALUES ('Tosa bebê', 2, 55.00);
+INSERT INTO pet_care (description, pet_care_group_id, price) VALUES ('Tosa higiênica', 2, 40.00);
+INSERT INTO pet_care (description, pet_care_group_id, price) VALUES ('Corte de unha', 3, 15.00);
 
 INSERT INTO user_role (role_id, user_id) VALUES (1, 1)
