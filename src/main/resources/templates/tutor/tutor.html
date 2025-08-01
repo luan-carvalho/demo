@@ -39,8 +39,14 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="birthDate" class="form-label">Data de Nascimento</label>
-                                    <input type="date" class="form-control" id="birthDate" name="birthDate"
-                                        th:value="${tutor.info.birthDate}" required>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="birthDate" name="birthDate"
+                                            th:value="${tutor.info.birthDate != null ? #dates.format(tutor.info.birthDate, 'dd/MM/yyyy') : ''}"
+                                            placeholder="DD/MM/AAAA" required />
+                                        <span class="input-group-text">
+                                            <i class="bi bi-calendar-event"></i>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -128,18 +134,32 @@
 
         <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
         <script th:inline="javascript">
+
             document.addEventListener("DOMContentLoaded", function () {
+
+                // 1. Cleave.js for phone masking
                 if (document.getElementById('phone')) {
                     new Cleave('#phone', {
                         delimiters: ['(', ') ', '-'], blocks: [0, 2, 5, 4], numericOnly: true
                     });
                 }
+
+                // 2. Cleave.js for CEP masking
                 if (document.getElementById('zipCode')) {
                     new Cleave('#zipCode', {
                         delimiters: ['-'], blocks: [5, 3], numericOnly: true
                     });
                 }
+
+                // 3. THE FIX: Initialize Flatpickr for the date field
+                if (document.getElementById('birthDate')) {
+                    flatpickr("#birthDate", {
+                        dateFormat: "d/m/Y", // How the date is displayed to the user
+                        allowInput: true     // Allows users to type the date manually
+                    });
+                }
             });
+
             function getCepData() {
                 const cepInput = document.getElementById('zipCode');
                 const cep = cepInput.value.replace(/\D/g, '');
