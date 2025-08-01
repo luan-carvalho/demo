@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import br.com.unnamed.demo.domain.shared.model.Address;
-import br.com.unnamed.demo.domain.shared.model.Email;
-import br.com.unnamed.demo.domain.shared.model.PersonInfo;
-import br.com.unnamed.demo.domain.shared.model.Phone;
+import br.com.unnamed.demo.authentication.model.valueObjects.Email;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
+import br.com.unnamed.demo.domain.tutor.model.valueObjects.Address;
+import br.com.unnamed.demo.domain.tutor.model.valueObjects.PersonInfo;
+import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -69,13 +69,6 @@ public class Tutor {
         return info.getPhone();
 
     }
-
-    public Email getEmail() {
-
-        return info.getEmail();
-
-    }
-
     public LocalDate getBirthDate() {
 
         return info.getBirthDate();
@@ -163,9 +156,9 @@ public class Tutor {
 
     }
 
-    public void updateTutorInfo(Phone phone, Email email, String name, Address address, LocalDate birthDate) {
+    public void updateTutorInfo(Phone phone, String name, Address address, LocalDate birthDate) {
 
-        this.info = new PersonInfo(name, phone, email, address, birthDate);
+        this.info = new PersonInfo(name, phone, address, birthDate);
 
     }
 

@@ -7,8 +7,7 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.unnamed.demo.domain.shared.model.Email;
-import br.com.unnamed.demo.domain.shared.model.PersonInfo;
+import br.com.unnamed.demo.authentication.model.valueObjects.Email;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -105,6 +104,10 @@ public class UserImpl implements UserDetails {
 
     public List<Role> getUserRoles() {
         return userRoles;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

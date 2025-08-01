@@ -11,13 +11,11 @@ public record PersonInfoDto(
         @NotBlank String name,
         @Valid AddressDto address,
         @Valid @NotBlank String phone,
-        @Valid @NotBlank String email,
         @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate birthDate) {
 
     public static PersonInfoDto empty() {
 
         return new PersonInfoDto(
-                null,
                 null,
                 null,
                 null,

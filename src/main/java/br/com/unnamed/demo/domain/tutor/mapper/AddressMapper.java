@@ -1,7 +1,7 @@
 package br.com.unnamed.demo.domain.tutor.mapper;
 
-import br.com.unnamed.demo.domain.shared.model.Address;
 import br.com.unnamed.demo.domain.tutor.dtos.AddressDto;
+import br.com.unnamed.demo.domain.tutor.model.valueObjects.Address;
 
 public class AddressMapper {
 

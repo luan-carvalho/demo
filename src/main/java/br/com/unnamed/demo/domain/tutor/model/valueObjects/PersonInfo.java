@@ -1,8 +1,9 @@
-package br.com.unnamed.demo.domain.shared.model;
+package br.com.unnamed.demo.domain.tutor.model.valueObjects;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import br.com.unnamed.demo.authentication.model.valueObjects.Email;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 
@@ -15,9 +16,6 @@ public class PersonInfo {
     private Phone phone;
 
     @Embedded
-    private Email email;
-
-    @Embedded
     private Address address;
 
     private LocalDate birthDate;
@@ -25,10 +23,9 @@ public class PersonInfo {
     public PersonInfo() {
     }
 
-    public PersonInfo(String name, Phone phone, Email email, Address address, LocalDate birthDate) {
+    public PersonInfo(String name, Phone phone, Address address, LocalDate birthDate) {
         this.name = name;
         this.phone = phone;
-        this.email = email;
         this.address = address;
         this.birthDate = birthDate;
     }
@@ -53,10 +50,6 @@ public class PersonInfo {
 
     public LocalDate getBirthDate() {
         return birthDate;
-    }
-
-    public Email getEmail() {
-        return email;
     }
 
 }

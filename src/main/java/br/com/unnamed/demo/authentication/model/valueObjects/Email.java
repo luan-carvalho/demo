@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.domain.shared.model;
+package br.com.unnamed.demo.authentication.model.valueObjects;
 
 import jakarta.persistence.Embeddable;
 

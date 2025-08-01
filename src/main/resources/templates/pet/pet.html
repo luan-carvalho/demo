@@ -8,8 +8,11 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0" th:text="${pet.id == null} ? 'Novo Pet' : 'Editar Pet'"></h1>
             <a th:href="@{/tutor/{id}(id=${tutorId})}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left me-2"></i>Voltar para o Tutor
+                <i class="bi bi-arrow-left"></i>
+                <span class="d-none d-md-inline ms-2">Voltar para o Tutor</span>
             </a>
+
+
         </div>
 
         <!-- Form Card -->
@@ -30,19 +33,11 @@
                         <div class="col-md-6 mb-3">
                             <label for="birthDate" class="form-label">Data de Nascimento</label>
                             <input type="date" class="form-control" id="birthDate" name="birthDate"
-                                th:value="${pet.birthDate}"
-                                required>
+                                th:value="${pet.birthDate}" required>
                         </div>
 
-                        <!--
-                    ================================================================
-                    THE DEFINITIVE FIX IS HERE
-                    ================================================================
-                    -->
-                        <!-- Species -->
                         <div class="col-md-6 mb-3">
                             <label for="specie" class="form-label">Espécie</label>
-                            <!-- We use `name` for submission and a crash-proof `th:selected` -->
                             <select class="form-select" id="specie" name="specie" required>
                                 <option value="" hidden>-- Selecione --</option>
                                 <option th:each="s : ${species}" th:value="${s.id}" th:text="${s.description}"
@@ -50,16 +45,14 @@
                             </select>
                         </div>
 
-                        <!-- Breed (Populated by JavaScript) -->
                         <div class="col-md-6 mb-3">
                             <label for="breed" class="form-label">Raça</label>
-                            <select class="form-select" name="breed" id="breed" th:data-selected="${pet.breed?.id}"
-                                required>
+                            <select class="form-select select2-searchable" name="breed" id="breed"
+                                th:data-selected="${pet.breed?.id}" required>
                                 <option value="" hidden>-- Selecione a espécie primeiro --</option>
                             </select>
                         </div>
 
-                        <!-- Other Selects -->
                         <div class="col-md-6 mb-3">
                             <label for="gender" class="form-label">Sexo</label>
                             <select class="form-select" id="gender" name="gender" required>
@@ -70,7 +63,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="coatColor" class="form-label">Pelagem</label>
-                            <select class="form-select" id="coatColor" name="coatColor" required>
+                            <select class="form-select select2-searchable" id="coatColor" name="coatColor" required>
                                 <option value="" hidden>-- Selecione --</option>
                                 <option th:each="cc : ${coatColors}" th:value="${cc.id}" th:text="${cc.description}"
                                     th:selected="${pet.coatColor != null and cc.id == pet.coatColor.id}"></option>
@@ -89,58 +82,62 @@
     </div>
 
 
-    <!-- The JavaScript block is unchanged and will now work -->
     <th:block th:fragment="page-scripts">
         <script th:inline="javascript">
             function loadBreeds(specieId, selectedBreedId) {
-                const breedSelect = document.getElementById("breed");
+                const breedSelect = $('#breed');
                 if (!specieId) {
-                    breedSelect.innerHTML = '<option value="" hidden>-- Selecione a espécie primeiro --</option>';
+                    breedSelect.html('<option value="" hidden>-- Selecione a espécie primeiro --</option>').trigger('change');
                     return;
                 }
-                breedSelect.innerHTML = '<option value="">Carregando...</option>';
-                breedSelect.disabled = true;
+                breedSelect.html('<option value="">Carregando...</option>').prop('disabled', true).trigger('change');
 
                 fetch(`/breed/fetch?specieId=${specieId}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error(`Network error: ${response.status}`);
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(breeds => {
-                        breedSelect.innerHTML = '<option value="" hidden>-- Selecione a raça --</option>';
+                        breedSelect.html('<option value="" hidden>-- Selecione a raça --</option>');
                         breeds.forEach(breed => {
-                            const option = document.createElement("option");
-                            option.value = breed.id;
-                            option.textContent = breed.description;
-                            if (selectedBreedId && selectedBreedId.toString() == breed.id.toString()) {
-                                option.selected = true;
-                            }
-                            breedSelect.appendChild(option);
+                            const option = new Option(breed.description, breed.id, false, false);
+                            breedSelect.append(option);
                         });
-                        breedSelect.disabled = false;
+
+                        if (selectedBreedId) {
+                            breedSelect.val(selectedBreedId);
+                        }
+
+                        breedSelect.prop('disabled', false);
+                        breedSelect.trigger('change');
                     })
                     .catch(error => {
                         console.error('Error loading breeds:', error);
-                        breedSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+                        breedSelect.html('<option value="">Erro ao carregar</option>').prop('disabled', false).trigger('change');
                     });
             }
 
-            document.addEventListener("DOMContentLoaded", () => {
-                const specieSelect = document.getElementById("specie");
-                const breedSelect = document.getElementById("breed");
-                const initialSpecieId = specieSelect.value;
-                const breedToSelect = breedSelect.getAttribute('data-selected');
 
+            $(document).ready(function () {
+                // THE FIX: Initialize each Select2 instance individually
+                // and set its dropdownParent to its closest card.
+                $('.select2-searchable').each(function () {
+                    $(this).select2({
+                        theme: "bootstrap-5",
+                        width: '100%',
+                        dropdownParent: $(this).closest('.card')
+                    });
+                });
+
+                // The rest of the script remains the same...
+                $('#specie').on('change', function () {
+                    loadBreeds($(this).val(), null);
+                });
+
+                const initialSpecieId = $('#specie').val();
                 if (initialSpecieId) {
+                    const breedToSelect = $('#breed').data('selected');
                     loadBreeds(initialSpecieId, breedToSelect);
                 }
             });
 
-            // The 'change' listener is implicitly part of the above block,
-            // just make sure it's inside the DOMContentLoaded
-            document.getElementById("specie").addEventListener("change", (event) => {
-                loadBreeds(event.target.value, null);
-            });
         </script>
     </th:block>
 

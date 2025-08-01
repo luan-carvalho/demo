@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import br.com.unnamed.demo.domain.shared.model.Email;
-import br.com.unnamed.demo.domain.shared.model.Phone;
+import br.com.unnamed.demo.authentication.model.valueObjects.Email;
 import br.com.unnamed.demo.domain.shared.service.ReferenceDataService;
 import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
@@ -19,6 +18,7 @@ import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
 import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Gender;
+import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
 import jakarta.validation.Valid;
 
@@ -74,10 +74,13 @@ public class TutorController {
         if (tutorDto.id() != null) {
 
             Tutor existingTutor = tutorService.findById(tutorDto.id());
-            existingTutor.updateTutorInfo(new Phone(tutorDto.info().phone()), new Email(tutorDto.info().email()),
+
+            existingTutor.updateTutorInfo(
+                    new Phone(tutorDto.info().phone()),
                     tutorDto.info().name(),
                     AddressMapper.toEntity(tutorDto.info().address()),
                     tutorDto.info().birthDate());
+
             tutorService.save(existingTutor);
             return "redirect:/tutor";
 
@@ -117,17 +120,17 @@ public class TutorController {
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "pet/pet");
         return "layout/base-layout";
-        
+
     }
-    
+
     @GetMapping("/{tutorId}/pet/new")
     public String findNewPetForm(@PathVariable Long tutorId, Model model) {
-        
+
         model.addAttribute("species", refService.findAllSpecies());
         model.addAttribute("coatColors", refService.findAllCoatColors());
         model.addAttribute("genders", Gender.values());
         model.addAttribute("pet", PetFormDto.empty());
-        
+
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "pet/pet");
         return "layout/base-layout";

@@ -16,7 +16,6 @@ public class TutorMapper {
                 dto.info().name(),
                 AddressMapper.toEntity(dto.info().address()),
                 dto.info().phone(),
-                dto.info().email(),
                 dto.info().birthDate());
 
     }
@@ -28,7 +27,6 @@ public class TutorMapper {
                 new PersonInfoDto(tutor.getName(),
                         AddressMapper.toDto(tutor.getAddress()),
                         tutor.getPhone().getValue(),
-                        tutor.getEmail().getValue(),
                         tutor.getBirthDate()),
                 tutor.getAllPets(),
                 tutor.getStatus());
