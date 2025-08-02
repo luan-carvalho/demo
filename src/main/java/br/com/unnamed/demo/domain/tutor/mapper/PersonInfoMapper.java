@@ -1,6 +1,5 @@
 package br.com.unnamed.demo.domain.tutor.mapper;
 
-import br.com.unnamed.demo.authentication.model.valueObjects.Email;
 import br.com.unnamed.demo.domain.tutor.dtos.PersonInfoDto;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.PersonInfo;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;

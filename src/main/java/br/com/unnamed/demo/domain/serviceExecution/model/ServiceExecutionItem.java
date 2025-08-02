@@ -22,20 +22,18 @@ public class ServiceExecutionItem {
     private ServiceExecution serviceExecution;
 
     @ManyToOne
-    @JoinColumn(name = "petCare_id")
+    @JoinColumn(name = "pet_care_id")
     private PetCare petCare;
     private BigDecimal unitPrice;
-    private int quantity;
 
     public ServiceExecutionItem() {
 
     }
 
-    public ServiceExecutionItem(ServiceExecution serviceExecution, PetCare petCare, int quantity) {
+    public ServiceExecutionItem(ServiceExecution serviceExecution, PetCare petCare) {
         this.serviceExecution = serviceExecution;
         this.petCare = petCare;
         this.unitPrice = petCare.getPrice();
-        this.quantity = quantity;
     }
 
     public Long getId() {
@@ -46,16 +44,12 @@ public class ServiceExecutionItem {
         return petCare;
     }
 
-    public BigDecimal calculateTotalPrice() {
+    public ServiceExecution getServiceExecution() {
+        return serviceExecution;
+    }
 
-        if (unitPrice == null || unitPrice.compareTo(BigDecimal.ZERO) < 0)
-            throw new IllegalStateException("Price must not be null and greater than zero");
-
-        if (quantity <= 0)
-            throw new IllegalStateException("Quantity must be greater than zero");
-
-        return unitPrice.multiply(BigDecimal.valueOf(quantity));
-
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
     }
 
 }

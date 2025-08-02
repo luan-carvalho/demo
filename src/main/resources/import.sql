@@ -102,3 +102,12 @@ INSERT INTO pet_care (description, group_id, price, status) VALUES ('Banho - Gra
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Tosa bebê', 2, 55.00, 'ACTIVE');
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Tosa higiênica', 2, 40.00, 'ACTIVE');
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Corte de unha', 3, 15.00, 'ACTIVE');
+
+INSERT INTO service_execution (tutor_id, pet_id, date, service_status, arrival_time) VALUES (1, 1, '2025-08-02', 'PENDING', '2025-08-02 09:30:00');
+INSERT INTO service_execution (tutor_id, pet_id, date, service_status, arrival_time, start_time) VALUES (1, 1, '2025-08-02', 'IN_PROGRESS', '2025-08-02 08:30:00', '2025-08-02 09:00:00');
+INSERT INTO service_execution (tutor_id, pet_id, date, service_status, arrival_time, start_time, finish_time) VALUES (1, 1, '2025-08-02', 'COMPLETED', '2025-08-02 08:00:00', '2025-08-02 08:30:00', '2025-08-02 09:00:00');
+
+INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price, quantity) VALUES (1, 1, 45.00, 1);
+INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price, quantity) VALUES (1, 4, 55.00, 1);
+INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price, quantity) VALUES (2, 1, 45.00, 1);
+INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price, quantity) VALUES (3, 1, 45.00, 1);

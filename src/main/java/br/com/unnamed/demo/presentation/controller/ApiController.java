@@ -8,23 +8,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import br.com.unnamed.demo.domain.shared.service.ReferenceDataService;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Breed;
+import br.com.unnamed.demo.domain.tutor.service.PetInfoService;
+import br.com.unnamed.demo.domain.tutor.service.TutorService;
 
 @Controller
-@RequestMapping("breed")
-public class BreedController {
+@RequestMapping("api")
+public class ApiController {
 
-    private final ReferenceDataService dataService;
+    private final PetInfoService petInfoService;
+    private final TutorService tutorService;
 
-    public BreedController(ReferenceDataService dataService) {
-        this.dataService = dataService;
+    public ApiController(PetInfoService petInfoService, TutorService tutorService) {
+        this.petInfoService = petInfoService;
+        this.tutorService = tutorService;
     }
 
-    @GetMapping("/fetch")
+    @GetMapping("/breed/fetch")
     @ResponseBody
     public List<Breed> getBreedsBasedOnSpecies(@RequestParam Long specieId) {
-        return dataService.findAllBreedsFromSpecieId(specieId);
+        return petInfoService.findAllBreedsFromSpecieId(specieId);
     }
 
 }

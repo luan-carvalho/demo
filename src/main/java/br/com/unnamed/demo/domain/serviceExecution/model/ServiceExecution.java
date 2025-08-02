@@ -1,6 +1,6 @@
 package br.com.unnamed.demo.domain.serviceExecution.model;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class ServiceExecution {
@@ -27,6 +27,9 @@ public class ServiceExecution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    private LocalDate date;
+    @NotNull
     private LocalDateTime arrivalTime;
     private LocalDateTime startTime;
     private LocalDateTime finishTime;
@@ -34,10 +37,12 @@ public class ServiceExecution {
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
+    @NotNull
     private Pet pet;
 
     @ManyToOne
     @JoinColumn(name = "tutor_id")
+    @NotNull
     private Tutor tutor;
 
     @OneToMany(mappedBy = "serviceExecution")
@@ -45,9 +50,6 @@ public class ServiceExecution {
 
     @Enumerated(EnumType.STRING)
     private ServiceStatus serviceStatus;
-
-    @Column(precision = 10, scale = 2)
-    private BigDecimal total;
 
     public ServiceExecution() {
 
@@ -58,7 +60,8 @@ public class ServiceExecution {
         this.tutor = tutor;
         this.pet = pet;
         this.executedServices = new ArrayList<>();
-        this.total = BigDecimal.ZERO;
+        this.date = LocalDate.now();
+        this.arrivalTime = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
 
     }
@@ -66,6 +69,7 @@ public class ServiceExecution {
     public void startService() {
 
         this.serviceStatus = ServiceStatus.IN_PROGRESS;
+        this.startTime = LocalDateTime.now();
 
     }
 
@@ -76,9 +80,9 @@ public class ServiceExecution {
 
     }
 
-    public void addService(PetCare petCare, int quantity) {
+    public void addService(PetCare petCare) {
 
-        this.executedServices.add(new ServiceExecutionItem(this, petCare, quantity));
+        this.executedServices.add(new ServiceExecutionItem(this, petCare));
 
     }
 
@@ -88,4 +92,43 @@ public class ServiceExecution {
 
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalDateTime getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getFinishTime() {
+        return finishTime;
+    }
+
+    public LocalDateTime getPickUpTime() {
+        return pickUpTime;
+    }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    public Tutor getTutor() {
+        return tutor;
+    }
+
+    public List<ServiceExecutionItem> getExecutedServices() {
+        return executedServices;
+    }
+
+    public ServiceStatus getServiceStatus() {
+        return serviceStatus;
+    }
 }

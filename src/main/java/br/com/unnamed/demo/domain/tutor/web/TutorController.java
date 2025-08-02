@@ -1,7 +1,7 @@
 package br.com.unnamed.demo.domain.tutor.web;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,14 +9,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import br.com.unnamed.demo.domain.shared.service.ReferenceDataService;
 import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
 import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
 import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
+import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Gender;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
+import br.com.unnamed.demo.domain.tutor.service.ReferenceDataService;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
 import jakarta.validation.Valid;
 
@@ -38,7 +39,7 @@ public class TutorController {
     public String findAllActiveTutors(Model model) {
 
         model.addAttribute("tutors", TutorMapper
-                .toGridList(tutorService.findAllActive(PageRequest.of(0, 10, Sort.by("info.name").ascending()))));
+                .toGridList(tutorService.findAllActive()));
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor-list");
         return "layout/base-layout";

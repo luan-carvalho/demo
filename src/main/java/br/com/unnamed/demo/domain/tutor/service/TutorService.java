@@ -2,7 +2,6 @@ package br.com.unnamed.demo.domain.tutor.service;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -45,14 +44,14 @@ public class TutorService {
 
     }
 
-    public List<Tutor> findAllActive(Pageable pagination) {
+    public List<Tutor> findAllActive() {
 
-        return TutorRepo.findAllActive(pagination);
+        return TutorRepo.findAllActive();
 
     }
-    public List<Tutor> findAllInactive(Pageable pagination) {
+    public List<Tutor> findAllInactive() {
 
-        return TutorRepo.findAllInactive(pagination);
+        return TutorRepo.findAllInactive();
 
     }
 

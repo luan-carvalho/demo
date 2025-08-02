@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">Novo Atendimento</h1>
+            <a th:href="@{/serviceExecution}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Voltar para a Lista
+            </a>
+        </div>
+
+        <form id="newServiceForm" th:action="@{/serviceExecution/new}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <div class="row g-4">
+                <!-- Left Column: Form Details -->
+                <div class="col-lg-7">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Detalhes do Atendimento</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Client and Pet Selection -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="clientSelect" class="form-label fw-bold">1. Selecione o Cliente</label>
+                                    <select class="form-select" id="clientSelect" name="tutorId" required
+                                        data-theme="bootstrap-5" style="width: 100%;">
+                                        <option></option> <!-- Required for Select2 placeholder -->
+                                        <option th:each="tutor : ${all_tutors}" th:value="${tutor.id}"
+                                            th:text="${tutor.info.name}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="petSelect" class="form-label fw-bold">2. Selecione o Pet</label>
+                                    <select class="form-select" id="petSelect" name="petId" required disabled>
+                                        <option value="" selected disabled>Selecione um cliente primeiro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Services Selection -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">3. Selecione os Serviços</label>
+                                <div id="servicesChecklist" class="border rounded p-3"
+                                    style="max-height: 300px; overflow-y: auto;">
+                                    <div th:if="${#lists.isEmpty(all_pet_cares)}" class="text-muted">Nenhum serviço
+                                        cadastrado.</div>
+                                    <!-- Pass price and name data to the checkbox for JS to use -->
+                                    <div th:each="care : ${all_pet_cares}" class="form-check">
+                                        <input class="form-check-input" type="checkbox" th:value="${care.id}"
+                                            th:id="'care-' + ${care.id}"
+                                            th:attr="data-price=${care.price}, data-name=${care.description}"
+                                            name="petCareIds">
+                                        <label class="form-check-label" th:for="'care-' + ${care.id}"
+                                            th:text="${care.description}"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Summary and Actions -->
+                <div class="col-lg-5">
+                    <!-- Summary Card -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Resumo</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm">
+                                <tbody id="selectedServicesBody">
+                                    <tr>
+                                        <td colspan="2" class="text-center text-muted">Nenhum serviço selecionado.</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="border-top">
+                                        <th class="text-end">Total:</th>
+                                        <th id="totalDisplay" class="text-end">R$ 0,00</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Actions Card -->
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Ações</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <span>Salvar Atendimento</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <script src="/js/newServiceExecution.js"></script>
+</body>
+
+</html>

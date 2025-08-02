@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.domain.shared.service;
+package br.com.unnamed.demo.domain.tutor.service;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import br.com.unnamed.demo.domain.tutor.repository.CoatColorRepository;
 import br.com.unnamed.demo.domain.tutor.repository.SpecieRepository;
 
 @Service
-public class ReferenceDataService {
+public class PetInfoService {
 
     private final BreedRepository breedRepo;
     private final CoatColorRepository coatColorRepo;
     private final SpecieRepository specieRepository;
 
-    public ReferenceDataService(BreedRepository breedRepo, CoatColorRepository coatColorRepo,
+    public PetInfoService(BreedRepository breedRepo, CoatColorRepository coatColorRepo,
             SpecieRepository specieRepository) {
 
         this.breedRepo = breedRepo;

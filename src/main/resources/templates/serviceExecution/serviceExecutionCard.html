@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="serviceCard(service)" class="card shadow-sm mb-3 border">
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h6 class="card-title mb-0" th:text="${service.pet.name}"></h6>
+                <span class="badge bg-light text-dark-emphasis border rounded-pill"
+                    th:text="'#' + ${service.id}"></span>
+            </div>
+            <p class="card-subtitle mb-2 text-muted small">
+                <i class="bi bi-person"></i>
+                <span th:text="${service.tutor.info.name}"></span>
+            </p>
+            <div class="mt-3 border-top pt-2">
+                <p class="small text-muted mb-1 fw-bold"></p>
+                <div class="d-flex flex-wrap gap-1">
+                    <span th:each="item : ${service.executedServices}"
+                        class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill"
+                        th:text="${item.petCare.description}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
