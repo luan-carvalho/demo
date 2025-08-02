@@ -4,33 +4,37 @@
 <body>
 
     <div th:fragment="content">
-        <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0" th:text="${pet.id == null} ? 'Novo Pet' : 'Editar Pet'"></h1>
             <a th:href="@{/tutor/{id}(id=${tutorId})}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i>
                 <span class="d-none d-md-inline ms-2">Voltar para o Tutor</span>
             </a>
-
-
         </div>
 
-        <!-- Form Card -->
         <div class="card shadow-sm">
             <div class="card-header">
                 <h5 class="card-title mb-0">Informações do Pet</h5>
             </div>
-            <form th:action="@{/tutor/{tutorId}/pet/save (tutorId=${tutorId})}" method="post" th:object="${pet}">
+            <form id="petForm" th:action="@{/tutor/{tutorId}/pet/save (tutorId=${tutorId})}" method="post"
+                th:object="${pet}">
                 <div class="card-body">
                     <input type="hidden" th:field="*{id}">
                     <input type="hidden" th:if="${pet.id}" th:field="*{status}">
                     <div class="row">
-                        <!-- Text and Date inputs (Reliable) -->
                         <div class="col-md-6 mb-3">
                             <label for="name" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="name" th:field="*{name}" required>
                         </div>
-
+                        <div class="col-md-6 mb-3">
+                            <label for="gender" class="form-label">Sexo</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="" hidden>-- Selecione --</option>
+                                <option th:each="g : ${genders}" th:value="${g.name()}"
+                                    th:text="#{${'genders.' + g.name()}}"
+                                    th:selected="${pet.gender != null and g.name() == pet.gender.name()}"></option>
+                            </select>
+                        </div>
                         <div class="col-md-6 mb-3">
                             <label for="specie" class="form-label">Espécie</label>
                             <select class="form-select" id="specie" name="specie" required>
@@ -39,21 +43,11 @@
                                     th:selected="${pet.specie != null and s.id == pet.specie.id}"></option>
                             </select>
                         </div>
-
                         <div class="col-md-6 mb-3">
                             <label for="breed" class="form-label">Raça</label>
                             <select class="form-select select2-searchable" name="breed" id="breed"
                                 th:data-selected="${pet.breed?.id}" required>
                                 <option value="" hidden>-- Selecione a espécie primeiro --</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="gender" class="form-label">Sexo</label>
-                            <select class="form-select" id="gender" name="gender" required>
-                                <option value="" hidden>-- Selecione --</option>
-                                <option th:each="g : ${genders}" th:value="${g}" th:text="#{${'genders.' + g.name()}}"
-                                    th:selected="${pet.gender != null and g == pet.gender}"></option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -66,74 +60,14 @@
                         </div>
                     </div>
                 </div>
-                <!-- Form Footer -->
                 <div class="card-footer d-flex justify-content-between align-items-center">
-                    <div> <!-- Actions... --> </div>
+                    <div></div>
                     <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle-fill me-2"></i><span
                             th:text="${pet.id != null} ? 'Salvar Alterações' : 'Cadastrar Pet'"></span></button>
                 </div>
             </form>
         </div>
     </div>
-
-
-    <th:block th:fragment="page-scripts">
-        <script th:inline="javascript">
-            function loadBreeds(specieId, selectedBreedId) {
-                const breedSelect = $('#breed');
-                if (!specieId) {
-                    breedSelect.html('<option value="" hidden>-- Selecione a espécie primeiro --</option>').trigger('change');
-                    return;
-                }
-                breedSelect.html('<option value="">Carregando...</option>').prop('disabled', true).trigger('change');
-
-                fetch(`/breed/fetch?specieId=${specieId}`)
-                    .then(response => response.json())
-                    .then(breeds => {
-                        breedSelect.html('<option value="" hidden>-- Selecione a raça --</option>');
-                        breeds.forEach(breed => {
-                            const option = new Option(breed.description, breed.id, false, false);
-                            breedSelect.append(option);
-                        });
-
-                        if (selectedBreedId) {
-                            breedSelect.val(selectedBreedId);
-                        }
-
-                        breedSelect.prop('disabled', false);
-                        breedSelect.trigger('change');
-                    })
-                    .catch(error => {
-                        console.error('Error loading breeds:', error);
-                        breedSelect.html('<option value="">Erro ao carregar</option>').prop('disabled', false).trigger('change');
-                    });
-            }
-
-
-            $(document).ready(function () {
-                $('.select2-searchable').each(function () {
-                    $(this).select2({
-                        theme: "bootstrap-5",
-                        width: '100%',
-                        dropdownParent: $(this).closest('.card')
-                    });
-                });
-
-                // The rest of the script remains the same...
-                $('#specie').on('change', function () {
-                    loadBreeds($(this).val(), null);
-                });
-
-                const initialSpecieId = $('#specie').val();
-                if (initialSpecieId) {
-                    const breedToSelect = $('#breed').data('selected');
-                    loadBreeds(initialSpecieId, breedToSelect);
-                }
-            });
-
-        </script>
-    </th:block>
-
 </body>
 
 </html>

@@ -4,7 +4,7 @@
 <body>
     <div th:fragment="content">
 
-        <!-- Page Header -->
+        <!-- Page Header (unchanged) -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0">Serviços</h1>
             <a th:href="@{/petCare/new}" class="btn btn-primary d-flex align-items-center">
@@ -13,10 +13,9 @@
             </a>
         </div>
 
-        <!-- The main content card -->
+        <!-- The main content card (unchanged) -->
         <div class="card shadow-sm">
             <div class="card-body">
-                <!-- This wrapper makes the table horizontally scrollable on small screens -->
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
@@ -24,36 +23,31 @@
                                 <th scope="col">Descrição</th>
                                 <th scope="col">Grupo</th>
                                 <th scope="col" class="text-end">Preço</th>
-                                <th scope="col" class="text-center">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Loop through each PetCare service -->
-                            <tr th:each="petCare : ${petCares}">
-                                <td class="fw-bold" th:text="${petCare.description}"></td>
+                            <!-- 
+                        ================================================================
+                        THE CHANGES ARE HERE
+                        ================================================================
+                        -->
+                            <tr th:each="petCare : ${petCares}" class="clickable-row"
+                                th:data-href="@{/petCare/{id}(id=${petCare.id})}">
 
-                                <!-- Display group or a placeholder -->
+                                <td class="fw" th:text="${petCare.description}"></td>
+
                                 <td>
                                     <span th:if="${petCare.group != null}"
                                         th:text="${petCare.group.description}"></span>
                                     <em th:if="${petCare.group == null}" class="text-muted">Nenhum</em>
                                 </td>
 
-                                <!-- Display formatted price, right-aligned -->
                                 <td class="text-end"
                                     th:text="'R$ ' + ${#numbers.formatDecimal(petCare.price, 1, 'POINT', 2, 'COMMA')}">
                                 </td>
-
-                                <!-- Action button -->
-                                <td class="text-center">
-                                    <a th:href="@{/petCare/{id}(id=${petCare.id})}"
-                                        class="btn btn-sm btn-outline-secondary" title="Editar Serviço">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                </td>
                             </tr>
 
-                            <!-- Empty state message -->
+                            <!-- Empty state message (unchanged) -->
                             <tr th:if="${#lists.isEmpty(petCares)}">
                                 <td colspan="4" class="text-center text-muted py-4">
                                     Nenhum serviço cadastrado.

@@ -26,7 +26,17 @@ public class ServiceExecutionItem {
     private PetCare petCare;
     private BigDecimal unitPrice;
     private int quantity;
-    private BigDecimal discount;
+
+    public ServiceExecutionItem() {
+
+    }
+
+    public ServiceExecutionItem(ServiceExecution serviceExecution, PetCare petCare, int quantity) {
+        this.serviceExecution = serviceExecution;
+        this.petCare = petCare;
+        this.unitPrice = petCare.getPrice();
+        this.quantity = quantity;
+    }
 
     public Long getId() {
         return id;
@@ -34,10 +44,6 @@ public class ServiceExecutionItem {
 
     public PetCare getPetCare() {
         return petCare;
-    }
-
-    public BigDecimal getDiscount() {
-        return discount;
     }
 
     public BigDecimal calculateTotalPrice() {

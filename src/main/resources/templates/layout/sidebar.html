@@ -1,100 +1,149 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <body>
 
     <div th:fragment="sidebar">
-
         <div class="offcanvas offcanvas-start text-white bg-dark d-lg-none" tabindex="-1" id="sidebarOffcanvas"
-            aria-labelledby="sidebarOffcanvasLabel">
+            aria-labelledby="sidebarOffcanvasLabel" data-bs-focus="false">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">
                     <a href="/" class="d-flex align-items-center text-white text-decoration-none">
-                        <i class="bi bi-heptagon-fill me-2"></i>
-                        <span class="fs-4">PetCare</span>
+                        <span class="fs-4">Lady | Beleza Pet</span>
+                        <i class="bi bi-heart-pulse-fill fs-5 ms-2"></i>
                     </a>
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
                     aria-label="Close"></button>
             </div>
             <div class="offcanvas-body d-flex flex-column p-3">
-                <div class="p-3" th:replace="~{::menu-links}"></div>
-
-                <div class="mt-auto p-3">
+                <div th:replace="~{::menu-links}"></div>
+                <div class="mt-auto">
                     <hr class="text-secondary">
                     <div th:replace="~{::user-dropdown}"></div>
                 </div>
             </div>
         </div>
 
-
         <div class="d-none d-lg-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar-desktop">
-            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                <i class="bi bi-heptagon-fill me-2"></i>
-                <span class="fs-4">PetCare</span>
-            </a>
+            <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">
+                <a href="/" class="d-flex align-items-center text-white text-decoration-none">
+                    <span class="fs-4">Lady | Beleza Pet</span>
+                    <i class="bi bi-heart-pulse-fill fs-5 ms-2"></i>
+                </a>
+            </h5>
             <hr>
             <div th:replace="~{::menu-links}"></div>
             <hr>
             <div th:replace="~{::user-dropdown}"></div>
         </div>
-
     </div>
 
-
     <ul th:fragment="menu-links" class="nav nav-pills flex-column mb-auto">
-
-        <li class="nav-item mb-2">
+        <li class="nav-item">
             <a th:href="@{/}" th:class="${activePage == 'home' ? 'nav-link active' : 'nav-link text-white'}"
                 aria-current="page">
                 <i class="bi bi-house-door me-2"></i> Home
             </a>
         </li>
-
-        <li class="mb-2">
-            <a href="#" th:class="${activePage == 'agendamentos' ? 'nav-link active' : 'nav-link text-white'}">
+        <li class="nav-item">
+            <a th:href="@{serviceExecution}" th:class="${activePage == 'serviceExecution' ? 'nav-link active' : 'nav-link text-white'}">
                 <i class="bi bi-calendar-check me-2"></i> Atendimentos
             </a>
         </li>
-
-        <li>
+        <li class="nav-item">
             <a th:href="@{/tutor}" th:class="${activePage == 'clients' ? 'nav-link active' : 'nav-link text-white'}">
                 <i class="bi bi-people me-2"></i> Clientes
             </a>
         </li>
 
-        <li class="nav-item mb-2">
-            <a href="#" class="nav-link d-flex justify-content-between align-items-center"
-                th:classappend="${#lists.contains({'services', 'service-groups'}, activePage) ? 'active' : 'text-white'}"
-                data-bs-toggle="collapse" data-bs-target="#services-collapse" aria-expanded="false">
-                <span>
-                    <i class="bi bi-card-list me-2"></i>
-                    Serviços
-                </span>
-                <i class="bi bi-chevron-down small"></i>
-            </a>
-            <div class="collapse" id="services-collapse"
-                th:classappend="${#lists.contains({'services', 'service-groups'}, activePage) ? 'show' : ''}">
-                <ul class="nav flex-column ps-4 mt-2">
-                    <li class="nav-item">
-                        <a th:href="@{/petCare}"
-                            th:class="${activePage == 'services' ? 'nav-link active' : 'nav-link text-white'}"
-                            class="py-1">
-                            Serviços
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a th:href="@{/petCareGroup}"
-                            th:class="${activePage == 'service-groups' ? 'nav-link active' : 'nav-link text-white'}"
-                            class="py-1">
-                            Grupos de Serviços
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li>
 
+        <th:block sec:authorize="hasRole('ADMIN')">
 
+            <li class="nav-item">
+                <a href="#" class="nav-link d-flex justify-content-between align-items-center"
+                    th:classappend="${#lists.contains({'services', 'service-groups'}, activePage) ? 'active' : 'text-white'}"
+                    data-bs-toggle="collapse" data-bs-target="#services-collapse" aria-expanded="false">
+                    <span><i class="bi bi-card-list me-2"></i> Serviços</span>
+                    <i class="bi bi-chevron-down small"></i>
+                </a>
+                <div class="collapse" id="services-collapse"
+                    th:classappend="${#lists.contains({'services', 'service-groups'}, activePage) ? 'show' : ''}">
+                    <ul class="nav flex-column ps-4 mt-2">
+                        <li><a th:href="@{/petCare}"
+                                th:class="${activePage == 'services' ? 'nav-link active' : 'nav-link text-white'}"
+                                class="py-1">Serviços</a></li>
+                        <li><a th:href="@{/petCareGroup}"
+                                th:class="${activePage == 'service-groups' ? 'nav-link active' : 'nav-link text-white'}"
+                                class="py-1">Grupos de Serviços</a></li>
+                    </ul>
+                </div>
+            </li>
+
+            <hr>
+            <li class="nav-item">
+                <a href="#" class="nav-link d-flex justify-content-between align-items-center"
+                    th:classappend="${#lists.contains({'contas-pagar', 'contas-receber'}, activePage) ? 'active' : 'text-white'}"
+                    data-bs-toggle="collapse" data-bs-target="#financeiro-collapse" aria-expanded="false">
+                    <span><i class="bi bi-cash-coin me-2"></i> Financeiro</span>
+                    <i class="bi bi-chevron-down small"></i>
+                </a>
+                <div class="collapse" id="financeiro-collapse"
+                    th:classappend="${#lists.contains({'contas-pagar', 'contas-receber'}, activePage) ? 'show' : ''}">
+                    <ul class="nav flex-column ps-4 mt-2">
+                        <li><a href="#"
+                                th:class="${activePage == 'contas-pagar' ? 'nav-link active' : 'nav-link text-white'}"
+                                class="py-1">Contas a Pagar</a></li>
+                        <li><a href="#"
+                                th:class="${activePage == 'contas-receber' ? 'nav-link active' : 'nav-link text-white'}"
+                                class="py-1">Contas a Receber</a></li>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- NEW "Caixa" top-level menu item -->
+            <li class="nav-item">
+                <a href="#" th:class="${activePage == 'caixa' ? 'nav-link active' : 'nav-link text-white'}">
+                    <i class="bi bi-archive me-2"></i> Caixa
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <!-- UPDATED: Added 'relatorio-caixa' to the list -->
+                <a href="#" class="nav-link d-flex justify-content-between align-items-center"
+                    th:classappend="${#lists.contains({'relatorio-servicos', 'fluxo-caixa', 'relatorio-caixa'}, activePage) ? 'active' : 'text-white'}"
+                    data-bs-toggle="collapse" data-bs-target="#relatorios-collapse" aria-expanded="false">
+                    <span><i class="bi bi-clipboard-data me-2"></i> Relatórios</span>
+                    <i class="bi bi-chevron-down small"></i>
+                </a>
+                <!-- UPDATED: Added 'relatorio-caixa' to the list -->
+                <div class="collapse" id="relatorios-collapse"
+                    th:classappend="${#lists.contains({'relatorio-servicos', 'fluxo-caixa', 'relatorio-caixa'}, activePage) ? 'show' : ''}">
+                    <ul class="nav flex-column ps-4 mt-2">
+                        <li><a href="#"
+                                th:class="${activePage == 'relatorio-servicos' ? 'nav-link active' : 'nav-link text-white'}"
+                                class="py-1">Serviços Realizados</a></li>
+                        <li><a href="#"
+                                th:class="${activePage == 'relatorio-caixa' ? 'nav-link active' : 'nav-link text-white'}"
+                                class="py-1">Fechamento de Caixa</a></li>
+                        <li><a href="#"
+                                th:class="${activePage == 'fluxo-caixa' ? 'nav-link active' : 'nav-link text-white'}"
+                                class="py-1">Fluxo de Caixa</a></li>
+                        <!-- NEW "Relatório de Caixa" sub-menu item -->
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a href="#" th:class="${activePage == 'users' ? 'nav-link active' : 'nav-link text-white'}">
+                    <i class="bi bi-person-gear me-2"></i> Usuários
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" th:class="${activePage == 'settings' ? 'nav-link active' : 'nav-link text-white'}">
+                    <i class="bi bi-gear me-2"></i> Configurações
+                </a>
+            </li>
+        </th:block>
     </ul>
 
     <div th:fragment="user-dropdown" class="dropdown">
@@ -115,7 +164,6 @@
             </li>
         </ul>
     </div>
-
 
 </body>
 

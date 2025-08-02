@@ -4,7 +4,6 @@
 <body>
     <div th:fragment="content">
 
-        <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0">Grupos de Serviços</h1>
             <a th:href="@{/petCareGroup/new}" class="btn btn-primary d-flex align-items-center">
@@ -12,8 +11,6 @@
                 Novo Grupo
             </a>
         </div>
-
-        <!-- The main content card -->
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
@@ -21,22 +18,14 @@
                         <thead class="table-light">
                             <tr>
                                 <th scope="col">Descrição</th>
-                                <th scope="col" class="text-center">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Loop through each group -->
-                            <tr th:each="group : ${petCareGroups}">
-                                <td class="fw" th:text="${group.description}"></td>
-                                <td class="text-center">
-                                    <a th:href="@{/petCareGroup/{id}(id=${group.id})}"
-                                        class="btn btn-sm btn-outline-secondary" title="Editar Grupo">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                            <tr th:each="group : ${petCareGroups}" class="clickable-row"
+                                th:data-href="@{/petCareGroup/{id}(id=${group.id})}">
 
-                            <!-- Empty state message -->
+                                <td class="fw" th:text="${group.description}"></td>
+                            </tr>
                             <tr th:if="${#lists.isEmpty(petCareGroups)}">
                                 <td colspan="2" class="text-center text-muted py-4">
                                     Nenhum grupo de serviço cadastrado.

@@ -4,7 +4,6 @@
 <body>
     <div th:fragment="content">
 
-        <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0" th:text="${petCare.id == null} ? 'Novo Serviço' : 'Editar Serviço'"></h1>
             <a th:href="@{/petCare}" class="btn btn-secondary">
@@ -12,7 +11,6 @@
             </a>
         </div>
 
-        <!-- The form is centered in a card with a max-width for better readability -->
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card shadow-sm">
@@ -21,11 +19,9 @@
                     </div>
                     <form th:action="@{/petCare}" method="post" th:object="${petCare}">
                         <div class="card-body">
-                            <!-- Hidden fields for ID and Status -->
                             <input type="hidden" th:field="*{id}" />
                             <input type="hidden" th:if="*{id != null}" th:field="*{status}" />
 
-                            <!-- Description -->
                             <div class="mb-3">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" class="form-control" id="description" th:field="*{description}"
@@ -33,7 +29,6 @@
                             </div>
 
                             <div class="row">
-                                <!-- Price -->
                                 <div class="col-md-6 mb-3">
                                     <label for="price" class="form-label">Preço</label>
                                     <div class="input-group">
@@ -43,12 +38,10 @@
                                     </div>
                                 </div>
 
-                                <!-- Group -->
                                 <div class="col-md-6 mb-3">
                                     <label for="group" class="form-label">Grupo</label>
                                     <select class="form-select" id="group" name="group">
                                         <option value="" hidden>-- Selecione o grupo --</option>
-                                        <!-- Using the robust th:selected logic -->
                                         <option th:each="group : ${petCareGroups}" th:value="${group.id}"
                                             th:text="${group.description}"
                                             th:selected="${petCare.group != null and group.id == petCare.group.id}">
@@ -58,9 +51,7 @@
                             </div>
                         </div>
 
-                        <!-- Form Footer with Submit button -->
                         <div class="card-footer d-flex justify-content-between align-items-center">
-                            <!-- Activate/Inactivate links will only appear if petCare.id exists -->
                             <div>
                                 <a th:if="${petCare.id != null and petCare.status.name() == 'ACTIVE'}" href="#"
                                     th:href="@{/petCare/{id}/inactivate(id=${petCare.id})}"
@@ -71,7 +62,6 @@
                                     class="btn btn-sm btn-outline-success">Reativar Serviço</a>
                             </div>
 
-                            <!-- Save Button -->
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check-circle-fill me-2"></i>
                                 <span th:text="*{id != null} ? 'Salvar Alterações' : 'Cadastrar Serviço'"></span>

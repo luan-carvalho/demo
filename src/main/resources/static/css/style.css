@@ -1,0 +1,49 @@
+    /* This makes the sidebar sticky on desktop */
+    @media (min-width: 992px) {
+        .sidebar-desktop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            /* Tells the sidebar to show a scrollbar when content is too long */
+            overflow-y: auto;
+        }
+
+        .content {
+            margin-left: 280px;
+        }
+    }
+
+    .content {
+        flex-grow: 1;
+        padding: 1.5em;
+    }
+
+    /* Subtle Active State for Sidebar */
+    .sidebar-desktop .nav-pills .nav-link.active,
+    .sidebar-desktop .nav-pills .show>.nav-link,
+    .offcanvas-body .nav-pills .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+    }
+
+    /* Mobile sidebar padding */
+    .offcanvas-body {
+        padding: 1rem;
+    }
+
+    /* Subtle Form Field Focus Effect */
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: none;
+    }
+
+    .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+        box-shadow: none;
+    }
+
+    /* Clickable Table Rows */
+    .clickable-row {
+        cursor: pointer;
+    }
