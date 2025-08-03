@@ -2,12 +2,14 @@ package br.com.unnamed.demo.domain.serviceExecution.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionItem;
+import br.com.unnamed.demo.domain.serviceExecution.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRepository;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -22,12 +24,24 @@ public class ServiceExecutionService {
         this.repo = repo;
     }
 
-    public ServiceExecution createServiceExecution(Tutor tutor, Pet pet, List<PetCare> petCares) {
+    public ServiceExecution findById(Long id) {
 
-        ServiceExecution newServiceExecution = new ServiceExecution(tutor, pet);
-        petCares.forEach(p -> newServiceExecution.addService(p));
-        repo.save(newServiceExecution);
-        return newServiceExecution;
+        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Service execution not found"));
+
+    }
+
+    public void create(Tutor tutor, Pet pet, List<PetCare> petCares) {
+
+        ServiceExecution service = new ServiceExecution(tutor, pet);
+        service.addServices(petCares);
+        repo.save(service);
+
+    }
+
+    public void update(ServiceExecution serviceExecution, List<PetCare> petCares) {
+
+        serviceExecution.updatePetCares(petCares);
+        repo.save(serviceExecution);
 
     }
 
@@ -45,35 +59,36 @@ public class ServiceExecutionService {
 
     }
 
-    public void startServiceExecution(ServiceExecution serviceExecution) {
+    public List<ServiceExecution> findByStatus(ServiceStatus status) {
 
-        serviceExecution.startService();
-        repo.save(serviceExecution);
-
-    }
-
-    public void finishServiceExecution(ServiceExecution serviceExecution) {
-
-        serviceExecution.finishService();
-        repo.save(serviceExecution);
+        return repo.findAllByStatusAndDate(status, LocalDate.now());
 
     }
 
-    public List<ServiceExecution> findAllPending(LocalDate date) {
+    public void start(Long serviceId) {
 
-        return repo.findAllByStatusAndDate(ServiceStatus.PENDING, date);
-
-    }
-
-    public List<ServiceExecution> findAllInProgress(LocalDate date) {
-
-        return repo.findAllByStatusAndDate(ServiceStatus.PENDING, date);
+        ServiceExecution s = findById(serviceId);
+        s.startService();
+        repo.save(s);
 
     }
 
-    public List<ServiceExecution> findAllCompleted(LocalDate date) {
+    public void finish(Long serviceId) {
 
-        return repo.findAllByStatusAndDate(ServiceStatus.PENDING, date);
+        ServiceExecution s = findById(serviceId);
+        s.finishService();
+        repo.save(s);
+
+    }
+
+    public void cancel(Long serviceId) {
+
+        ServiceExecution serviceExecution = findById(serviceId);
+
+        if (serviceExecution.getPaymentStatus() == PaymentStatus.PAID)
+            throw new IllegalArgumentException("Não é possível cancelar um serviço que já foi pago");
+
+        repo.delete(serviceExecution);
 
     }
 

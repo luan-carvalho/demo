@@ -52,4 +52,11 @@ public class ServiceExecutionItem {
         return unitPrice;
     }
 
+    @Override
+    public String toString() {
+        return petCare.getDescription();
+    }
+
+    
+
 }

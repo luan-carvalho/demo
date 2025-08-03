@@ -92,17 +92,6 @@
                 </div>
             </div>
         </form>
-
-        <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
-        <script th:inline="javascript">
-            document.addEventListener("DOMContentLoaded", function () {
-                if (document.getElementById('phone')) {
-                    new Cleave('#phone', {
-                        delimiters: ['(', ') ', '-'], blocks: [0, 2, 5, 4], numericOnly: true
-                    });
-                }
-            });
-        </script>
     </div>
 </body>
 

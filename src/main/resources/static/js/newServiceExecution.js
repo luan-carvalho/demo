@@ -1,86 +1,98 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // === DOM ELEMENT REFERENCES ===
-    const clientSelect = $('#clientSelect'); // Use jQuery for Select2
-    const petSelect = document.getElementById('petSelect');
-    const servicesChecklist = document.getElementById('servicesChecklist');
-    const selectedServicesBody = document.getElementById('selectedServicesBody');
-    const totalDisplay = document.getElementById('totalDisplay');
+$(document).ready(function () {
+    // === DOM REFERENCES ===
+    const tutorIdInput = $('#tutorIdInput');
+    const petIdInput = $('#petIdInput');
+    const servicesChecklist = $('#servicesChecklist');
+    const selectedServicesBody = $('#selectedServicesBody');
+    const totalDisplay = $('#totalDisplay');
+    const submitButton = $('#submitServiceButton');
 
-    // === INITIALIZE SELECT2 FOR CLIENT SEARCH ===
-    clientSelect.select2({
-        placeholder: 'Digite para buscar um cliente',
-        // Optional: If you use a layout with a fixed header, you might need dropdownParent
-        // dropdownParent: clientSelect.parent() 
-    });
+    // === VALIDATION LOGIC ===
+    function validateForm() {
+        // Use .val() to check for a value. It works for both new (ID) and edit (object.toString()) states.
+        const isClientSelected = tutorIdInput.val() && petIdInput.val();
+        const areServicesSelected = servicesChecklist.find('input[type="checkbox"]:checked').length > 0;
 
-    // === EVENT LISTENERS ===
-
-    // 1. When a client is selected
-    clientSelect.on('change', function () {
-        const tutorId = $(this).val();
-        updatePetDropdown(tutorId);
-    });
-
-    // 2. When a service checkbox is checked or unchecked
-    servicesChecklist.addEventListener('change', function (e) {
-        if (e.target.matches('input[type="checkbox"]')) {
-            updateSelectedServicesGrid();
-        }
-    });
-
-    // === HELPER FUNCTIONS ===
-
-    function updatePetDropdown(tutorId) {
-        petSelect.disabled = true;
-        petSelect.innerHTML = '<option value="">Carregando...</option>';
-
-        if (!tutorId) {
-            petSelect.innerHTML = '<option value="" selected disabled>Selecione um cliente primeiro</option>';
-            return;
-        }
-
-        fetch(`/tutor/${tutorId}/pets`)
-            .then(response => response.text())
-            .then(html => {
-                petSelect.innerHTML = html;
-                petSelect.disabled = false;
-            })
-            .catch(error => {
-                console.error('Error fetching pets:', error);
-                petSelect.innerHTML = '<option value="" disabled>Erro ao carregar pets</option>';
-            });
+        // Disable the button if either condition is false
+        submitButton.prop('disabled', !(isClientSelected && areServicesSelected));
     }
 
-    function updateSelectedServicesGrid() {
-        // Clear the current grid
-        selectedServicesBody.innerHTML = '';
-        let currentTotal = 0.0;
+    // === EVENT HANDLERS ===
 
-        const checkedServices = servicesChecklist.querySelectorAll('input[type="checkbox"]:checked');
-
-        if (checkedServices.length === 0) {
-            selectedServicesBody.innerHTML = '<tr><td colspan="2" class="text-center text-muted">Nenhum serviço selecionado.</td></tr>';
-            totalDisplay.textContent = 'R$ 0,00';
-            return;
+    // Listen for clicks on any service checkbox
+    servicesChecklist.on('change', function (e) {
+        if ($(e.target).is('input[type="checkbox"]')) {
+            updateSelectedServicesGrid();
+            validateForm();
         }
+    });
 
-        checkedServices.forEach(checkbox => {
-            const price = parseFloat(checkbox.dataset.price);
-            const name = checkbox.dataset.name;
+    // === LOGIC FOR 'NEW' MODE (MODAL) ===
+    const clientPetSearchModalEl = document.getElementById('clientPetSearchModal');
+    // This 'if' block ensures the modal logic only runs if the modal exists on the page (i.e., in 'new' mode)
+    if (clientPetSearchModalEl) {
+        const searchModal = new bootstrap.Modal(clientPetSearchModalEl);
+        const searchInput = $('#searchClientPetInput');
+        const clientPetList = $('#clientPetList');
+        const selectedDisplay = $('#selectedClientPetDisplay');
 
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td>${name}</td>
-                <td class="text-end">R$ ${price.toFixed(2).replace('.', ',')}</td>
-            `;
-            selectedServicesBody.appendChild(newRow);
-
-            currentTotal += price;
+        // Live search listener
+        searchInput.on('input', function () {
+            const searchTerm = $(this).val().toLowerCase();
+            clientPetList.find('.client-pet-item').each(function () {
+                const tutorName = $(this).data('tutor-name').toLowerCase();
+                const petName = $(this).data('pet-name').toLowerCase();
+                if (tutorName.includes(searchTerm) || petName.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
         });
 
-        totalDisplay.textContent = `R$ ${currentTotal.toFixed(2).replace('.', ',')}`;
+        // Item selection listener
+        clientPetList.on('click', '.client-pet-item', function () {
+            const tutorId = $(this).data('tutor-id');
+            const tutorName = $(this).data('tutor-name');
+            const petId = $(this).data('pet-id');
+            const petName = $(this).data('pet-name');
+
+            selectedDisplay.text(`${tutorName} / ${petName}`).removeClass('text-muted');
+            tutorIdInput.val(tutorId);
+            petIdInput.val(petId);
+
+            searchModal.hide();
+            validateForm(); // Re-validate after selection
+        });
+
+        // Reset search when modal closes
+        $(clientPetSearchModalEl).on('hidden.bs.modal', function () {
+            searchInput.val('');
+            clientPetList.find('.client-pet-item').show();
+        });
     }
 
-    // Initial call to set the grid state correctly on page load
+    // === HELPER FUNCTION (for both modes) ===
+    function updateSelectedServicesGrid() {
+        selectedServicesBody.empty();
+        let currentTotal = 0.0;
+        const checkedServices = servicesChecklist.find('input[type="checkbox"]:checked');
+
+        if (checkedServices.length === 0) {
+            selectedServicesBody.html('<tr><td colspan="2" class="text-center text-muted py-3">Nenhum serviço selecionado.</td></tr>');
+            totalDisplay.text('R$ 0,00');
+        } else {
+            checkedServices.each(function () {
+                const price = parseFloat($(this).data('price'));
+                const name = $(this).data('name');
+                const row = `<tr><td>${name}</td><td class="text-end">R$ ${price.toFixed(2).replace('.', ',')}</td></tr>`;
+                selectedServicesBody.append(row);
+                currentTotal += price;
+            });
+            totalDisplay.text(`R$ ${currentTotal.toFixed(2).replace('.', ',')}`);
+        }
+    }
+
     updateSelectedServicesGrid();
+    validateForm();
 });

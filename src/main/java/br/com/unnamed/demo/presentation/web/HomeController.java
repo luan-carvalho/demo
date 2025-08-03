@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.presentation.controller;
+package br.com.unnamed.demo.presentation.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

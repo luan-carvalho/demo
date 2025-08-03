@@ -1,7 +1,5 @@
 package br.com.unnamed.demo.domain.tutor.web;
 
-import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +11,10 @@ import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
 import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
 import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
-import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Gender;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
-import br.com.unnamed.demo.domain.tutor.service.ReferenceDataService;
+import br.com.unnamed.demo.domain.tutor.service.PetInfoService;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
 import jakarta.validation.Valid;
 
@@ -26,12 +23,12 @@ import jakarta.validation.Valid;
 public class TutorController {
 
     private final TutorService tutorService;
-    private final ReferenceDataService refService;
+    private final PetInfoService petInfoService;
 
-    public TutorController(TutorService tutorService, ReferenceDataService refService) {
+    public TutorController(TutorService tutorService, PetInfoService petInfoService) {
 
         this.tutorService = tutorService;
-        this.refService = refService;
+        this.petInfoService = petInfoService;
 
     }
 
@@ -42,6 +39,7 @@ public class TutorController {
                 .toGridList(tutorService.findAllActive()));
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor-list");
+        model.addAttribute("pageScript", "/js/script.js");
         return "layout/base-layout";
 
     }
@@ -53,6 +51,7 @@ public class TutorController {
         model.addAttribute("tutor", tutorDto);
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
+        model.addAttribute("pageScript", "/js/script.js");
         return "layout/base-layout";
 
     }
@@ -63,6 +62,7 @@ public class TutorController {
         model.addAttribute("tutor", TutorFormDto.empty());
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
+        model.addAttribute("pageScript", "/js/script.js");
         return "layout/base-layout";
 
     }
@@ -108,14 +108,15 @@ public class TutorController {
     @GetMapping("/{tutorId}/pet/{petId}")
     public String findPet(@PathVariable Long tutorId, @PathVariable Long petId, Model model) {
 
-        model.addAttribute("species", refService.findAllSpecies());
-        model.addAttribute("coatColors", refService.findAllCoatColors());
+        model.addAttribute("species", petInfoService.findAllSpecies());
+        model.addAttribute("coatColors", petInfoService.findAllCoatColors());
         model.addAttribute("genders", Gender.values());
         model.addAttribute("tutorId", tutorId);
         model.addAttribute("pet", PetMapper.toFormDto(tutorService.findByTutorAndPetId(tutorId, petId)));
 
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "pet/pet");
+        model.addAttribute("pageScript", "/js/pet.js");
         return "layout/base-layout";
 
     }
@@ -123,13 +124,14 @@ public class TutorController {
     @GetMapping("/{tutorId}/pet/new")
     public String findNewPetForm(@PathVariable Long tutorId, Model model) {
 
-        model.addAttribute("species", refService.findAllSpecies());
-        model.addAttribute("coatColors", refService.findAllCoatColors());
+        model.addAttribute("species", petInfoService.findAllSpecies());
+        model.addAttribute("coatColors", petInfoService.findAllCoatColors());
         model.addAttribute("genders", Gender.values());
         model.addAttribute("pet", PetFormDto.empty());
 
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "pet/pet");
+        model.addAttribute("pageScript", "/js/pet.js");
         return "layout/base-layout";
 
     }
