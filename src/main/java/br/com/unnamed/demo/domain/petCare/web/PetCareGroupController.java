@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.unnamed.demo.domain.petCare.dtos.PetCareGroupDto;
 import br.com.unnamed.demo.domain.petCare.mapper.PetCareGroupMapper;
@@ -19,7 +20,9 @@ public class PetCareGroupController {
     private PetCareGroupService petCareGroupService;
 
     public PetCareGroupController(PetCareGroupService petCareGroupService) {
+
         this.petCareGroupService = petCareGroupService;
+
     }
 
     @GetMapping
@@ -29,6 +32,7 @@ public class PetCareGroupController {
 
         model.addAttribute("view", "petCareGroup/petCareGroup-list");
         model.addAttribute("activePage", "service-groups");
+        model.addAttribute("pageScript", "/js/script.js");
         return "layout/base-layout";
 
     }
@@ -86,6 +90,25 @@ public class PetCareGroupController {
 
         petCareGroupService.activate(id);
         return "redirect:/petCareGroup";
+
+    }
+
+    @GetMapping("/search")
+    public String searchByDescription(@RequestParam(required = false) String description, Model model) {
+
+        if (description == null || description.isBlank()) {
+
+            return "redirect:/petCareGroup";
+
+        }
+
+        model.addAttribute("petCareGroups",
+                PetCareGroupMapper.toDtoList(petCareGroupService.searchByDescription(description)));
+        model.addAttribute("description", description);
+        model.addAttribute("view", "petCareGroup/petCareGroup-list");
+        model.addAttribute("activePage", "service-groups");
+        model.addAttribute("pageScript", "/js/script.js");
+        return "layout/base-layout";
 
     }
 

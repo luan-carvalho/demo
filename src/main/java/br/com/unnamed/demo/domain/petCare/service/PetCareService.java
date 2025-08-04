@@ -40,4 +40,26 @@ public class PetCareService {
 
     }
 
+    public void deactivate(Long id) {
+
+        PetCare toBeDeactivated = findById(id);
+        toBeDeactivated.deactivate();
+        save(toBeDeactivated);
+
+    }
+
+    public void activate(Long id) {
+
+        PetCare toBeActivated = findById(id);
+        toBeActivated.activate();
+        save(toBeActivated);
+
+    }
+
+    public List<PetCare> searchByDescription(String description) {
+
+        return repo.findByDescription(description);
+
+    }
+
 }

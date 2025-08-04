@@ -20,7 +20,30 @@
             </a>
         </div>
 
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <form th:action="@{/tutor}" method="get" class="d-flex gap-2">
+                            <input type="text" name="name" class="form-control"
+                                placeholder="Buscar por nome do tutor ou do pet..." th:value="${search}">
+                            <button type="submit" class="btn btn-primary" title="Buscar">
+                                <i class="bi bi-search"></i>
+                            </button>
+                            <a th:href="@{/tutor}" class="btn btn-secondary" title="Limpar filtro">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-people-fill me-2"></i>Lista de Clientes</h5>
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
@@ -31,22 +54,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="tutor : ${tutors}" class="clickable-row"
+                            <tr th:each="tutor : ${tutorPage.content}" class="clickable-row"
                                 th:data-href="@{/tutor/{id}(id=${tutor.id})}">
 
                                 <td class="fw" th:text="${tutor.name}"></td>
 
                                 <td>
-                                    <a th:each="pet : ${tutor.pets}"
+                                    <a th:if="${not #lists.isEmpty(tutor.getActivePets())}"
+                                        th:each="pet : ${tutor.getActivePets()}"
                                         th:href="@{/tutor/{tutorId}/pet/{petId}(tutorId=${tutor.id}, petId=${pet.id})}"
                                         th:text="${pet.name}"
                                         class="badge bg-primary text-decoration-none fw-normal me-1"
                                         th:onclick="|event.stopPropagation()|">
                                     </a>
+                                    <span th:if="${#lists.isEmpty(tutor.getActivePets())}"
+                                        class="text-center text-muted py-4">
+                                        -
+                                    </span>
                                 </td>
                             </tr>
 
-                            <tr th:if="${#lists.isEmpty(tutors)}">
+                            <tr th:if="${#lists.isEmpty(tutorPage)}">
                                 <td colspan="2" class="text-center text-muted py-4">
                                     Nenhum cliente cadastrado.
                                 </td>
@@ -54,6 +82,30 @@
                         </tbody>
                     </table>
                 </div>
+
+                <nav th:if="${tutorPage.totalPages > 1}" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Previous Page Link -->
+                        <li class="page-item" th:classappend="${tutorPage.first} ? 'disabled'">
+                            <a class="page-link"
+                                th:href="@{/tutor(page=${tutorPage.number - 1}, size=${tutorPage.size}, search=${search})}">Anterior</a>
+                        </li>
+
+                        <!-- Page Number Links -->
+                        <li th:each="i : ${#numbers.sequence(0, tutorPage.totalPages - 1)}" class="page-item"
+                            th:classappend="${i == tutorPage.number} ? 'active'">
+                            <a class="page-link"
+                                th:href="@{/tutor(page=${i}, size=${tutorPage.size}, search=${search})}"
+                                th:text="${i + 1}"></a>
+                        </li>
+
+                        <!-- Next Page Link -->
+                        <li class="page-item" th:classappend="${tutorPage.last} ? 'disabled'">
+                            <a class="page-link"
+                                th:href="@{/tutor(page=${tutorPage.number + 1}, size=${tutorPage.size}, search=${search})}">Próxima</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

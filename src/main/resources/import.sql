@@ -85,6 +85,22 @@ INSERT INTO tutor (name, phone, status) VALUES('Carlos Alberto', '21988776655', 
 INSERT INTO tutor (name, phone, status) VALUES('Juliana Mendes', '31991234567', 'ACTIVE');
 INSERT INTO tutor (name, phone, status) VALUES('Marcos Paulo', '4799332211', 'ACTIVE');
 INSERT INTO tutor (name, phone, status) VALUES('Ana Beatriz', '6299445566', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Beatriz Costa', '85998765432', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Ricardo Gomes', '92981234567', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Sofia Ribeiro', '71992345678', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Thiago Martins', '48988761234', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Camila Ferreira', '61996549876', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Gustavo Almeida', '81987654321', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Larissa Barbosa', '51991238765', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Felipe Azevedo', '41988772233', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Vanessa Rocha', '27999887766', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Bruno Castro', '84981122334', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Isabela Pereira', '98992233445', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Rodrigo Santos', '79988765544', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Patricia Moreira', '82993344556', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Leonardo Dias', '83987788990', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Daniela Correia', '67991199228', 'ACTIVE');
+INSERT INTO tutor (name, phone, status) VALUES ('Eduardo Nogueira', '91984485566', 'INACTIVE'); 
 
 INSERT INTO pet (name, gender, specie_id, breed_id, coat_color_id, tutor_id, status) VALUES ('Dox', 'MALE', 1, 5, 19, 1, 'ACTIVE');
 INSERT INTO pet (name, gender, specie_id, breed_id, coat_color_id, tutor_id, status) VALUES ('Luna', 'FEMALE', 1, 4, 3, 2, 'ACTIVE');

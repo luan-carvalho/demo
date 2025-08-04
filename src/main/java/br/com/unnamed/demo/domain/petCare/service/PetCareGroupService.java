@@ -56,4 +56,10 @@ public class PetCareGroupService {
 
     }
 
+    public List<PetCareGroup> searchByDescription(String description) {
+
+        return repo.findByDescription(description);
+
+    }
+
 }

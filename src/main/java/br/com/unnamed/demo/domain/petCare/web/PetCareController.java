@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.unnamed.demo.domain.petCare.dtos.PetCareDto;
 import br.com.unnamed.demo.domain.petCare.mapper.PetCareGroupMapper;
@@ -32,6 +33,7 @@ public class PetCareController {
         model.addAttribute("petCares", PetCareMapper.toDtoList(petCareService.findAllActive()));
         model.addAttribute("view", "petCare/petCare-list");
         model.addAttribute("activePage", "services");
+        model.addAttribute("pageScript", "/js/script.js");
         return "layout/base-layout";
 
     }
@@ -75,6 +77,41 @@ public class PetCareController {
         petCareService.save(newPetCare);
 
         return "redirect:/petCare";
+
+    }
+
+    @GetMapping("/{id}/inactivate")
+    public String deactivatePetCare(@PathVariable Long id) {
+
+        petCareService.deactivate(id);
+        return "redirect:/petCare";
+
+    }
+
+    @GetMapping("/{id}/activate")
+    public String activatePetCare(@PathVariable Long id) {
+
+        petCareService.activate(id);
+        return "redirect:/petCare";
+
+    }
+
+    @GetMapping("/search")
+    public String searchByDescription(@RequestParam(required = false) String description, Model model) {
+
+        if (description == null || description.isBlank()) {
+
+            return "redirect:/petCare";
+
+        }
+
+        model.addAttribute("petCares",
+                PetCareMapper.toDtoList(petCareService.searchByDescription(description)));
+        model.addAttribute("description", description);
+        model.addAttribute("view", "petCare/petCare-list");
+        model.addAttribute("activePage", "services");
+        model.addAttribute("pageScript", "/js/script.js");
+        return "layout/base-layout";
 
     }
 

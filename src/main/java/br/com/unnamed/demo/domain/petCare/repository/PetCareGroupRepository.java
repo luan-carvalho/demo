@@ -17,4 +17,7 @@ public interface PetCareGroupRepository extends JpaRepository<PetCareGroup, Long
     @Query("SELECT p FROM PetCareGroup p WHERE p.status = 'INACTIVE'")
     List<PetCareGroup> findAllInactive();
 
+    @Query("SELECT DISTINCT p FROM PetCareGroup p WHERE LOWER(p.description) LIKE LOWER(CONCAT('%', :description, '%'))")
+    List<PetCareGroup> findByDescription(String description);
+
 }

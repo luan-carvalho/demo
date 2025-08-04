@@ -2,6 +2,8 @@ package br.com.unnamed.demo.domain.tutor.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -11,17 +13,17 @@ import br.com.unnamed.demo.domain.tutor.repository.TutorRepository;
 @Service
 public class TutorService {
 
-    private TutorRepository TutorRepo;
+    private final TutorRepository tutorRepo;
 
-    public TutorService(TutorRepository TutorRepo) {
+    public TutorService(TutorRepository tutorRepo) {
 
-        this.TutorRepo = TutorRepo;
+        this.tutorRepo = tutorRepo;
 
     }
 
     public Tutor findById(long id) {
 
-        return TutorRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Tutor not found"));
+        return tutorRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Tutor not found"));
 
     }
 
@@ -34,24 +36,37 @@ public class TutorService {
 
     public Tutor save(Tutor Tutor) {
 
-        return TutorRepo.save(Tutor);
+        return tutorRepo.save(Tutor);
 
     }
 
     public void deleteById(Long id) {
 
-        TutorRepo.deleteById(id);
+        tutorRepo.deleteById(id);
+
+    }
+
+    public Page<Tutor> findAllActiveWithPage(Pageable pageable) {
+
+        return tutorRepo.findAllActiveWithPage(pageable);
+
+    }
+
+    public Page<Tutor> findAllInactiveWithPage(Pageable pageable) {
+
+        return tutorRepo.findAllInactiveWithPage(pageable);
 
     }
 
     public List<Tutor> findAllActive() {
 
-        return TutorRepo.findAllActive();
+        return tutorRepo.findAllActive();
 
     }
+
     public List<Tutor> findAllInactive() {
 
-        return TutorRepo.findAllInactive();
+        return tutorRepo.findAllInactive();
 
     }
 
@@ -84,6 +99,12 @@ public class TutorService {
         Tutor c = findById(tutorId);
         c.activatePet(petId);
         save(c);
+
+    }
+
+    public Page<Tutor> searchByTutorOrPetName(String name, Pageable pageable) {
+
+        return tutorRepo.findByTutorOrPetName(name, pageable);
 
     }
 

@@ -80,28 +80,6 @@
                 </div>
             </li>
 
-            <hr>
-            <li class="nav-item">
-                <a href="#" class="nav-link d-flex justify-content-between align-items-center"
-                    th:classappend="${#lists.contains({'contas-pagar', 'contas-receber'}, activePage) ? 'active' : 'text-white'}"
-                    data-bs-toggle="collapse" data-bs-target="#financeiro-collapse" aria-expanded="false">
-                    <span><i class="bi bi-cash-coin me-2"></i> Financeiro</span>
-                    <i class="bi bi-chevron-down small"></i>
-                </a>
-                <div class="collapse" id="financeiro-collapse"
-                    th:classappend="${#lists.contains({'contas-pagar', 'contas-receber'}, activePage) ? 'show' : ''}">
-                    <ul class="nav flex-column ps-4 mt-2">
-                        <li><a href="#"
-                                th:class="${activePage == 'contas-pagar' ? 'nav-link active' : 'nav-link text-white'}"
-                                class="py-1">Contas a Pagar</a></li>
-                        <li><a href="#"
-                                th:class="${activePage == 'contas-receber' ? 'nav-link active' : 'nav-link text-white'}"
-                                class="py-1">Contas a Receber</a></li>
-                    </ul>
-                </div>
-            </li>
-
-            <!-- NEW "Caixa" top-level menu item -->
             <li class="nav-item">
                 <a href="#" th:class="${activePage == 'caixa' ? 'nav-link active' : 'nav-link text-white'}">
                     <i class="bi bi-archive me-2"></i> Caixa
@@ -109,14 +87,12 @@
             </li>
 
             <li class="nav-item">
-                <!-- UPDATED: Added 'relatorio-caixa' to the list -->
                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
                     th:classappend="${#lists.contains({'relatorio-servicos', 'fluxo-caixa', 'relatorio-caixa'}, activePage) ? 'active' : 'text-white'}"
                     data-bs-toggle="collapse" data-bs-target="#relatorios-collapse" aria-expanded="false">
                     <span><i class="bi bi-clipboard-data me-2"></i> Relatórios</span>
                     <i class="bi bi-chevron-down small"></i>
                 </a>
-                <!-- UPDATED: Added 'relatorio-caixa' to the list -->
                 <div class="collapse" id="relatorios-collapse"
                     th:classappend="${#lists.contains({'relatorio-servicos', 'fluxo-caixa', 'relatorio-caixa'}, activePage) ? 'show' : ''}">
                     <ul class="nav flex-column ps-4 mt-2">
@@ -124,12 +100,8 @@
                                 th:class="${activePage == 'relatorio-servicos' ? 'nav-link active' : 'nav-link text-white'}"
                                 class="py-1">Serviços Realizados</a></li>
                         <li><a href="#"
-                                th:class="${activePage == 'relatorio-caixa' ? 'nav-link active' : 'nav-link text-white'}"
-                                class="py-1">Fechamento de Caixa</a></li>
-                        <li><a href="#"
                                 th:class="${activePage == 'fluxo-caixa' ? 'nav-link active' : 'nav-link text-white'}"
                                 class="py-1">Fluxo de Caixa</a></li>
-                        <!-- NEW "Relatório de Caixa" sub-menu item -->
                     </ul>
                 </div>
             </li>
@@ -137,12 +109,7 @@
                 <a href="#" th:class="${activePage == 'users' ? 'nav-link active' : 'nav-link text-white'}">
                     <i class="bi bi-person-gear me-2"></i> Usuários
                 </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" th:class="${activePage == 'settings' ? 'nav-link active' : 'nav-link text-white'}">
-                    <i class="bi bi-gear me-2"></i> Configurações
-                </a>
-            </li>
+            </li>   
         </th:block>
     </ul>
 

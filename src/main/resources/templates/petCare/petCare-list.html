@@ -13,6 +13,27 @@
             </a>
         </div>
 
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <!-- The form now only takes up part of the width -->
+                <div class="row">
+                    <div class="col-lg-7"> <!-- On large screens, use 7 of 12 columns -->
+                        <form th:action="@{/petCare/search}" method="get" class="d-flex gap-2">
+                            <input type="text" name="description" class="form-control"
+                                placeholder="Buscar pela descrição..." th:value="${description}">
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                            <a th:href="@{/petCare}" class="btn btn-secondary" title="Limpar filtro">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- The main content card (unchanged) -->
         <div class="card shadow-sm">
             <div class="card-body">

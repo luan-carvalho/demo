@@ -1,11 +1,16 @@
 package br.com.unnamed.demo.domain.tutor.web;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
@@ -33,12 +38,20 @@ public class TutorController {
     }
 
     @GetMapping
-    public String findAllActiveTutors(Model model) {
+    public String findAllActiveTutors(Model model, @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        model.addAttribute("tutors", TutorMapper
-                .toGridList(tutorService.findAllActive()));
-        model.addAttribute("activePage", "clients");
+        Pageable pageable = PageRequest.of(page, size, Sort.by("info.name").ascending());
+        Page<Tutor> tutorPage = tutorService.findAllActiveWithPage(pageable);
+
+        if (name != null && !name.isBlank())
+            tutorPage = tutorService.searchByTutorOrPetName(name, pageable);
+
+        model.addAttribute("tutorPage", tutorPage);
+        model.addAttribute("name", name);
         model.addAttribute("view", "tutor/tutor-list");
+        model.addAttribute("activePage", "clients");
         model.addAttribute("pageScript", "/js/script.js");
         return "layout/base-layout";
 

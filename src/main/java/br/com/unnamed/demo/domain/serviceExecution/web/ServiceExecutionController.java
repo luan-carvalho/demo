@@ -43,7 +43,7 @@ public class ServiceExecutionController {
         model.addAttribute("in_progress_services", service.findByStatus(ServiceStatus.IN_PROGRESS));
         model.addAttribute("completed_services", service.findByStatus(ServiceStatus.COMPLETED));
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy");
         model.addAttribute("currentDate", LocalDate.now().format(formatter));
 
         model.addAttribute("activePage", "serviceExecution");
