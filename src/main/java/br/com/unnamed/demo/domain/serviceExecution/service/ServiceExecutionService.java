@@ -74,4 +74,10 @@ public class ServiceExecutionService {
 
     }
 
+    public List<LocalDate> findNotPaidFromPreviousDates() {
+
+        return repo.findNotPaidFromPreviousDates();
+
+    }
+
 }

@@ -10,6 +10,37 @@
                 <i class="bi bi-plus-lg me-1"></i> Novo Serviço
             </a>
         </div>
+        <div th:if="${dates_with_not_paid != null}" class="alert alert-warning shadow-sm" role="alert">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Alert Message -->
+                <div>
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Atenção:</strong> Existem serviços não finalizado de dias anteriores.
+                </div>
+                <!-- Toggle Button for the list of dates -->
+                <a class="btn btn-sm btn-outline-dark" data-bs-toggle="collapse" href="#pendingDatesList" role="button"
+                    aria-expanded="false" aria-controls="pendingDatesList">
+                    Ver Datas
+                </a>
+            </div>
+
+            <!-- Collapsible Area with the list of dates -->
+            <div class="collapse mt-3" id="pendingDatesList">
+                <hr>
+                <p class="mb-2">Clique em uma data para ver os atendimentos com pagamentos pendentes:</p>
+                <div class="list-group">
+                    <!-- Loop through the dates provided by the controller -->
+                    <a th:each="date : ${dates_with_not_paid}"
+                        th:href="@{/serviceExecution(date=${#temporals.format(date, 'yyyy-MM-dd')})}"
+                        class="list-group-item list-group-item-action list-group-item-warning text-dark text-capitalize">
+                        <!-- Format the date for display, e.g., "domingo, 3 de agosto de 2025" -->
+                        <i class="bi bi-calendar-range me-2"></i>
+                        <span
+                            th:text="${#temporals.format(date, 'EEEE, d ''de'' MMMM ''de'' yyyy', new java.util.Locale('pt', 'BR'))}"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
 
         <div class="card shadow-sm mb-4">
             <div class="card-body">
@@ -20,7 +51,7 @@
                         <i class="bi bi-arrow-left-short"></i>
                     </a>
 
-                    <span id="dateISO" type="hidden" th:text="${currentDateISO}"></span>
+                    <span id="dateISO" hidden th:text="${currentDateISO}"></span>
                     <div id="date-picker-container" style="cursor: pointer;" class="text-center"
                         th:data-current-date="${currentDateISO}">
                         <h5 class="mb-0 text-primary">
@@ -29,8 +60,8 @@
                         </h5>
                     </div>
 
-                    <a th:href="@{/serviceExecution(date=${nextDate})}" class="btn btn-outline-secondary"
-                        title="Próximo Dia">
+                    <a th:if="${not isToday}" th:href="@{/serviceExecution(date=${nextDate})}"
+                        class="btn btn-outline-secondary" title="Próximo Dia">
                         <i class="bi bi-arrow-right-short"></i>
                     </a>
 

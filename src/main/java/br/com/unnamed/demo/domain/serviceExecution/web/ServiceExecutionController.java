@@ -41,15 +41,21 @@ public class ServiceExecutionController {
 
         date = date == null ? LocalDate.now() : date;
 
+        List<LocalDate> datesWithNotPaid =  service.findNotPaidFromPreviousDates();
+
+        if (!datesWithNotPaid.isEmpty())
+            model.addAttribute("dates_with_not_paid", datesWithNotPaid);
+
         model.addAttribute("pending_services", service.findByStatusAndDate(ServiceStatus.PENDING, date));
         model.addAttribute("in_progress_services", service.findByStatusAndDate(ServiceStatus.IN_PROGRESS, date));
         model.addAttribute("completed_services", service.findByStatusAndDate(ServiceStatus.COMPLETED, date));
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - EEEE");
         model.addAttribute("currentDate", date.format(formatter));
         model.addAttribute("nextDate", date.plusDays(1).toString());
         model.addAttribute("previousDate", date.minusDays(1).toString());
         model.addAttribute("currentDateISO", date.toString());
+        model.addAttribute("isToday", date.isEqual(LocalDate.now()));
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecutionBoard");

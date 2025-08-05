@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         locale: "pt",
         dateFormat: "Y-m-d",
         defaultDate: currentDate,
-
+        maxDate: "today",
         onChange: function (selectedDates, dateStr, instance) {
             window.location.href = `/serviceExecution?date=${dateStr}`;
         }
