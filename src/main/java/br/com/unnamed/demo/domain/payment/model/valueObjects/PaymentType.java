@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.domain.petCare.model;
+package br.com.unnamed.demo.domain.payment.model.valueObjects;
 
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import jakarta.persistence.Entity;
@@ -7,33 +7,25 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
-public class PetCareGroup {
+@Entity
+public class PaymentType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String description;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    private String description;
-
-    public PetCareGroup() {
-
-        status = Status.ACTIVE;
-
-    }
-
-    public PetCareGroup(Long id, Status status, String description) {
-        this.id = id;
-        this.status = status;
-        this.description = description;
-    }
-    
     public void updateDescription(String description) {
         this.description = description;
     }

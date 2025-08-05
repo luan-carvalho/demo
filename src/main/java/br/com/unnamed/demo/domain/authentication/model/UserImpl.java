@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.authentication.model;
+package br.com.unnamed.demo.domain.authentication.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.unnamed.demo.authentication.model.valueObjects.Email;
+import br.com.unnamed.demo.domain.authentication.model.valueObjects.Email;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

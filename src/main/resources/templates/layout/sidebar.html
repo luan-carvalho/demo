@@ -10,7 +10,9 @@
                 <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">
                     <a href="/" class="d-flex align-items-center text-white text-decoration-none">
                         <span class="fs-4">Lady | Beleza Pet</span>
-                        <i class="bi bi-heart-pulse-fill fs-5 ms-2"></i>
+                        <span class="material-symbols-outlined fs-4 ms-2">
+                            pet_supplies
+                        </span>
                     </a>
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
@@ -29,7 +31,9 @@
             <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">
                 <a href="/" class="d-flex align-items-center text-white text-decoration-none">
                     <span class="fs-4">Lady | Beleza Pet</span>
-                    <i class="bi bi-heart-pulse-fill fs-5 ms-2"></i>
+                    <span class="material-symbols-outlined fs-4 ms-2">
+                        pet_supplies
+                    </span>
                 </a>
             </h5>
             <hr>
@@ -77,16 +81,30 @@
             </li>
 
             <li class="nav-item">
-                <a href="#" th:class="${activePage == 'caixa' ? 'nav-link active' : 'nav-link text-white'}">
-                    <i class="bi bi-archive me-2"></i> Caixa
+                <a href="#" class="nav-link d-flex justify-content-between align-items-center"
+                    th:classappend="${#lists.contains({'relatorio-servicos', 'fluxo-caixa', 'relatorio-caixa'}, activePage) ? 'active' : 'text-white'}"
+                    data-bs-toggle="collapse" data-bs-target="#financeiro-collapse" aria-expanded="false">
+                    <span><i class="bi bi-cash-coin"></i> Financeiro</span>
+                    <i class="bi bi-chevron-down small"></i>
                 </a>
+                <div class="collapse" id="financeiro-collapse"
+                    th:classappend="${#lists.contains({'pagamentos', 'tipo-pagamento'}, activePage) ? 'show' : ''}">
+                    <ul class="nav flex-column ps-4 mt-2">
+                        <li><a href="#"
+                                th:class="${activePage == 'pagamentos' ? 'nav-link active' : 'nav-link text-white'}"
+                                class="py-1">Pagamentos</a></li>
+                        <li><a th:href="@{/paymentType}"
+                                th:class="${activePage == 'tipo-pagamento' ? 'nav-link active' : 'nav-link text-white'}"
+                                class="py-1">Tipos de pagamento</a></li>
+                    </ul>
+                </div>
             </li>
 
             <li class="nav-item">
                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
                     th:classappend="${#lists.contains({'relatorio-servicos', 'fluxo-caixa', 'relatorio-caixa'}, activePage) ? 'active' : 'text-white'}"
                     data-bs-toggle="collapse" data-bs-target="#relatorios-collapse" aria-expanded="false">
-                    <span><i class="bi bi-clipboard-data me-2"></i> Relatórios</span>
+                    <span><i class="bi bi-clipboard-data me-2"></i>Relatórios</span>
                     <i class="bi bi-chevron-down small"></i>
                 </a>
                 <div class="collapse" id="relatorios-collapse"
@@ -97,7 +115,7 @@
                                 class="py-1">Serviços Realizados</a></li>
                         <li><a href="#"
                                 th:class="${activePage == 'fluxo-caixa' ? 'nav-link active' : 'nav-link text-white'}"
-                                class="py-1">Fluxo de Caixa</a></li>
+                                class="py-1">Fechamento de caixa</a></li>
                     </ul>
                 </div>
             </li>

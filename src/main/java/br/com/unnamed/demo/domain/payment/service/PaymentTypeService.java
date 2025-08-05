@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.domain.petCare.service;
+package br.com.unnamed.demo.domain.payment.service;
 
 import java.util.List;
 
@@ -6,40 +6,40 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.domain.petCare.model.PetCareGroup;
-import br.com.unnamed.demo.domain.petCare.repository.PetCareGroupRepository;
+import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentType;
+import br.com.unnamed.demo.domain.payment.repository.PaymentTypeRepository;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
 @Service
-public class PetCareGroupService {
+public class PaymentTypeService {
 
-    private PetCareGroupRepository repo;
+    private final PaymentTypeRepository repo;
 
-    public PetCareGroupService(PetCareGroupRepository repo) {
+    public PaymentTypeService(PaymentTypeRepository repo) {
         this.repo = repo;
     }
 
-    public List<PetCareGroup> findAllActive() {
+    public List<PaymentType> findAllActive() {
 
         return repo.findAllActive();
 
     }
 
-    public PetCareGroup findById(Long id) {
+    public PaymentType findById(Long id) {
 
         return repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Pet care group not found"));
 
     }
 
-    public void save(PetCareGroup petCareGroup) {
+    public void save(PaymentType paymentType) {
 
-        repo.save(petCareGroup);
+        repo.save(paymentType);
 
     }
 
     public void deactivate(Long id) {
 
-        PetCareGroup toBeDeactivated = findById(id);
+        PaymentType toBeDeactivated = findById(id);
         toBeDeactivated.deactivate();
         save(toBeDeactivated);
 
@@ -47,13 +47,13 @@ public class PetCareGroupService {
 
     public void activate(Long id) {
 
-        PetCareGroup toBeActivated = findById(id);
+        PaymentType toBeActivated = findById(id);
         toBeActivated.activate();
         save(toBeActivated);
 
     }
 
-    public Page<PetCareGroup> searchWithOptionalFilters(String description, Status status, Pageable pageable) {
+    public Page<PaymentType> searchWithOptionalFilters(String description, Status status, Pageable pageable) {
 
         return repo.searchWithOptionalFilters(description, status, pageable);
 

@@ -50,8 +50,10 @@ public class ServiceExecutionController {
         model.addAttribute("in_progress_services", service.findByStatusAndDate(ServiceStatus.IN_PROGRESS, date));
         model.addAttribute("completed_services", service.findByStatusAndDate(ServiceStatus.COMPLETED, date));
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - EEEE");
-        model.addAttribute("currentDate", date.format(formatter));
+        DateTimeFormatter formatter_long = DateTimeFormatter.ofPattern("dd/MM/yyyy - EEEE");
+        DateTimeFormatter formatter_short = DateTimeFormatter.ofPattern("dd/MM/yy");
+        model.addAttribute("currentDate", date.format(formatter_long));
+        model.addAttribute("currentDateShort", date.format(formatter_short));
         model.addAttribute("nextDate", date.plusDays(1).toString());
         model.addAttribute("previousDate", date.minusDays(1).toString());
         model.addAttribute("currentDateISO", date.toString());

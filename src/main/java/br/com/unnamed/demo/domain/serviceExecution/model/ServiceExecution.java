@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
-import br.com.unnamed.demo.domain.serviceExecution.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
@@ -58,21 +58,18 @@ public class ServiceExecution {
     @NotNull
     private ServiceStatus serviceStatus;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private PaymentStatus paymentStatus;
 
-    // @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL,
-    // orphanRemoval = true)
-    // private List<Payment> payment;
+    @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL,
+    orphanRemoval = true)
+    private List<Payment> payments;
 
     public ServiceExecution() {
 
         this.executedServices = new ArrayList<>();
+        this.payments = new ArrayList<>();
         this.date = LocalDate.now();
         this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
-        this.paymentStatus = PaymentStatus.NOT_PAID;
 
     }
 
@@ -84,7 +81,6 @@ public class ServiceExecution {
         this.date = LocalDate.now();
         this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
-        this.paymentStatus = PaymentStatus.NOT_PAID;
 
     }
 
@@ -96,7 +92,6 @@ public class ServiceExecution {
         this.date = LocalDate.now();
         this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
-        this.paymentStatus = PaymentStatus.NOT_PAID;
 
     }
 
@@ -121,9 +116,9 @@ public class ServiceExecution {
 
     }
 
-    // public void addPayment(Payment payment) {
+    public void pay(List<Payment> payments) {
 
-    // }
+    }
 
     public void addService(PetCare petCare) {
 

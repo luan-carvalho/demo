@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.authentication.config;
+package br.com.unnamed.demo.domain.authentication.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import br.com.unnamed.demo.authentication.web.LoginSuccessHandler;
+import br.com.unnamed.demo.domain.authentication.web.LoginSuccessHandler;
 
 @Configuration
 @EnableWebSecurity

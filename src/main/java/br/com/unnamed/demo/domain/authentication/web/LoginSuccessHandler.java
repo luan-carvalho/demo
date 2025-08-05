@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.authentication.web;
+package br.com.unnamed.demo.domain.authentication.web;
 
 import java.io.IOException;
 

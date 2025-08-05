@@ -1,11 +1,11 @@
-package br.com.unnamed.demo.authentication.web;
+package br.com.unnamed.demo.domain.authentication.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import br.com.unnamed.demo.authentication.service.UserService;
+import br.com.unnamed.demo.domain.authentication.service.UserService;
 
 @Controller
 @RequestMapping("/user")

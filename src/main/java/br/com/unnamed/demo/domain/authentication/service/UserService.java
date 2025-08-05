@@ -1,12 +1,12 @@
-package br.com.unnamed.demo.authentication.service;
+package br.com.unnamed.demo.domain.authentication.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.authentication.model.UserImpl;
-import br.com.unnamed.demo.authentication.repository.UserRepository;
+import br.com.unnamed.demo.domain.authentication.model.UserImpl;
+import br.com.unnamed.demo.domain.authentication.repository.UserRepository;
 
 @Service
 public class UserService {

@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.authentication.model;
+package br.com.unnamed.demo.domain.authentication.model;
 
 import java.util.List;
 

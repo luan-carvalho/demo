@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.authentication.config;
+package br.com.unnamed.demo.domain.authentication.config;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.authentication.model.UserImpl;
-import br.com.unnamed.demo.authentication.repository.UserRepository;
+import br.com.unnamed.demo.domain.authentication.model.UserImpl;
+import br.com.unnamed.demo.domain.authentication.repository.UserRepository;
 
 @Service
 public class UserDetailsConfig implements UserDetailsService {

@@ -85,22 +85,6 @@ INSERT INTO tutor (name, phone, status) VALUES('Carlos Alberto', '21988776655', 
 INSERT INTO tutor (name, phone, status) VALUES('Juliana Mendes', '31991234567', 'ACTIVE');
 INSERT INTO tutor (name, phone, status) VALUES('Marcos Paulo', '4799332211', 'ACTIVE');
 INSERT INTO tutor (name, phone, status) VALUES('Ana Beatriz', '6299445566', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Beatriz Costa', '85998765432', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Ricardo Gomes', '92981234567', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Sofia Ribeiro', '71992345678', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Thiago Martins', '48988761234', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Camila Ferreira', '61996549876', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Gustavo Almeida', '81987654321', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Larissa Barbosa', '51991238765', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Felipe Azevedo', '41988772233', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Vanessa Rocha', '27999887766', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Bruno Castro', '84981122334', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Isabela Pereira', '98992233445', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Rodrigo Santos', '79988765544', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Patricia Moreira', '82993344556', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Leonardo Dias', '83987788990', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Daniela Correia', '67991199228', 'ACTIVE');
-INSERT INTO tutor (name, phone, status) VALUES ('Eduardo Nogueira', '91984485566', 'INACTIVE'); 
 
 INSERT INTO pet (name, gender, specie_id, breed_id, coat_color_id, tutor_id, status) VALUES ('Dox', 'MALE', 1, 5, 19, 1, 'ACTIVE');
 INSERT INTO pet (name, gender, specie_id, breed_id, coat_color_id, tutor_id, status) VALUES ('Luna', 'FEMALE', 1, 4, 3, 2, 'ACTIVE');
@@ -114,17 +98,14 @@ INSERT INTO pet (name, gender, specie_id, breed_id, coat_color_id, tutor_id, sta
 INSERT INTO pet (name, gender, specie_id, breed_id, coat_color_id, tutor_id, status) VALUES ('Zara', 'FEMALE', 1, 6, 19, 6, 'ACTIVE');
 INSERT INTO pet (name, gender, specie_id, breed_id, coat_color_id, tutor_id, status) VALUES ('Leo', 'MALE', 1, 12, 5, 6, 'ACTIVE');
 
-
 INSERT INTO role (description) VALUES ('ROLE_ADMIN');
 INSERT INTO role (description) VALUES ('ROLE_USER');
 
 INSERT INTO users (name, email, password, status) VALUES ('Luan Carvalho', 'ita.luan12@gmail.com', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'ACTIVE');
 INSERT INTO users (name, email, password, status) VALUES ('Emilly Lyra', 'emilly@gmail.com', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'ACTIVE');
 
-
 INSERT INTO user_role (role_id, user_id) VALUES (1, 1);
 INSERT INTO user_role (role_id, user_id) VALUES (2, 1);
-
 
 INSERT INTO pet_care_group (description, status) VALUES ('Banho', 'ACTIVE');
 INSERT INTO pet_care_group (description, status) VALUES ('Tosa', 'ACTIVE');
@@ -137,11 +118,8 @@ INSERT INTO pet_care (description, group_id, price, status) VALUES ('Tosa bebê'
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Tosa higiênica', 2, 40.00, 'ACTIVE');
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Corte de unha', 3, 15.00, 'ACTIVE');
 
-INSERT INTO service_execution (tutor_id, pet_id, date, service_status, arrived_at, payment_status) VALUES (1, 1, '2025-08-03', 'PENDING', '2025-08-03 09:30:00', 'NOT_PAID');
-INSERT INTO service_execution (tutor_id, pet_id, date, service_status, arrived_at, started_at, payment_status) VALUES (1, 1, '2025-08-03', 'IN_PROGRESS', '2025-08-03 08:30:00', '2025-08-03 09:00:00', 'NOT_PAID');
-INSERT INTO service_execution (tutor_id, pet_id, date, service_status, arrived_at, started_at, finished_at, payment_status) VALUES (1, 1, '2025-08-03', 'COMPLETED', '2025-08-03 08:00:00', '2025-08-03 08:30:00', '2025-08-03 09:00:00', 'NOT_PAID');
-
-INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (1, 1, 45.00);
-INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (1, 4, 55.00);
-INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (2, 1, 45.00);
-INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (3, 1, 45.00);
+-- INSERT INTO payment_type (description, status) VALUES ('Dinheiro', 'ACTIVE');
+-- INSERT INTO payment_type (description, status) VALUES ('Cartão de débito', 'ACTIVE');
+-- INSERT INTO payment_type (description, status) VALUES ('Cartão de crédito', 'ACTIVE');
+-- INSERT INTO payment_type (description, status) VALUES ('PIX', 'ACTIVE');
+-- INSERT INTO payment_type (description, status) VALUES ('Permuta', 'ACTIVE');

@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.authentication.web;
+package br.com.unnamed.demo.domain.authentication.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

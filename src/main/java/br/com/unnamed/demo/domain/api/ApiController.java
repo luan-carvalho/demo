@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.api;
+package br.com.unnamed.demo.domain.api;
 
 import java.util.List;
 

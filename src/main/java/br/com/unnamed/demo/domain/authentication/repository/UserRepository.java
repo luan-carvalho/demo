@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.authentication.repository;
+package br.com.unnamed.demo.domain.authentication.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import br.com.unnamed.demo.authentication.model.UserImpl;
+import br.com.unnamed.demo.domain.authentication.model.UserImpl;
 
 public interface UserRepository extends JpaRepository<UserImpl, Long> {
 
