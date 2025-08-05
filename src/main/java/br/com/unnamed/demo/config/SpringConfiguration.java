@@ -9,8 +9,8 @@ public class SpringConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("redirect:home");
-        registry.addViewController("/home").setViewName("redirect:home");
+        registry.addViewController("/").setViewName("redirect:serviceExecution");
+        registry.addViewController("/home").setViewName("redirect:serviceExecution");
 
     }
 

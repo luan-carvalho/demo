@@ -2,10 +2,13 @@ package br.com.unnamed.demo.domain.petCare.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.petCare.repository.PetCareRepository;
+import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
 @Service
 public class PetCareService {
@@ -56,9 +59,9 @@ public class PetCareService {
 
     }
 
-    public List<PetCare> searchByDescription(String description) {
+    public Page<PetCare> searchWithOptionalFilters(String description, Status status, Pageable pageable) {
 
-        return repo.findByDescription(description);
+        return repo.searchWithOptionalFilters(description, status, pageable);
 
     }
 

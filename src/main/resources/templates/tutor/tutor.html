@@ -25,6 +25,7 @@
                                 <div class="col-md-8 mb-3">
                                     <label for="name" class="form-label">Nome Completo</label>
                                     <input type="text" class="form-control" id="name" th:field="*{info.name}"
+                                    placeholder="Nome do tutor..."
                                         required />
                                 </div>
                                 <div class="col-md-4 mb-3">
@@ -48,9 +49,15 @@
                             <a th:each="pet : ${tutor.pets}"
                                 th:href="@{/tutor/{tutorId}/pet/{petId}(tutorId=${tutor.id}, petId=${pet.id})}"
                                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                                th:classappend="${pet.isInactive()} ? 'text-muted text-decoration-line-through' : ''">
+                                th:classappend="${pet.isInactive()} ? 'text-muted' : ''">
 
-                                <div class="w-50" th:text="${pet.name}"></div>
+                                <div class="w-50 d-flex align-items-center">
+                                    <span th:text="${pet.name}"></span>
+                                    <span th:if="${pet.isInactive()}"
+                                        class="badge bg-danger-subtle text-danger-emphasis rounded-pill ms-2">
+                                        Inativo
+                                    </span>
+                                </div>
 
                                 <div class="w-50 text-end text-muted small">
                                     <span th:text="${pet.breed?.description} ?: 'Raça não definida'"></span>

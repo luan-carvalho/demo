@@ -15,26 +15,32 @@
 
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <!-- The form now only takes up part of the width -->
-                <div class="row">
-                    <div class="col-lg-7"> <!-- On large screens, use 7 of 12 columns -->
-                        <form th:action="@{/petCare/search}" method="get" class="d-flex gap-2">
-                            <input type="text" name="description" class="form-control"
-                                placeholder="Buscar pela descrição..." th:value="${description}">
-
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-search"></i>
-                            </button>
-                            <a th:href="@{/petCare}" class="btn btn-secondary" title="Limpar filtro">
-                                <i class="bi bi-x-lg"></i>
-                            </a>
-                        </form>
+                <form th:action="@{/petCare}" method="get" class="row g-2 align-items-end">
+                    <div class="col-lg-6">
+                        <label for="description" class="form-label">Buscar pela descrição</label>
+                        <input type="text" id="description" name="description" class="form-control"
+                            placeholder="Descrição do grupo..." th:value="${description}">
                     </div>
-                </div>
+                    <div class="col-lg-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select id="status" name="status" class="form-select">
+                            <option th:each="s : ${statuses}" th:value="${s}"
+                                th:text="${s.name() == 'ACTIVE'} ? 'Ativo' : 'Inativo'" th:selected="${status == s}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-description"></i> Buscar
+                        </button>
+                        <a th:href="@{/petCare}" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-lg"></i> Limpar
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <!-- The main content card (unchanged) -->
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
@@ -47,12 +53,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- 
-                        ================================================================
-                        THE CHANGES ARE HERE
-                        ================================================================
-                        -->
-                            <tr th:each="petCare : ${petCares}" class="clickable-row"
+                            <tr th:each="petCare : ${petCarePage.content}" class="clickable-row"
                                 th:data-href="@{/petCare/{id}(id=${petCare.id})}">
 
                                 <td class="fw" th:text="${petCare.description}"></td>
@@ -69,7 +70,7 @@
                             </tr>
 
                             <!-- Empty state message (unchanged) -->
-                            <tr th:if="${#lists.isEmpty(petCares)}">
+                            <tr th:if="${#lists.isEmpty(petCarePage)}">
                                 <td colspan="4" class="text-center text-muted py-4">
                                     Nenhum serviço cadastrado.
                                 </td>
@@ -78,6 +79,28 @@
                     </table>
                 </div>
             </div>
+            <nav th:if="${petCarePage.totalPages > 1}" aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${petCarePage.first} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/petCare(page=${petCarePage.number - 1}, size=${petCarePage.size}, description=${description})}">Anterior</a>
+                    </li>
+
+
+                    <li th:each="i : ${#numbers.sequence(0, petCarePage.totalPages - 1)}" class="page-item"
+                        th:classappend="${i == petCarePage.number} ? 'active'">
+                        <a class="page-link"
+                            th:href="@{/petCare(page=${i}, size=${petCarePage.size}, description=${description})}"
+                            th:text="${i + 1}"></a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${petCarePage.last} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/petCare(page=${petCarePage.number + 1}, size=${petCarePage.size}, description=${description})}">Próxima</a>
+                    </li>
+
+                </ul>
+            </nav>
         </div>
     </div>
 </body>

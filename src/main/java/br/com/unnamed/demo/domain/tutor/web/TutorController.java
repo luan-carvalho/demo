@@ -18,6 +18,7 @@ import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
 import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Gender;
+import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
 import br.com.unnamed.demo.domain.tutor.service.PetInfoService;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
@@ -38,18 +39,20 @@ public class TutorController {
     }
 
     @GetMapping
-    public String findAllActiveTutors(Model model, @RequestParam(required = false) String name,
+    public String listTutors(Model model, @RequestParam(required = false) String name,
+            @RequestParam(required = false) Status status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("info.name").ascending());
-        Page<Tutor> tutorPage = tutorService.findAllActiveWithPage(pageable);
+        status = status == null ? Status.ACTIVE : status;
 
-        if (name != null && !name.isBlank())
-            tutorPage = tutorService.searchByTutorOrPetName(name, pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("info.name").ascending());
+        Page<Tutor> tutorPage = tutorService.searchWithOptionalFilters(name, pageable, status);
 
         model.addAttribute("tutorPage", tutorPage);
         model.addAttribute("name", name);
+        model.addAttribute("status", status);
+        model.addAttribute("statuses", Status.values());
         model.addAttribute("view", "tutor/tutor-list");
         model.addAttribute("activePage", "clients");
         model.addAttribute("pageScript", "/js/script.js");

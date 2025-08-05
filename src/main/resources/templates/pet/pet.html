@@ -64,9 +64,29 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle-fill me-2"></i><span
-                            th:text="${pet.id != null} ? 'Salvar Alterações' : 'Cadastrar Pet'"></span></button>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <!-- Left Side: Activate/Inactivate buttons (only show in edit mode) -->
+                    <div th:if="${pet.id != null}">
+                        <a th:if="${pet.isActive()}"
+                            th:href="@{/tutor/{tutorId}/pet/{petId}/inactivate(tutorId=${tutorId}, petId=${pet.id})}"
+                            class="btn btn-sm btn-outline-danger">
+                            Inativar Pet
+                        </a>
+                        <a th:if="${pet.isInactive()}"
+                            th:href="@{/tutor/{tutorId}/pet/{petId}/activate(tutorId=${tutorId}, petId=${pet.id})}"
+                            class="btn btn-sm btn-outline-success">
+                            Reativar Pet
+                        </a>
+                    </div>
+
+                    <!-- This div is a spacer to keep the save button on the right if no other buttons are shown -->
+                    <div th:if="${pet.id == null}"></div>
+
+                    <!-- Right Side: The main save button -->
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <span th:text="${pet.id != null} ? 'Salvar Alterações' : 'Cadastrar Pet'"></span>
+                    </button>
                 </div>
             </form>
         </div>

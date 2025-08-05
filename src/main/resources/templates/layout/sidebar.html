@@ -40,15 +40,11 @@
     </div>
 
     <ul th:fragment="menu-links" class="nav nav-pills flex-column mb-auto">
+
         <li class="nav-item">
-            <a th:href="@{/}" th:class="${activePage == 'home' ? 'nav-link active' : 'nav-link text-white'}"
-                aria-current="page">
-                <i class="bi bi-house-door me-2"></i> Home
-            </a>
-        </li>
-        <li class="nav-item">
-            <a th:href="@{/serviceExecution}" th:class="${activePage == 'serviceExecution' ? 'nav-link active' : 'nav-link text-white'}">
-                <i class="bi bi-calendar-check me-2"></i> Atendimentos
+            <a th:href="@{/serviceExecution}"
+                th:class="${activePage == 'serviceExecution' ? 'nav-link active' : 'nav-link text-white'}">
+                <i class="bi bi-card-checklist"></i> Atendimentos
             </a>
         </li>
         <li class="nav-item">
@@ -109,7 +105,7 @@
                 <a href="#" th:class="${activePage == 'users' ? 'nav-link active' : 'nav-link text-white'}">
                     <i class="bi bi-person-gear me-2"></i> Usuários
                 </a>
-            </li>   
+            </li>
         </th:block>
     </ul>
 

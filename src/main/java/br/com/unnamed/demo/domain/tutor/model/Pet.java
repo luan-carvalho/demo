@@ -99,7 +99,8 @@ public class Pet {
 
     }
 
-    public void updateInfo(String name, Size size, Specie specie, Breed breed, CoatColor coatColor, LocalDate birthDate) {
+    public void updateInfo(String name, Size size, Specie specie, Breed breed, CoatColor coatColor,
+            LocalDate birthDate) {
 
         this.name = name;
         this.size = size;

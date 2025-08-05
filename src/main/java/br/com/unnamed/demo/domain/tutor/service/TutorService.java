@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
+import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import br.com.unnamed.demo.domain.tutor.repository.TutorRepository;
 
 @Service
@@ -18,6 +19,12 @@ public class TutorService {
     public TutorService(TutorRepository tutorRepo) {
 
         this.tutorRepo = tutorRepo;
+
+    }
+
+    public List<Tutor> findAll() {
+
+        return tutorRepo.findAll();
 
     }
 
@@ -43,30 +50,6 @@ public class TutorService {
     public void deleteById(Long id) {
 
         tutorRepo.deleteById(id);
-
-    }
-
-    public Page<Tutor> findAllActiveWithPage(Pageable pageable) {
-
-        return tutorRepo.findAllActiveWithPage(pageable);
-
-    }
-
-    public Page<Tutor> findAllInactiveWithPage(Pageable pageable) {
-
-        return tutorRepo.findAllInactiveWithPage(pageable);
-
-    }
-
-    public List<Tutor> findAllActive() {
-
-        return tutorRepo.findAllActive();
-
-    }
-
-    public List<Tutor> findAllInactive() {
-
-        return tutorRepo.findAllInactive();
 
     }
 
@@ -102,9 +85,9 @@ public class TutorService {
 
     }
 
-    public Page<Tutor> searchByTutorOrPetName(String name, Pageable pageable) {
+    public Page<Tutor> searchWithOptionalFilters(String name, Pageable pageable, Status status) {
 
-        return tutorRepo.findByTutorOrPetName(name, pageable);
+        return tutorRepo.searchWithOptionalFilters(name, status, pageable);
 
     }
 

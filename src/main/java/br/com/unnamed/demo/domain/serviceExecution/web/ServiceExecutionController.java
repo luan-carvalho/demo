@@ -57,7 +57,8 @@ public class ServiceExecutionController {
     @GetMapping("/new")
     public String showNewServicePage(Model model) {
 
-        model.addAttribute("all_tutors", tutorService.findAllActive());
+        model.addAttribute("all_tutors", tutorService.findAll().stream().filter(Tutor::isActive)
+                .sorted((t1, t2) -> t1.getName().compareTo(t2.getName())).toList());
         model.addAttribute("all_pet_cares", petCareService.findAllActive());
 
         model.addAttribute("activePage", "serviceExecution");

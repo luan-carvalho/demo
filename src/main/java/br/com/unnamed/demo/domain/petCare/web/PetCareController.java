@@ -1,5 +1,8 @@
 package br.com.unnamed.demo.domain.petCare.web;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +17,7 @@ import br.com.unnamed.demo.domain.petCare.mapper.PetCareMapper;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.petCare.service.PetCareGroupService;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
+import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
 @Controller
 @RequestMapping("petCare")
@@ -28,9 +32,20 @@ public class PetCareController {
     }
 
     @GetMapping
-    public String getAllActivePetCares(Model model) {
+    public String listPetCares(Model model,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) Status status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        model.addAttribute("petCares", PetCareMapper.toDtoList(petCareService.findAllActive()));
+        status = status == null ? Status.ACTIVE : status;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("description").ascending());
+
+        model.addAttribute("petCarePage", petCareService.searchWithOptionalFilters(description, status, pageable));
+        model.addAttribute("status", status);
+        model.addAttribute("statuses", Status.values());
+        model.addAttribute("description", description);
         model.addAttribute("view", "petCare/petCare-list");
         model.addAttribute("activePage", "services");
         model.addAttribute("pageScript", "/js/script.js");
@@ -93,25 +108,6 @@ public class PetCareController {
 
         petCareService.activate(id);
         return "redirect:/petCare";
-
-    }
-
-    @GetMapping("/search")
-    public String searchByDescription(@RequestParam(required = false) String description, Model model) {
-
-        if (description == null || description.isBlank()) {
-
-            return "redirect:/petCare";
-
-        }
-
-        model.addAttribute("petCares",
-                PetCareMapper.toDtoList(petCareService.searchByDescription(description)));
-        model.addAttribute("description", description);
-        model.addAttribute("view", "petCare/petCare-list");
-        model.addAttribute("activePage", "services");
-        model.addAttribute("pageScript", "/js/script.js");
-        return "layout/base-layout";
 
     }
 
