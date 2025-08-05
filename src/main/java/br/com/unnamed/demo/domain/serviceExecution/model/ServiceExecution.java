@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
-import br.com.unnamed.demo.domain.serviceExecution.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
@@ -36,9 +35,10 @@ public class ServiceExecution {
     private LocalDate date;
 
     @NotNull
-    private LocalDateTime arrivalTime;
-    private LocalDateTime startTime;
-    private LocalDateTime finishTime;
+    private LocalDateTime arrivedAt;
+    private LocalDateTime startedAt;
+    private LocalDateTime finishedAt;
+    private LocalDateTime canceledAt;
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
@@ -57,17 +57,21 @@ public class ServiceExecution {
     @NotNull
     private ServiceStatus serviceStatus;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private PaymentStatus paymentStatus;
+    // @Enumerated(EnumType.STRING)
+    // @NotNull
+    // private PaymentStatus paymentStatus;
+
+    // @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL,
+    // orphanRemoval = true)
+    // private List<Payment> payment;
 
     public ServiceExecution() {
 
         this.executedServices = new ArrayList<>();
         this.date = LocalDate.now();
-        this.arrivalTime = LocalDateTime.now();
+        this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
-        this.paymentStatus = PaymentStatus.NOT_PAID;
+        // this.paymentStatus = PaymentStatus.NOT_PAID;
 
     }
 
@@ -77,42 +81,48 @@ public class ServiceExecution {
         this.pet = pet;
         this.executedServices = new ArrayList<>();
         this.date = LocalDate.now();
-        this.arrivalTime = LocalDateTime.now();
+        this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
-        this.paymentStatus = PaymentStatus.NOT_PAID;
-        this.executedServices = new ArrayList<>();
-        this.date = LocalDate.now();
-        this.arrivalTime = LocalDateTime.now();
-        this.serviceStatus = ServiceStatus.PENDING;
-        this.paymentStatus = PaymentStatus.NOT_PAID;
+        // this.paymentStatus = PaymentStatus.NOT_PAID;
 
     }
 
     public ServiceExecution(Long id, @NotNull Pet pet, @NotNull Tutor tutor) {
-        
+
         this.id = id;
         this.pet = pet;
         this.tutor = tutor;
         this.date = LocalDate.now();
-        this.arrivalTime = LocalDateTime.now();
+        this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
-        this.paymentStatus = PaymentStatus.NOT_PAID;
+        // this.paymentStatus = PaymentStatus.NOT_PAID;
 
     }
 
-    public void startService() {
+    public void start() {
 
         this.serviceStatus = ServiceStatus.IN_PROGRESS;
-        this.startTime = LocalDateTime.now();
+        this.startedAt = LocalDateTime.now();
 
     }
 
-    public void finishService() {
+    public void finish() {
 
         this.serviceStatus = ServiceStatus.COMPLETED;
-        this.finishTime = LocalDateTime.now();
+        this.finishedAt = LocalDateTime.now();
 
     }
+
+    public void cancel() {
+
+        this.serviceStatus = ServiceStatus.CANCELED;
+        this.canceledAt = LocalDateTime.now();
+
+    }
+
+    // public void addPayment(Payment payment) {
+
+    // }
 
     public void addService(PetCare petCare) {
 
@@ -123,12 +133,6 @@ public class ServiceExecution {
     public void addServices(List<PetCare> petCares) {
 
         petCares.forEach(p -> addService(p));
-
-    }
-
-    public void removeService(ServiceExecutionItem item) {
-
-        this.executedServices.remove(item);
 
     }
 

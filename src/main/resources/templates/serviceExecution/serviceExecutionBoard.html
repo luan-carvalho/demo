@@ -11,11 +11,36 @@
             </a>
         </div>
 
-        <div class="mb-4">
-            <h6 class="text-muted fw-normal text-capitalize">
-                <i class="bi bi-calendar-event me-1"></i>
-                <span th:text="${currentDate}">Data de Hoje</span>
-            </h6>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-center align-items-center gap-3">
+                    <!-- Previous Day Arrow Button -->
+                    <a th:href="@{/serviceExecution(date=${previousDate})}" class="btn btn-outline-secondary"
+                        title="Dia Anterior">
+                        <i class="bi bi-arrow-left-short"></i>
+                    </a>
+
+                    <span id="dateISO" type="hidden" th:text="${currentDateISO}"></span>
+                    <div id="date-picker-container" style="cursor: pointer;" class="text-center"
+                        th:data-current-date="${currentDateISO}">
+                        <h5 class="mb-0 text-primary">
+                            <i class="bi bi-calendar-event me-2"></i>
+                            <span th:text="${currentDate}" class="text-capitalize"></span>
+                        </h5>
+                    </div>
+
+                    <a th:href="@{/serviceExecution(date=${nextDate})}" class="btn btn-outline-secondary"
+                        title="Próximo Dia">
+                        <i class="bi bi-arrow-right-short"></i>
+                    </a>
+
+                    <div class="border-start ps-3">
+                        <a th:href="@{/serviceExecution}" class="btn btn-secondary" title="Ir para hoje">
+                            Hoje
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="kanban-board d-flex flex-column flex-lg-row gap-4">
@@ -80,7 +105,11 @@
                 </div>
             </div>
         </div>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
     </div>
+
 
 </body>
 

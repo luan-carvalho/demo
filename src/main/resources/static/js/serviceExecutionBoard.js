@@ -14,5 +14,19 @@ document.addEventListener('DOMContentLoaded', function () {
             serviceInfoText.textContent = serviceInfo;
             deleteForm.action = `/serviceExecution/${serviceId}/delete`;
         });
+
+
     }
+
+    let currentDate = document.getElementById('dateISO').textContent
+
+    flatpickr("#date-picker-container", {
+        locale: "pt",
+        dateFormat: "Y-m-d",
+        defaultDate: currentDate,
+
+        onChange: function (selectedDates, dateStr, instance) {
+            window.location.href = `/serviceExecution?date=${dateStr}`;
+        }
+    });
 });

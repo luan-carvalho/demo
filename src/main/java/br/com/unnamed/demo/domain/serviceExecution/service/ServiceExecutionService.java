@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionItem;
-import br.com.unnamed.demo.domain.serviceExecution.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRepository;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -45,50 +43,34 @@ public class ServiceExecutionService {
 
     }
 
-    public void addService(ServiceExecution serviceExecution, PetCare petCare, int quantity) {
+    public List<ServiceExecution> findByStatusAndDate(ServiceStatus status, LocalDate date) {
 
-        serviceExecution.addService(petCare);
-        repo.save(serviceExecution);
-
-    }
-
-    public void removeService(ServiceExecution serviceExecution, ServiceExecutionItem item) {
-
-        serviceExecution.removeService(item);
-        repo.save(serviceExecution);
+        return repo.findByStatusAndDate(status, date);
 
     }
 
-    public List<ServiceExecution> findByStatus(ServiceStatus status) {
+    public void start(ServiceExecution s) {
 
-        return repo.findAllByStatusAndDate(status, LocalDate.now());
-
-    }
-
-    public void start(Long serviceId) {
-
-        ServiceExecution s = findById(serviceId);
-        s.startService();
+        s.start();
         repo.save(s);
 
     }
 
-    public void finish(Long serviceId) {
+    public void finish(ServiceExecution s) {
 
-        ServiceExecution s = findById(serviceId);
-        s.finishService();
+        s.finish();
         repo.save(s);
 
     }
 
-    public void cancel(Long serviceId) {
+    public void cancel(ServiceExecution s) {
 
-        ServiceExecution serviceExecution = findById(serviceId);
+        // if (serviceExecution.getPaymentStatus() == PaymentStatus.PAID)
+        // throw new IllegalArgumentException("Não é possível cancelar um serviço que já
+        // foi pago");
 
-        if (serviceExecution.getPaymentStatus() == PaymentStatus.PAID)
-            throw new IllegalArgumentException("Não é possível cancelar um serviço que já foi pago");
-
-        repo.delete(serviceExecution);
+        s.cancel();
+        repo.save(s);
 
     }
 

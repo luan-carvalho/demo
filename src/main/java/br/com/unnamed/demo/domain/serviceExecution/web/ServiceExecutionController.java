@@ -37,14 +37,19 @@ public class ServiceExecutionController {
     }
 
     @GetMapping
-    public String showServiceExecutionBoard(Model model) {
+    public String showServiceExecutionBoard(Model model, @RequestParam(required = false) LocalDate date) {
 
-        model.addAttribute("pending_services", service.findByStatus(ServiceStatus.PENDING));
-        model.addAttribute("in_progress_services", service.findByStatus(ServiceStatus.IN_PROGRESS));
-        model.addAttribute("completed_services", service.findByStatus(ServiceStatus.COMPLETED));
+        date = date == null ? LocalDate.now() : date;
+
+        model.addAttribute("pending_services", service.findByStatusAndDate(ServiceStatus.PENDING, date));
+        model.addAttribute("in_progress_services", service.findByStatusAndDate(ServiceStatus.IN_PROGRESS, date));
+        model.addAttribute("completed_services", service.findByStatusAndDate(ServiceStatus.COMPLETED, date));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy");
-        model.addAttribute("currentDate", LocalDate.now().format(formatter));
+        model.addAttribute("currentDate", date.format(formatter));
+        model.addAttribute("nextDate", date.plusDays(1).toString());
+        model.addAttribute("previousDate", date.minusDays(1).toString());
+        model.addAttribute("currentDateISO", date.toString());
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecutionBoard");
@@ -99,34 +104,41 @@ public class ServiceExecutionController {
         ServiceExecution serviceExecution = service.findById(serviceId);
         List<PetCare> petCares = petCareIds.stream().map(i -> petCareService.findById(i)).toList();
         service.update(serviceExecution, petCares);
-        return "redirect:/serviceExecution";
+        return "redirect:/serviceExecution" + (serviceExecution.getDate().isEqual(LocalDate.now()) ? ""
+                : "?date=" + serviceExecution.getDate().toString());
 
     }
 
     @PostMapping("/{serviceId}/delete")
     public String cancelService(@PathVariable Long serviceId) {
 
-        service.cancel(serviceId);
+        ServiceExecution s = service.findById(serviceId);
+        service.cancel(s);
 
-        return "redirect:/serviceExecution";
+        return "redirect:/serviceExecution"
+                + (s.getDate().isEqual(LocalDate.now()) ? "" : "?date=" + s.getDate().toString());
 
     }
 
     @PostMapping("/{serviceId}/start")
     public String startServiceExecution(@PathVariable Long serviceId) {
 
-        service.start(serviceId);
+        ServiceExecution s = service.findById(serviceId);
+        service.start(s);
 
-        return "redirect:/serviceExecution";
+        return "redirect:/serviceExecution"
+                + (s.getDate().isEqual(LocalDate.now()) ? "" : "?date=" + s.getDate().toString());
 
     }
 
     @PostMapping("/{serviceId}/finish")
     public String finishServiceExecution(@PathVariable Long serviceId) {
 
-        service.finish(serviceId);
+        ServiceExecution s = service.findById(serviceId);
+        service.finish(s);
 
-        return "redirect:/serviceExecution";
+        return "redirect:/serviceExecution"
+                + (s.getDate().isEqual(LocalDate.now()) ? "" : "?date=" + s.getDate().toString());
 
     }
 

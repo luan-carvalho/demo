@@ -12,6 +12,6 @@ import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 public interface ServiceExecutionRepository extends JpaRepository<ServiceExecution, Long> {
 
     @Query("SELECT s FROM ServiceExecution s WHERE s.serviceStatus = :serviceStatus AND s.date = :date")
-    public List<ServiceExecution> findAllByStatusAndDate(ServiceStatus serviceStatus, LocalDate date);
+    public List<ServiceExecution> findByStatusAndDate(ServiceStatus serviceStatus, LocalDate date);
 
 }
