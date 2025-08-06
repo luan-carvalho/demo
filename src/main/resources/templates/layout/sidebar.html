@@ -22,13 +22,14 @@
                 <div th:replace="~{::menu-links}"></div>
                 <div class="mt-auto">
                     <hr class="text-secondary">
-                    <div th:replace="~{::user-dropdown}"></div>
+                    <div th:replace="~{::user-area}"></div>
                 </div>
             </div>
         </div>
 
+        <!-- Desktop Sidebar -->
         <div class="d-none d-lg-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar-desktop">
-            <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">
+            <h5 class="offcanvas-title">
                 <a href="/" class="d-flex align-items-center text-white text-decoration-none">
                     <span class="fs-4">Lady | Beleza Pet</span>
                     <span class="material-symbols-outlined fs-4 ms-2">
@@ -39,32 +40,37 @@
             <hr>
             <div th:replace="~{::menu-links}"></div>
             <hr>
-            <div th:replace="~{::user-dropdown}"></div>
+            <div th:replace="~{::user-area}"></div>
         </div>
     </div>
 
+    <!-- ======================================================= -->
+    <!--          UPDATED AND ALIGNED MENU LINKS FRAGMENT        -->
+    <!-- ======================================================= -->
     <ul th:fragment="menu-links" class="nav nav-pills flex-column mb-auto">
 
         <li class="nav-item">
             <a th:href="@{/serviceExecution}"
                 th:class="${activePage == 'serviceExecution' ? 'nav-link active' : 'nav-link text-white'}">
-                <i class="bi bi-card-checklist"></i> Atendimentos
+                <i class="bi bi-card-checklist bi-fw me-2"></i>Atendimentos
             </a>
         </li>
         <li class="nav-item">
             <a th:href="@{/tutor}" th:class="${activePage == 'clients' ? 'nav-link active' : 'nav-link text-white'}">
-                <i class="bi bi-people me-2"></i> Clientes
+                <i class="bi bi-people bi-fw me-2"></i>Clientes
             </a>
         </li>
 
-
         <th:block sec:authorize="hasRole('ADMIN')">
+            <hr>
 
             <li class="nav-item">
                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
                     th:classappend="${#lists.contains({'services', 'service-groups'}, activePage) ? 'active' : 'text-white'}"
                     data-bs-toggle="collapse" data-bs-target="#services-collapse" aria-expanded="false">
-                    <span><i class="bi bi-card-list me-2"></i> Serviços</span>
+                    <span>
+                        <i class="bi bi-card-list bi-fw me-2"></i>Serviços
+                    </span>
                     <i class="bi bi-chevron-down small"></i>
                 </a>
                 <div class="collapse" id="services-collapse"
@@ -82,9 +88,11 @@
 
             <li class="nav-item">
                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
-                    th:classappend="${#lists.contains({'relatorio-servicos', 'fluxo-caixa', 'relatorio-caixa'}, activePage) ? 'active' : 'text-white'}"
+                    th:classappend="${#lists.contains({'pagamentos', 'tipo-pagamento'}, activePage) ? 'active' : 'text-white'}"
                     data-bs-toggle="collapse" data-bs-target="#financeiro-collapse" aria-expanded="false">
-                    <span><i class="bi bi-cash-coin"></i> Financeiro</span>
+                    <span>
+                        <i class="bi bi-cash-coin bi-fw me-2"></i>Financeiro
+                    </span>
                     <i class="bi bi-chevron-down small"></i>
                 </a>
                 <div class="collapse" id="financeiro-collapse"
@@ -104,7 +112,9 @@
                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
                     th:classappend="${#lists.contains({'relatorio-servicos', 'fluxo-caixa', 'relatorio-caixa'}, activePage) ? 'active' : 'text-white'}"
                     data-bs-toggle="collapse" data-bs-target="#relatorios-collapse" aria-expanded="false">
-                    <span><i class="bi bi-clipboard-data me-2"></i>Relatórios</span>
+                    <span>
+                        <i class="bi bi-clipboard-data bi-fw me-2"></i>Relatórios
+                    </span>
                     <i class="bi bi-chevron-down small"></i>
                 </a>
                 <div class="collapse" id="relatorios-collapse"
@@ -121,29 +131,28 @@
             </li>
             <li class="nav-item">
                 <a href="#" th:class="${activePage == 'users' ? 'nav-link active' : 'nav-link text-white'}">
-                    <i class="bi bi-person-gear me-2"></i> Usuários
+                    <i class="bi bi-person-gear bi-fw me-2"></i>Usuários
                 </a>
             </li>
         </th:block>
     </ul>
 
-    <div th:fragment="user-dropdown" class="dropdown">
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://via.placeholder.com/32" alt="" width="32" height="32" class="rounded-circle me-2">
-            <strong>Usuário</strong>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-            <li><a class="dropdown-item" href="#">Meu Perfil</a></li>
-            <li>
-                <hr class="dropdown-divider">
-            </li>
-            <li>
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="dropdown-item">Sair</button>
-                </form>
-            </li>
-        </ul>
+    <div th:fragment="user-area">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Left Side: User Info -->
+            <div class="d-flex align-items-center text-white text-decoration-none">
+                <i class="bi bi-person-circle fs-4 me-2"></i>
+                <span class="fw-bold"
+                    th:text="${#strings.capitalizeWords(#authentication.principal.username)}">Usuário</span>
+            </div>
+
+            <!-- Right Side: Logout Button -->
+            <form th:action="@{/logout}" method="post" class="ms-2">
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Sair">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        </div>
     </div>
 
 </body>

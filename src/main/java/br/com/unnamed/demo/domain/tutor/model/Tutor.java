@@ -146,11 +146,9 @@ public class Tutor {
 
         getOwnedPet(pet.getId()).updateInfo(
                 pet.getName(),
-                pet.getSize(),
                 pet.getSpecie(),
                 pet.getBreed(),
-                pet.getCoatColor(),
-                pet.getBirthDate());
+                pet.getCoatColor());
 
     }
 

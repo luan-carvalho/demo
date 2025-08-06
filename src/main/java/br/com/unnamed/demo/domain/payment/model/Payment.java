@@ -14,14 +14,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Payment {
 
     @Id
@@ -42,5 +38,16 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "service_execution_id")
     private ServiceExecution serviceExecution;
+
+    public Payment() {
+    }
+
+    public Payment(@NotNull LocalDate date, @NotNull PaymentType type, BigDecimal value,
+            ServiceExecution serviceExecution) {
+        this.date = date;
+        this.type = type;
+        this.value = value;
+        this.serviceExecution = serviceExecution;
+    }
 
 }

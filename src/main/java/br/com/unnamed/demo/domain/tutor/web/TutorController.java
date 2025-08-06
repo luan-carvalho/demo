@@ -55,30 +55,33 @@ public class TutorController {
         model.addAttribute("statuses", Status.values());
         model.addAttribute("view", "tutor/tutor-list");
         model.addAttribute("activePage", "clients");
+        model.addAttribute("pageTitle", "Clientes");
         model.addAttribute("pageScript", "/js/script.js");
         return "layout/base-layout";
-
+        
     }
-
+    
     @GetMapping("/{id}")
     public String findTutorById(@PathVariable Long id, Model model) {
-
+        
         TutorFormDto tutorDto = TutorMapper.toForm(tutorService.findById(id));
         model.addAttribute("tutor", tutorDto);
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
         model.addAttribute("pageScript", "/js/script.js");
+        model.addAttribute("pageTitle", "Clientes");
         return "layout/base-layout";
-
+        
     }
-
+    
     @GetMapping("/new")
     public String showTutorRegistrationForm(Model model) {
-
+        
         model.addAttribute("tutor", TutorFormDto.empty());
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
         model.addAttribute("pageScript", "/js/script.js");
+        model.addAttribute("pageTitle", "Clientes");
         return "layout/base-layout";
 
     }
@@ -160,12 +163,16 @@ public class TutorController {
         if (pet.id() != null) {
 
             tutor.updatePetInfo(PetMapper.toEntity(pet));
-
+            System.out.println("Atualizando...");
+            System.out.println("Status = " + pet.status());
+            
         }
-
+        
         if (pet.id() == null) {
-
+            
             tutor.addPet(PetMapper.toEntity(pet));
+            System.out.println("Criando...");
+            System.out.println("Status = " + pet.status());
 
         }
 

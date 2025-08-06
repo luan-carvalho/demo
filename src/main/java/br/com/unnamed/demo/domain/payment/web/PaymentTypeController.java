@@ -45,6 +45,7 @@ public class PaymentTypeController {
         model.addAttribute("view", "paymentType/paymentType-list");
         model.addAttribute("activePage", "tipo-pagamento");
         model.addAttribute("pageScript", "/js/script.js");
+        model.addAttribute("pageTitle", "Tipo de pagamento");
         return "layout/base-layout";
 
     }
@@ -55,6 +56,7 @@ public class PaymentTypeController {
         model.addAttribute("paymentType", PaymentTypeDto.empty());
         model.addAttribute("view", "paymentType/paymentType");
         model.addAttribute("activePage", "tipo-pagamento");
+        model.addAttribute("pageTitle", "Tipo de pagamento");
         return "layout/base-layout";
 
     }
@@ -65,6 +67,7 @@ public class PaymentTypeController {
         model.addAttribute("paymentType", service.findById(id));
         model.addAttribute("view", "paymentType/paymentType");
         model.addAttribute("activePage", "tipo-pagamento");
+        model.addAttribute("pageTitle", "Tipo de pagamento");
         return "layout/base-layout";
     }
 

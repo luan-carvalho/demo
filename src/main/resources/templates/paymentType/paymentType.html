@@ -6,8 +6,8 @@
 
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0" th:text="${petCareGroup.id == null} ? 'Novo Grupo' : 'Editar Grupo'"></h1>
-            <a th:href="@{/petCareGroup}" class="btn btn-secondary">
+            <h1 class="h3 mb-0" th:text="${paymentType.id == null} ? 'Novo Grupo' : 'Editar Grupo'"></h1>
+            <a th:href="@{/paymentType}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Voltar para a Lista
             </a>
         </div>
@@ -19,7 +19,7 @@
                     <div class="card-header">
                         <h5 class="card-title mb-0">Detalhes do Grupo</h5>
                     </div>
-                    <form th:action="@{/petCareGroup}" method="post" th:object="${petCareGroup}">
+                    <form th:action="@{/paymentType}" method="post" th:object="${paymentType}">
                         <div class="card-body">
                             <!-- Hidden fields -->
                             <input type="hidden" th:field="*{id}" />
@@ -36,15 +36,15 @@
                         <!-- Form Footer -->
                         <!-- Form Footer with Actions -->
                         <div class="card-footer d-flex justify-content-between align-items-center">
-                            <!-- Activate/Inactivate links will only appear if petCareGroup.id exists -->
+                            <!-- Activate/Inactivate links will only appear if paymentType.id exists -->
                             <div>
-                                <a th:if="${petCareGroup.id != null and petCareGroup.status.name() == 'ACTIVE'}"
-                                    href="#" th:href="@{/petCareGroup/{id}/inactivate(id=${petCareGroup.id})}"
-                                    class="btn btn-sm btn-outline-danger">Inativar Grupo</a>
+                                <a th:if="${paymentType.id != null and paymentType.status.name() == 'ACTIVE'}" href="#"
+                                    th:href="@{/paymentType/{id}/inactivate(id=${paymentType.id})}"
+                                    class="btn btn-sm btn-outline-danger">Inativar Tipo de Pagamento</a>
 
-                                <a th:if="${petCareGroup.id != null and petCareGroup.status.name() == 'INACTIVE'}"
-                                    href="#" th:href="@{/petCareGroup/{id}/activate(id=${petCareGroup.id})}"
-                                    class="btn btn-sm btn-outline-success">Reativar Grupo</a>
+                                <a th:if="${paymentType.id != null and paymentType.status.name() == 'INACTIVE'}"
+                                    href="#" th:href="@{/paymentType/{id}/activate(id=${paymentType.id})}"
+                                    class="btn btn-sm btn-outline-success">Reativar Tipo de Pagamento</a>
                             </div>
 
                             <!-- Save Button -->

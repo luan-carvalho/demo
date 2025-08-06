@@ -1,7 +1,6 @@
 package br.com.unnamed.demo.domain.tutor.mapper;
 
 import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
-import br.com.unnamed.demo.domain.tutor.dtos.PetInfoDto;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 
 public class PetMapper {
@@ -12,8 +11,6 @@ public class PetMapper {
                 pet.getId(),
                 pet.getName(),
                 pet.getGender(),
-                pet.getSize(),
-                pet.getBirthDate(),
                 pet.getSpecie(),
                 pet.getBreed(),
                 pet.getCoatColor(),
@@ -27,19 +24,10 @@ public class PetMapper {
                 dto.id(),
                 dto.name(),
                 dto.gender(),
-                dto.size(),
-                dto.birthDate(),
                 dto.specie(),
                 dto.breed(),
                 dto.coatColor(),
                 dto.status());
-
-    }
-
-    public static PetInfoDto toInfoDto(Pet pet) {
-
-        return new PetInfoDto(pet.getId(), pet.getName(), pet.getBreed().getDescription(),
-                pet.getCoatColor().getDescription());
 
     }
 

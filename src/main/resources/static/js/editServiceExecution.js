@@ -7,16 +7,12 @@ $(document).ready(function () {
 
     function validateForm() {
         // Use .val() to check for a value. It works for both new (ID) and edit (object.toString()) states.
-        const isClientSelected = tutorIdInput.val() && petIdInput.val();
         const areServicesSelected = servicesChecklist.find('input[type="checkbox"]:checked').length > 0;
 
         // Disable the button if either condition is false
-        submitButton.prop('disabled', !(isClientSelected && areServicesSelected));
+        submitButton.prop('disabled', !(areServicesSelected));
     }
 
-    // === EVENT HANDLERS ===
-
-    // Listen for clicks on any service checkbox
     servicesChecklist.on('change', function (e) {
         if ($(e.target).is('input[type="checkbox"]')) {
             updateSelectedServicesGrid();

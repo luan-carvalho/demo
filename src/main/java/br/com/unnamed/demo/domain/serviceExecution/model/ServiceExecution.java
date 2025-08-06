@@ -58,15 +58,12 @@ public class ServiceExecution {
     @NotNull
     private ServiceStatus serviceStatus;
 
-
-    @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL,
-    orphanRemoval = true)
+    @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments;
 
     public ServiceExecution() {
 
         this.executedServices = new ArrayList<>();
-        this.payments = new ArrayList<>();
         this.date = LocalDate.now();
         this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
@@ -92,6 +89,7 @@ public class ServiceExecution {
         this.date = LocalDate.now();
         this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
+        this.executedServices = new ArrayList<>();
 
     }
 
@@ -117,6 +115,24 @@ public class ServiceExecution {
     }
 
     public void pay(List<Payment> payments) {
+
+        if (getAmountPaid() == calculateTotal())
+            throw new IllegalArgumentException("Service already fully paid");
+
+        this.payments.addAll(payments);
+        this.serviceStatus = ServiceStatus.PAID;
+
+    }
+
+    public BigDecimal getAmountPaid() {
+
+        return payments.stream().map(Payment::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
+
+    public BigDecimal getBalance() {
+
+        return calculateTotal().subtract(getAmountPaid());
 
     }
 

@@ -1,10 +1,6 @@
 package br.com.unnamed.demo.domain.tutor.model;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-
 import br.com.unnamed.demo.domain.tutor.model.enums.Gender;
-import br.com.unnamed.demo.domain.tutor.model.enums.Size;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Breed;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.CoatColor;
@@ -37,11 +33,6 @@ public class Pet {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Enumerated(EnumType.STRING)
-    private Size size;
-
-    private LocalDate birthDate;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "specie_id")
     private Specie Specie;
@@ -62,13 +53,6 @@ public class Pet {
         status = Status.ACTIVE;
 
     }
-
-    public long getAge() {
-
-        return ChronoUnit.YEARS.between(birthDate, LocalDate.now());
-
-    }
-
     public void deactivate() {
 
         this.status = Status.INACTIVE;
@@ -99,15 +83,12 @@ public class Pet {
 
     }
 
-    public void updateInfo(String name, Size size, Specie specie, Breed breed, CoatColor coatColor,
-            LocalDate birthDate) {
+    public void updateInfo(String name,  Specie specie, Breed breed, CoatColor coatColor) {
 
         this.name = name;
-        this.size = size;
         this.Specie = specie;
         this.breed = breed;
         this.coatColor = coatColor;
-        this.birthDate = birthDate;
 
     }
 }

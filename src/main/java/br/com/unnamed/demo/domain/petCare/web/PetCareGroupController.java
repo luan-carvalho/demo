@@ -47,6 +47,7 @@ public class PetCareGroupController {
         model.addAttribute("view", "petCareGroup/petCareGroup-list");
         model.addAttribute("activePage", "service-groups");
         model.addAttribute("pageScript", "/js/script.js");
+        model.addAttribute("pageTitle", "Grupo de serviços");
         return "layout/base-layout";
 
     }
@@ -57,6 +58,7 @@ public class PetCareGroupController {
         model.addAttribute("petCareGroup", PetCareGroupDto.empty());
         model.addAttribute("view", "petCareGroup/petCareGroup");
         model.addAttribute("activePage", "service-groups");
+        model.addAttribute("pageTitle", "Grupo de serviços");
         return "layout/base-layout";
 
     }
@@ -67,6 +69,7 @@ public class PetCareGroupController {
         model.addAttribute("petCareGroup", petCareGroupService.findById(id));
         model.addAttribute("view", "petCareGroup/petCareGroup");
         model.addAttribute("activePage", "service-groups");
+        model.addAttribute("pageTitle", "Grupo de serviços");
         return "layout/base-layout";
     }
 

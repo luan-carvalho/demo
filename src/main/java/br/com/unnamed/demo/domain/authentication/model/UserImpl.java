@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.unnamed.demo.domain.authentication.model.valueObjects.Email;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,9 +28,7 @@ public class UserImpl implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    private Email email;
+    private String username;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -59,7 +56,7 @@ public class UserImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email.getValue();
+        return this.username;
     }
 
     public Long getId() {
@@ -98,16 +95,8 @@ public class UserImpl implements UserDetails {
 
     }
 
-    public Email getEmail() {
-        return email;
-    }
-
     public List<Role> getUserRoles() {
         return userRoles;
-    }
-
-    public String getName() {
-        return name;
     }
 
 }

@@ -2,6 +2,7 @@ package br.com.unnamed.demo.domain.serviceExecution.web;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -9,9 +10,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import br.com.unnamed.demo.domain.payment.dto.PaymentDtos.PaymentItemDto;
+import br.com.unnamed.demo.domain.payment.dto.PaymentDtos.PaymentRequestDto;
+import br.com.unnamed.demo.domain.payment.model.Payment;
+import br.com.unnamed.demo.domain.payment.service.PaymentTypeService;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
@@ -26,14 +32,16 @@ import br.com.unnamed.demo.domain.tutor.service.TutorService;
 public class ServiceExecutionController {
 
     private ServiceExecutionService service;
+    private PaymentTypeService paymentTypeService;
     private PetCareService petCareService;
     private TutorService tutorService;
 
     public ServiceExecutionController(ServiceExecutionService service, PetCareService petCareService,
-            TutorService tutorService) {
+            TutorService tutorService, PaymentTypeService paymentTypeService) {
         this.service = service;
         this.petCareService = petCareService;
         this.tutorService = tutorService;
+        this.paymentTypeService = paymentTypeService;
     }
 
     @GetMapping
@@ -41,7 +49,7 @@ public class ServiceExecutionController {
 
         date = date == null ? LocalDate.now() : date;
 
-        List<LocalDate> datesWithNotPaid =  service.findNotPaidFromPreviousDates();
+        List<LocalDate> datesWithNotPaid = service.findNotPaidFromPreviousDates();
 
         if (!datesWithNotPaid.isEmpty())
             model.addAttribute("dates_with_not_paid", datesWithNotPaid);
@@ -49,6 +57,7 @@ public class ServiceExecutionController {
         model.addAttribute("pending_services", service.findByStatusAndDate(ServiceStatus.PENDING, date));
         model.addAttribute("in_progress_services", service.findByStatusAndDate(ServiceStatus.IN_PROGRESS, date));
         model.addAttribute("completed_services", service.findByStatusAndDate(ServiceStatus.COMPLETED, date));
+        model.addAttribute("all_payment_types", paymentTypeService.findAllActive());
 
         DateTimeFormatter formatter_long = DateTimeFormatter.ofPattern("dd/MM/yyyy - EEEE");
         DateTimeFormatter formatter_short = DateTimeFormatter.ofPattern("dd/MM/yy");
@@ -58,6 +67,7 @@ public class ServiceExecutionController {
         model.addAttribute("previousDate", date.minusDays(1).toString());
         model.addAttribute("currentDateISO", date.toString());
         model.addAttribute("isToday", date.isEqual(LocalDate.now()));
+        model.addAttribute("pageTitle", "Atendimentos");
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecutionBoard");
@@ -77,6 +87,7 @@ public class ServiceExecutionController {
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/newServiceExecution");
         model.addAttribute("pageScript", "/js/newServiceExecution.js");
+        model.addAttribute("pageTitle", "Atendimentos");
         return "layout/base-layout";
 
     }
@@ -90,6 +101,7 @@ public class ServiceExecutionController {
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/editServiceExecution");
         model.addAttribute("pageScript", "/js/editServiceExecution.js");
+        model.addAttribute("pageTitle", "Atendimentos");
         return "layout/base-layout";
 
     }
@@ -147,6 +159,27 @@ public class ServiceExecutionController {
 
         return "redirect:/serviceExecution"
                 + (s.getDate().isEqual(LocalDate.now()) ? "" : "?date=" + s.getDate().toString());
+
+    }
+
+    @PostMapping("/{serviceId}/pay")
+    public String registerPayment(@PathVariable Long serviceId, @RequestBody PaymentRequestDto dto) {
+
+        ServiceExecution s = service.findById(serviceId);
+        List<Payment> payments = new ArrayList<>();
+
+        for (PaymentItemDto p : dto.getPayments()) {
+
+            payments.add(new Payment(
+                    LocalDate.now(),
+                    paymentTypeService.findById(p.getPaymentTypeId()),
+                    p.getAmount(),
+                    s));
+
+        }
+
+        service.registerPayment(s, payments);
+        return "redirect:/serviceExecution";
 
     }
 

@@ -6,6 +6,9 @@ import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
+import br.com.unnamed.demo.domain.payment.dto.PaymentDtos.PaymentDetailsDto;
+import br.com.unnamed.demo.domain.payment.mapper.PaymentMapper;
+import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
@@ -65,9 +68,8 @@ public class ServiceExecutionService {
 
     public void cancel(ServiceExecution s) {
 
-        // if (serviceExecution.getPaymentStatus() == PaymentStatus.PAID)
-        // throw new IllegalArgumentException("Não é possível cancelar um serviço que já
-        // foi pago");
+        if (s.getServiceStatus() == ServiceStatus.PAID)
+            throw new IllegalArgumentException("Não é possível cancelar um serviço que já foi pago");
 
         s.cancel();
         repo.save(s);
@@ -77,6 +79,19 @@ public class ServiceExecutionService {
     public List<LocalDate> findNotPaidFromPreviousDates() {
 
         return repo.findNotPaidFromPreviousDates();
+
+    }
+
+    public PaymentDetailsDto getPaymentsDetails(Long serviceId) {
+
+        return PaymentMapper.toPaymentDetailDto(findById(serviceId));
+
+    }
+
+    public void registerPayment(ServiceExecution s, List<Payment> payments) {
+
+        s.pay(payments);
+        repo.save(s);
 
     }
 

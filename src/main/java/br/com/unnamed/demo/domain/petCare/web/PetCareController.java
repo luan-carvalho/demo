@@ -49,6 +49,7 @@ public class PetCareController {
         model.addAttribute("view", "petCare/petCare-list");
         model.addAttribute("activePage", "services");
         model.addAttribute("pageScript", "/js/script.js");
+        model.addAttribute("pageTitle", "Serviços");
         return "layout/base-layout";
 
     }
@@ -60,6 +61,7 @@ public class PetCareController {
         model.addAttribute("petCare", PetCareDto.empty());
         model.addAttribute("view", "petCare/petCare");
         model.addAttribute("activePage", "services");
+        model.addAttribute("pageTitle", "Serviços");
         return "layout/base-layout";
 
     }
@@ -71,6 +73,7 @@ public class PetCareController {
         model.addAttribute("petCare", petCareService.findById(id));
         model.addAttribute("view", "petCare/petCare");
         model.addAttribute("activePage", "services");
+        model.addAttribute("pageTitle", "Serviços");
         return "layout/base-layout";
     }
 
