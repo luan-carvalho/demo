@@ -116,6 +116,33 @@ document.addEventListener('DOMContentLoaded', function () {
         updateUI(); // Initial UI update
     });
 
+    paymentAmountInput.addEventListener('input', function (e) {
+
+        // console.log("preenchido " + parseFloat(paymentAmountInput.value))
+
+        let amountInput = parseFloat(paymentAmountInput.value);
+        let amountAdded = 0;
+
+        payments.forEach(p => {
+            amountAdded += p.amount;
+        })
+
+        let balance = totalAmount - amountAdded;
+
+
+        if (amountInput > balance) {
+
+            addPaymentButton.disabled = true;
+            return;
+            
+        }
+        
+        addPaymentButton.disabled = false;
+
+
+    })
+
+
     // When the "Adicionar à Lista" form is submitted
     addPaymentToListForm.addEventListener('submit', function (e) {
         e.preventDefault();
