@@ -61,7 +61,7 @@ public class PetCareController {
         model.addAttribute("petCare", PetCareDto.empty());
         model.addAttribute("view", "petCare/petCare");
         model.addAttribute("activePage", "services");
-        model.addAttribute("pageTitle", "Serviços");
+        model.addAttribute("pageTitle", "Serviço | Novo");
         return "layout/base-layout";
 
     }
@@ -69,11 +69,13 @@ public class PetCareController {
     @GetMapping("/{id}")
     public String getPetCare(@PathVariable Long id, Model model) {
 
+        PetCare p = petCareService.findById(id);
+
         model.addAttribute("petCareGroups", PetCareGroupMapper.toDtoList(petCareGroupService.findAllActive()));
-        model.addAttribute("petCare", petCareService.findById(id));
+        model.addAttribute("petCare", p);
         model.addAttribute("view", "petCare/petCare");
         model.addAttribute("activePage", "services");
-        model.addAttribute("pageTitle", "Serviços");
+        model.addAttribute("pageTitle", "Serviço | " + p.getDescription());
         return "layout/base-layout";
     }
 

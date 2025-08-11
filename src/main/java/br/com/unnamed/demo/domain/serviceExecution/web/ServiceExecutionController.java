@@ -87,7 +87,7 @@ public class ServiceExecutionController {
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/newServiceExecution");
         model.addAttribute("pageScript", "/js/newServiceExecution.js");
-        model.addAttribute("pageTitle", "Atendimentos");
+        model.addAttribute("pageTitle", "Atendimento | Novo");
         return "layout/base-layout";
 
     }
@@ -95,13 +95,16 @@ public class ServiceExecutionController {
     @GetMapping("/{serviceId}")
     public String showEditServicePage(@PathVariable Long serviceId, Model model) {
 
-        model.addAttribute("serviceExecution", service.findById(serviceId));
+        ServiceExecution s = service.findById(serviceId);
+
+        model.addAttribute("serviceExecution", s);
         model.addAttribute("all_pet_cares", petCareService.findAllActive());
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/editServiceExecution");
         model.addAttribute("pageScript", "/js/editServiceExecution.js");
-        model.addAttribute("pageTitle", "Atendimentos");
+        model.addAttribute("pageTitle", "Atendimento | #" + s.getId());
+        model.addAttribute("isToday", s.getDate().isEqual(LocalDate.now()));
         return "layout/base-layout";
 
     }

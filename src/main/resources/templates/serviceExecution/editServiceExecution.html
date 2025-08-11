@@ -5,8 +5,9 @@
     <div th:fragment="content">
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">Editar Atendimento #<span th:text="${serviceExecution.id}"></span></h1>
-            <a th:href="@{/serviceExecution}" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i> Voltar</a>
+            <h1 class="h3 mb-0">Atendimento #<span th:text="${serviceExecution.id}"></span></h1>
+            <a th:if="${isToday}" th:href="@{/serviceExecution}" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i> Voltar</a>
+            <a th:if="${not isToday}" th:href="@{/serviceExecution?date={date}(date=${serviceExecution.date})}" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i> Voltar</a>
         </div>
 
         <form id="editServiceForm" th:action="@{/serviceExecution/update}" method="post">

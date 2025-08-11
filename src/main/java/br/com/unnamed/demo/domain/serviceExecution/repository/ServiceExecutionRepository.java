@@ -17,4 +17,6 @@ public interface ServiceExecutionRepository extends JpaRepository<ServiceExecuti
     @Query("SELECT DISTINCT s.date FROM ServiceExecution s WHERE s.serviceStatus NOT IN ('PAID', 'CANCELED') AND s.date < CURRENT_DATE")
     public List<LocalDate> findNotPaidFromPreviousDates();
 
+    List<ServiceExecution> findTop10ByPetIdOrderByDateDesc(Long petId);
+
 }

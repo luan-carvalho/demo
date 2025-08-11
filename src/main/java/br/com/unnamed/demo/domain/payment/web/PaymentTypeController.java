@@ -56,7 +56,7 @@ public class PaymentTypeController {
         model.addAttribute("paymentType", PaymentTypeDto.empty());
         model.addAttribute("view", "paymentType/paymentType");
         model.addAttribute("activePage", "tipo-pagamento");
-        model.addAttribute("pageTitle", "Tipo de pagamento");
+        model.addAttribute("pageTitle", "Tipo de pagamento | Novo");
         return "layout/base-layout";
 
     }
@@ -64,10 +64,12 @@ public class PaymentTypeController {
     @GetMapping("/{id}")
     public String getPaymentType(@PathVariable Long id, Model model) {
 
-        model.addAttribute("paymentType", service.findById(id));
+        PaymentType p = service.findById(id);
+
+        model.addAttribute("paymentType", p);
         model.addAttribute("view", "paymentType/paymentType");
         model.addAttribute("activePage", "tipo-pagamento");
-        model.addAttribute("pageTitle", "Tipo de pagamento");
+        model.addAttribute("pageTitle", "Tipo de pagamento | " + p.getDescription());
         return "layout/base-layout";
     }
 

@@ -95,4 +95,10 @@ public class ServiceExecutionService {
 
     }
 
+    public List<ServiceExecution> findTop10ByPetIdOrderByDateDesc(Long id) {
+
+        return repo.findTop10ByPetIdOrderByDateDesc(id);
+
+    }
+
 }

@@ -97,17 +97,22 @@
             </div>
         </form>
 
-        <div class="modal fade" id="clientPetSearchModal" tabindex="-1"
-            aria-labelledby="clientPetSearchModalLabel" aria-hidden="true">
+        <div class="modal fade" id="clientPetSearchModal" tabindex="-1" aria-labelledby="clientPetSearchModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="clientPetSearchModalLabel">Buscar Cliente / Pet</h5><button
-                            type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="clientPetSearchModalLabel">Buscar Cliente / Pet</h5>
+                        <a th:href="@{/tutor/new}" class="btn btn-sm btn-outline-primary d-flex align-items-center">
+                            <i class="bi bi-person-plus-fill me-1"></i>
+                            Novo Tutor
+                        </a>
+                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                     </div>
                     <div class="modal-body">
                         <input type="text" id="searchClientPetInput" class="form-control mb-3"
                             placeholder="Digite o nome do tutor ou do pet...">
+
                         <div id="clientPetList" class="list-group">
                             <th:block th:each="tutor : ${all_tutors}">
                                 <div th:each="pet : ${tutor.getActivePets()}"

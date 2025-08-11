@@ -1,5 +1,7 @@
 package br.com.unnamed.demo.domain.tutor.web;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
+import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
 import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
 import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
@@ -30,12 +34,12 @@ public class TutorController {
 
     private final TutorService tutorService;
     private final PetInfoService petInfoService;
+    private final ServiceExecutionService service;
 
-    public TutorController(TutorService tutorService, PetInfoService petInfoService) {
-
+    public TutorController(TutorService tutorService, PetInfoService petInfoService, ServiceExecutionService service) {
         this.tutorService = tutorService;
         this.petInfoService = petInfoService;
-
+        this.service = service;
     }
 
     @GetMapping
@@ -58,30 +62,30 @@ public class TutorController {
         model.addAttribute("pageTitle", "Clientes");
         model.addAttribute("pageScript", "/js/script.js");
         return "layout/base-layout";
-        
+
     }
-    
+
     @GetMapping("/{id}")
     public String findTutorById(@PathVariable Long id, Model model) {
-        
+
         TutorFormDto tutorDto = TutorMapper.toForm(tutorService.findById(id));
         model.addAttribute("tutor", tutorDto);
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
         model.addAttribute("pageScript", "/js/script.js");
-        model.addAttribute("pageTitle", "Clientes");
+        model.addAttribute("pageTitle", "Cliente | " + tutorDto.info().name().split(" ")[0]);
         return "layout/base-layout";
-        
+
     }
-    
+
     @GetMapping("/new")
     public String showTutorRegistrationForm(Model model) {
-        
+
         model.addAttribute("tutor", TutorFormDto.empty());
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
         model.addAttribute("pageScript", "/js/script.js");
-        model.addAttribute("pageTitle", "Clientes");
+        model.addAttribute("pageTitle", "Cliente | Novo");
         return "layout/base-layout";
 
     }
@@ -112,7 +116,7 @@ public class TutorController {
     public String deactivateTutor(@PathVariable Long id) {
 
         tutorService.deactivate(id);
-        return "redirect:/tutor";
+        return "redirect:/tutor/" + id;
 
     }
 
@@ -120,19 +124,24 @@ public class TutorController {
     public String activateTutor(@PathVariable Long id) {
 
         tutorService.activate(id);
-        return "redirect:/tutor";
+        return "redirect:/tutor/" + id;
 
     }
 
     @GetMapping("/{tutorId}/pet/{petId}")
     public String findPet(@PathVariable Long tutorId, @PathVariable Long petId, Model model) {
 
+        PetFormDto pet = PetMapper.toFormDto(tutorService.findByTutorAndPetId(tutorId, petId));
+        List<ServiceExecution> serviceHistory = service.findTop10ByPetIdOrderByDateDesc(petId);
+
         model.addAttribute("species", petInfoService.findAllSpecies());
         model.addAttribute("coatColors", petInfoService.findAllCoatColors());
         model.addAttribute("genders", Gender.values());
         model.addAttribute("tutorId", tutorId);
-        model.addAttribute("pet", PetMapper.toFormDto(tutorService.findByTutorAndPetId(tutorId, petId)));
+        model.addAttribute("pet", pet);
+        model.addAttribute("serviceHistory", serviceHistory);
 
+        model.addAttribute("pageTitle", "Pet | " + pet.name());
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "pet/pet");
         model.addAttribute("pageScript", "/js/pet.js");
@@ -150,6 +159,7 @@ public class TutorController {
 
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "pet/pet");
+        model.addAttribute("pageTitle", "Pet | Novo");
         model.addAttribute("pageScript", "/js/pet.js");
         return "layout/base-layout";
 
@@ -165,11 +175,11 @@ public class TutorController {
             tutor.updatePetInfo(PetMapper.toEntity(pet));
             System.out.println("Atualizando...");
             System.out.println("Status = " + pet.status());
-            
+
         }
-        
+
         if (pet.id() == null) {
-            
+
             tutor.addPet(PetMapper.toEntity(pet));
             System.out.println("Criando...");
             System.out.println("Status = " + pet.status());

@@ -66,10 +66,12 @@ public class PetCareGroupController {
     @GetMapping("/{id}")
     public String getPetCareGroup(@PathVariable Long id, Model model) {
 
-        model.addAttribute("petCareGroup", petCareGroupService.findById(id));
+        PetCareGroup pg = petCareGroupService.findById(id);
+
+        model.addAttribute("petCareGroup", pg);
         model.addAttribute("view", "petCareGroup/petCareGroup");
         model.addAttribute("activePage", "service-groups");
-        model.addAttribute("pageTitle", "Grupo de serviços");
+        model.addAttribute("pageTitle", "Grupo | " + pg.getDescription());
         return "layout/base-layout";
     }
 
