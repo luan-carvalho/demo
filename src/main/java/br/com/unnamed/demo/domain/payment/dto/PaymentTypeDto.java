@@ -9,5 +9,6 @@ public record PaymentTypeDto(Long id, String description, Status status) {
         return new PaymentTypeDto(null, null, null);
 
     }
+    
 
 }

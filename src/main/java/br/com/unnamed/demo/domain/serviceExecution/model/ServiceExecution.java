@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
+import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -124,9 +125,17 @@ public class ServiceExecution {
 
     }
 
+    public void deletePayment(Payment payment) {
+
+        this.payments.stream().filter(p -> p.getId() == payment.getId()).forEach(Payment::delete);
+        this.serviceStatus = ServiceStatus.COMPLETED;
+
+    }
+
     public BigDecimal getAmountPaid() {
 
-        return payments.stream().map(Payment::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return payments.stream().filter(p -> p.getStatus() == PaymentStatus.ACTIVE).map(Payment::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     }
 

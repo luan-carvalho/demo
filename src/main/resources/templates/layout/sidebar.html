@@ -98,7 +98,7 @@
                 <div class="collapse" id="financeiro-collapse"
                     th:classappend="${#lists.contains({'pagamentos', 'tipo-pagamento'}, activePage) ? 'show' : ''}">
                     <ul class="nav flex-column ps-4 mt-2">
-                        <li><a href="#"
+                        <li><a th:href="@{/payment}"
                                 th:class="${activePage == 'pagamentos' ? 'nav-link active' : 'nav-link text-white'}"
                                 class="py-1">Pagamentos</a></li>
                         <li><a th:href="@{/paymentType}"

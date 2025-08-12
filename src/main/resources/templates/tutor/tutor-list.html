@@ -63,14 +63,14 @@
                                 <td class="fw" th:text="${tutor.name}"></td>
 
                                 <td>
-                                    <a th:if="${not #lists.isEmpty(tutor.getActivePets())}"
+                                    <a th:if="${not tutor.getActivePets().isEmpty()}"
                                         th:each="pet : ${tutor.getActivePets()}"
                                         th:href="@{/tutor/{tutorId}/pet/{petId}(tutorId=${tutor.id}, petId=${pet.id})}"
                                         th:text="${pet.name}"
                                         class="badge bg-primary text-decoration-none fw-normal me-1"
                                         th:onclick="|event.stopPropagation()|">
                                     </a>
-                                    <span th:if="${#lists.isEmpty(tutor.getActivePets())}"
+                                    <span th:if="${tutor.getActivePets().isEmpty()}"
                                         class="text-center text-muted py-4">
                                         -
                                     </span>

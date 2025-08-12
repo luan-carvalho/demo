@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import br.com.unnamed.demo.domain.payment.dto.PaymentDtos.PaymentItemDto;
 import br.com.unnamed.demo.domain.payment.dto.PaymentDtos.PaymentRequestDto;
 import br.com.unnamed.demo.domain.payment.model.Payment;
+import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.payment.service.PaymentTypeService;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
@@ -177,7 +178,8 @@ public class ServiceExecutionController {
                     LocalDate.now(),
                     paymentTypeService.findById(p.getPaymentTypeId()),
                     p.getAmount(),
-                    s));
+                    s,
+                    PaymentStatus.ACTIVE));
 
         }
 

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="content">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0" th:text="${pageTitle}">Pagamentos</h1>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form th:action="@{/payment}" method="get" class="row g-2 align-items-end">
+
+                    <span hidden id="dateISO" name="date" th:text="${currentDateISO}"></span>
+
+                    <div class="col-lg-4">
+                        <label for="name" class="form-label">Tutor / Pet</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Digite o nome..."
+                            th:value="${name}">
+                    </div>
+
+                    <div class="col-lg-2">
+                        <label for="date" class="form-label">Data</label>
+                        <input type="date" id="date" name="date" class="form-control" th:value="${date}">
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label for="type" class="form-label">Tipo de Pagamento</label>
+                        <select id="type" name="type" class="form-select">
+                            <option value="">Todos os Tipos</option>
+                            <option th:each="pt : ${all_payment_types}" th:value="${pt.id}" th:text="${pt.description}"
+                                th:selected="${type != null and type.id == pt.id}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-1 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
+                        <a th:href="@{/payment}" class="btn btn-secondary w-100"><i class="bi bi-x-lg"></i></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-table me-2"></i>Pagamentos Registrados</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Data</th>
+                                <th scope="col">Cliente / Pet</th>
+                                <th scope="col">Tipo de Pagamento</th>
+                                <th scope="col" class="text-end">Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr th:each="payment : ${payments}" th:data-href="@{/payment/{id}(id=${payment.id})}" class="clickable-row">
+
+                                <td th:text="${#temporals.format(payment.date, 'dd/MM/yyyy')}"></td>
+
+                                <td>
+                                    <div class="fw" th:text="${payment.serviceExecution.tutor.info.name}"></div>
+                                    <div class="small text-muted" th:text="${payment.serviceExecution.pet.name}">
+                                    </div>
+                                </td>
+
+                                <td th:text="${payment.type.description}"></td>
+
+                                <td class="text-end fw-bold"
+                                    th:text="'R$ ' + ${#numbers.formatDecimal(payment.value, 1, 'POINT', 2, 'COMMA')}">
+                                </td>
+                            </tr>
+
+                            <tr th:if="${payments.isEmpty()}">
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    <span>Nenhum pagamento encontrado</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <nav th:if="${tutorPage.totalPages > 1}" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${tutorPage.first} ? 'disabled'">
+                <a class="page-link"
+                    th:href="@{/tutor(page=${tutorPage.number - 1}, size=${tutorPage.size}, search=${search})}">Anterior</a>
+            </li>
+
+            <li th:each="i : ${#numbers.sequence(0, tutorPage.totalPages - 1)}" class="page-item"
+                th:classappend="${i == tutorPage.number} ? 'active'">
+                <a class="page-link" th:href="@{/tutor(page=${i}, size=${tutorPage.size}, search=${search})}"
+                    th:text="${i + 1}"></a>
+            </li>
+
+            <li class="page-item" th:classappend="${tutorPage.last} ? 'disabled'">
+                <a class="page-link"
+                    th:href="@{/tutor(page=${tutorPage.number + 1}, size=${tutorPage.size}, search=${search})}">Próxima</a>
+            </li>
+        </ul>
+    </nav> -->
+</body>
+
+</html>
