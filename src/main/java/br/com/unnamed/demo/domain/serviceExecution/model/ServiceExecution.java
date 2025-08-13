@@ -44,14 +44,16 @@ public class ServiceExecution {
     @NotNull
     private Tutor tutor;
 
-    @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "service_execution_id")
     private List<ServiceExecutionItem> executedServices;
 
     @Enumerated(EnumType.STRING)
     @NotNull
     private ServiceStatus serviceStatus;
 
-    @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "service_execution_id")
     private List<Payment> payments;
 
     public ServiceExecution() {
@@ -62,24 +64,15 @@ public class ServiceExecution {
 
     }
 
-    public ServiceExecution(Tutor tutor, Pet pet) {
-
-        this.tutor = tutor;
-        this.pet = pet;
-        this.executedServices = new ArrayList<>();
-        this.date = LocalDate.now();
-        this.serviceStatus = ServiceStatus.PENDING;
-
-    }
-
-    public ServiceExecution(Long id, Pet pet, Tutor tutor) {
+    public ServiceExecution(Long id, Pet pet, Tutor tutor, ServiceStatus serviceStatus,
+            List<ServiceExecutionItem> executedServices) {
 
         this.id = id;
         this.pet = pet;
         this.tutor = tutor;
         this.date = LocalDate.now();
-        this.serviceStatus = ServiceStatus.PENDING;
-        this.executedServices = new ArrayList<>();
+        this.serviceStatus = serviceStatus;
+        this.executedServices = executedServices;
 
     }
 
@@ -95,14 +88,15 @@ public class ServiceExecution {
 
     }
 
-    public void sendToRegister() {
+    public void checkout() {
 
-        this.serviceStatus = ServiceStatus.IN_REGISTER;
+        this.serviceStatus = ServiceStatus.CHECKOUT;
 
     }
 
     public void cancel() {
 
+        this.payments.clear();
         this.serviceStatus = ServiceStatus.CANCELED;
 
     }
@@ -139,7 +133,7 @@ public class ServiceExecution {
 
     public void addService(PetCare petCare) {
 
-        this.executedServices.add(new ServiceExecutionItem(this, petCare));
+        this.executedServices.add(new ServiceExecutionItem(petCare));
 
     }
 

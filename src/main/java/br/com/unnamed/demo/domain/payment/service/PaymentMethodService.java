@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.payment.model.PaymentMethod;
-import br.com.unnamed.demo.domain.payment.model.enums.PaymentMethodType;
 import br.com.unnamed.demo.domain.payment.repository.PaymentMethodRepository;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 

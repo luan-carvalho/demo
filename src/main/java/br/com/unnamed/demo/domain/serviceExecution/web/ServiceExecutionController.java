@@ -2,7 +2,6 @@ package br.com.unnamed.demo.domain.serviceExecution.web;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -10,21 +9,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import br.com.unnamed.demo.domain.payment.dto.PaymentDtos.PaymentItemDto;
-import br.com.unnamed.demo.domain.payment.dto.PaymentDtos.PaymentRequestDto;
-import br.com.unnamed.demo.domain.payment.model.Payment;
-import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
-import br.com.unnamed.demo.domain.payment.service.PaymentTypeService;
-import br.com.unnamed.demo.domain.petCare.model.PetCare;
+import br.com.unnamed.demo.domain.payment.service.PaymentMethodService;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
-import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
 
@@ -33,16 +25,16 @@ import br.com.unnamed.demo.domain.tutor.service.TutorService;
 public class ServiceExecutionController {
 
     private ServiceExecutionService service;
-    private PaymentTypeService paymentTypeService;
+    private PaymentMethodService paymentMethodService;
     private PetCareService petCareService;
     private TutorService tutorService;
 
     public ServiceExecutionController(ServiceExecutionService service, PetCareService petCareService,
-            TutorService tutorService, PaymentTypeService paymentTypeService) {
+            TutorService tutorService, PaymentMethodService paymentMethodService) {
         this.service = service;
         this.petCareService = petCareService;
         this.tutorService = tutorService;
-        this.paymentTypeService = paymentTypeService;
+        this.paymentMethodService = paymentMethodService;
     }
 
     @GetMapping
@@ -58,7 +50,7 @@ public class ServiceExecutionController {
         model.addAttribute("pending_services", service.findByStatusAndDate(ServiceStatus.PENDING, date));
         model.addAttribute("in_progress_services", service.findByStatusAndDate(ServiceStatus.IN_PROGRESS, date));
         model.addAttribute("completed_services", service.findByStatusAndDate(ServiceStatus.COMPLETED, date));
-        model.addAttribute("all_payment_types", paymentTypeService.findAllActive());
+        model.addAttribute("all_payment_types", paymentMethodService.findAllActive());
 
         DateTimeFormatter formatter_long = DateTimeFormatter.ofPattern("dd/MM/yyyy - EEEE");
         DateTimeFormatter formatter_short = DateTimeFormatter.ofPattern("dd/MM/yy");
@@ -113,11 +105,13 @@ public class ServiceExecutionController {
     @PostMapping("/save")
     public String save(Long tutorId, Long petId, @RequestParam(required = false) List<Long> petCareIds) {
 
-        List<PetCare> petCares = petCareIds.stream().map(i -> petCareService.findById(i)).toList();
-        Tutor tutor = tutorService.findById(tutorId);
-        Pet pet = tutor.getOwnedPet(petId);
+        // List<PetCare> petCares = petCareIds.stream().map(i ->
+        // petCareService.findById(i)).toList();
+        // Tutor tutor = tutorService.findById(tutorId);
+        // Pet pet = tutor.getOwnedPet(petId);
+        ServiceExecution s = new ServiceExecution();
+        service.save(s);
 
-        service.create(tutor, pet, petCares);
         return "redirect:/serviceExecution";
     }
 
@@ -154,11 +148,11 @@ public class ServiceExecutionController {
 
     }
 
-    @PostMapping("/{serviceId}/sendToRegister")
+    @PostMapping("/{serviceId}/checkout")
     public String sendServiceExecutionToRegister(@PathVariable Long serviceId) {
 
         ServiceExecution s = service.findById(serviceId);
-        service.finish(s);
+        service.checkout(s);
 
         return "redirect:/serviceExecution"
                 + (s.getDate().isEqual(LocalDate.now()) ? "" : "?date=" + s.getDate().toString());

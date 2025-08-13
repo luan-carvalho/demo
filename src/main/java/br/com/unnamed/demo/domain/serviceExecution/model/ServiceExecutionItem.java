@@ -18,10 +18,6 @@ public class ServiceExecutionItem {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "service_execution_id")
-    private ServiceExecution serviceExecution;
-
-    @ManyToOne
     @JoinColumn(name = "pet_care_id")
     private PetCare petCare;
     private BigDecimal unitPrice;
@@ -30,10 +26,11 @@ public class ServiceExecutionItem {
 
     }
 
-    public ServiceExecutionItem(ServiceExecution serviceExecution, PetCare petCare) {
-        this.serviceExecution = serviceExecution;
+    public ServiceExecutionItem(PetCare petCare) {
+        
         this.petCare = petCare;
         this.unitPrice = petCare.getPrice();
+
     }
 
     public Long getId() {
@@ -44,9 +41,6 @@ public class ServiceExecutionItem {
         return petCare;
     }
 
-    public ServiceExecution getServiceExecution() {
-        return serviceExecution;
-    }
 
     public BigDecimal getUnitPrice() {
         return unitPrice;
