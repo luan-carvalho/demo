@@ -6,8 +6,6 @@ import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.domain.payment.dto.PaymentDtos.PaymentDetailsDto;
-import br.com.unnamed.demo.domain.payment.mapper.PaymentMapper;
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
@@ -65,6 +63,14 @@ public class ServiceExecutionService {
         repo.save(s);
 
     }
+    }
+
+    public void sendToRegister(ServiceExecution s) {
+
+        s.finish();
+        repo.save(s);
+
+    }
 
     public void cancel(ServiceExecution s) {
 
@@ -79,12 +85,6 @@ public class ServiceExecutionService {
     public List<LocalDate> findNotPaidFromPreviousDates() {
 
         return repo.findNotPaidFromPreviousDates();
-
-    }
-
-    public PaymentDetailsDto getPaymentsDetails(Long serviceId) {
-
-        return PaymentMapper.toPaymentDetailDto(findById(serviceId));
 
     }
 

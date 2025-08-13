@@ -2,12 +2,10 @@ package br.com.unnamed.demo.domain.serviceExecution.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
-import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -36,12 +34,6 @@ public class ServiceExecution {
     @NotNull
     private LocalDate date;
 
-    @NotNull
-    private LocalDateTime arrivedAt;
-    private LocalDateTime startedAt;
-    private LocalDateTime finishedAt;
-    private LocalDateTime canceledAt;
-
     @ManyToOne
     @JoinColumn(name = "pet_id")
     @NotNull
@@ -66,7 +58,6 @@ public class ServiceExecution {
 
         this.executedServices = new ArrayList<>();
         this.date = LocalDate.now();
-        this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
 
     }
@@ -77,18 +68,16 @@ public class ServiceExecution {
         this.pet = pet;
         this.executedServices = new ArrayList<>();
         this.date = LocalDate.now();
-        this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
 
     }
 
-    public ServiceExecution(Long id, @NotNull Pet pet, @NotNull Tutor tutor) {
+    public ServiceExecution(Long id, Pet pet, Tutor tutor) {
 
         this.id = id;
         this.pet = pet;
         this.tutor = tutor;
         this.date = LocalDate.now();
-        this.arrivedAt = LocalDateTime.now();
         this.serviceStatus = ServiceStatus.PENDING;
         this.executedServices = new ArrayList<>();
 
@@ -97,21 +86,24 @@ public class ServiceExecution {
     public void start() {
 
         this.serviceStatus = ServiceStatus.IN_PROGRESS;
-        this.startedAt = LocalDateTime.now();
 
     }
 
     public void finish() {
 
         this.serviceStatus = ServiceStatus.COMPLETED;
-        this.finishedAt = LocalDateTime.now();
+
+    }
+
+    public void sendToRegister() {
+
+        this.serviceStatus = ServiceStatus.IN_REGISTER;
 
     }
 
     public void cancel() {
 
         this.serviceStatus = ServiceStatus.CANCELED;
-        this.canceledAt = LocalDateTime.now();
 
     }
 
@@ -127,14 +119,14 @@ public class ServiceExecution {
 
     public void deletePayment(Payment payment) {
 
-        this.payments.stream().filter(p -> p.getId() == payment.getId()).forEach(Payment::delete);
+        this.payments.remove(payment);
         this.serviceStatus = ServiceStatus.COMPLETED;
 
     }
 
     public BigDecimal getAmountPaid() {
 
-        return payments.stream().filter(p -> p.getStatus() == PaymentStatus.ACTIVE).map(Payment::getValue)
+        return payments.stream().map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     }
@@ -151,19 +143,6 @@ public class ServiceExecution {
 
     }
 
-    public void addServices(List<PetCare> petCares) {
-
-        petCares.forEach(p -> addService(p));
-
-    }
-
-    public void updatePetCares(List<PetCare> petCares) {
-
-        this.executedServices.clear();
-        addServices(petCares);
-
-    }
-
     public BigDecimal calculateTotal() {
 
         if (this.executedServices == null || this.executedServices.isEmpty()) {
@@ -172,16 +151,6 @@ public class ServiceExecution {
 
         return this.executedServices.stream().map(ServiceExecutionItem::getUnitPrice).reduce(BigDecimal.ZERO,
                 BigDecimal::add);
-
-    }
-
-    public void updateTutorAndPet(Tutor tutor, Pet pet) {
-
-        if (!tutor.getActivePets().contains(pet))
-            throw new IllegalArgumentException("O pet informado não pertence ao tutor selecionado");
-
-        this.tutor = tutor;
-        this.pet = pet;
 
     }
 

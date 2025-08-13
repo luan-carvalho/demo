@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
-import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentType;
+import br.com.unnamed.demo.domain.payment.model.PaymentMethod;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
@@ -22,10 +22,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
                         OR LOWER(p.serviceExecution.pet.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
                     )
                     AND (CAST(:date AS DATE) IS NULL OR p.date = CAST(:date AS DATE))
-                    AND (:type IS NULL OR p.type = :type)
-                    AND p.status = 'ACTIVE'
+                    AND (:paymentMethod IS NULL OR p.paymentMethod = :paymentMethod)
                     ORDER BY p.date DESC
             """)
-    List<Payment> searchWithOptionalFilters(String name, @Param("type") PaymentType type, @Param("date") LocalDate date);
+    List<Payment> searchWithOptionalFilters(String name, @Param("type") PaymentMethod paymentMethod, @Param("date") LocalDate date);
 
 }

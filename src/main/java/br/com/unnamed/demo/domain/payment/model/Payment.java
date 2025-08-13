@@ -3,13 +3,9 @@ package br.com.unnamed.demo.domain.payment.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
-import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentType;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,47 +24,35 @@ public class Payment {
     private Long id;
 
     @NotNull
-    // @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate date;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_type_id")
-    @Enumerated(EnumType.STRING)
-    private PaymentType type;
+    @NotNull
+    private PaymentMethod paymentMethod;
 
     @Column(precision = 10, scale = 2)
-    private BigDecimal value;
+    @NotNull
+    private BigDecimal amount;
 
     @ManyToOne
     @JoinColumn(name = "service_execution_id")
+    @NotNull
     private ServiceExecution serviceExecution;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus status;
+    private String observation;
 
     public Payment() {
     }
 
-    public Payment(@NotNull LocalDate date, @NotNull PaymentType type, BigDecimal value,
-            ServiceExecution serviceExecution, PaymentStatus status) {
+    public Payment(LocalDate date, PaymentMethod paymentMethod, BigDecimal amount,
+            ServiceExecution serviceExecution, String observation) {
+
         this.date = date;
-        this.type = type;
-        this.value = value;
+        this.paymentMethod = paymentMethod;
+        this.amount = amount;
         this.serviceExecution = serviceExecution;
-        this.status = status;
-    }
-
-    public void delete() {
-
-        this.status = PaymentStatus.DELETED;
-
-    }
-
-    public void updateAmountAndType(BigDecimal value, PaymentType type) {
-
-        this.value = value;
-        this.type = type;
+        this.observation = observation;
 
     }
 

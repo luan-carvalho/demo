@@ -110,8 +110,8 @@ public class ServiceExecutionController {
 
     }
 
-    @PostMapping("/new")
-    public String createNewService(Long tutorId, Long petId, @RequestParam(required = false) List<Long> petCareIds) {
+    @PostMapping("/save")
+    public String save(Long tutorId, Long petId, @RequestParam(required = false) List<Long> petCareIds) {
 
         List<PetCare> petCares = petCareIds.stream().map(i -> petCareService.findById(i)).toList();
         Tutor tutor = tutorService.findById(tutorId);
@@ -119,18 +119,6 @@ public class ServiceExecutionController {
 
         service.create(tutor, pet, petCares);
         return "redirect:/serviceExecution";
-    }
-
-    // --- "EDIT" FORM SUBMISSION MAPPING ---
-    @PostMapping("/update")
-    public String updateService(Long serviceId, @RequestParam(required = false) List<Long> petCareIds) {
-
-        ServiceExecution serviceExecution = service.findById(serviceId);
-        List<PetCare> petCares = petCareIds.stream().map(i -> petCareService.findById(i)).toList();
-        service.update(serviceExecution, petCares);
-        return "redirect:/serviceExecution" + (serviceExecution.getDate().isEqual(LocalDate.now()) ? ""
-                : "?date=" + serviceExecution.getDate().toString());
-
     }
 
     @PostMapping("/{serviceId}/delete")
@@ -166,26 +154,14 @@ public class ServiceExecutionController {
 
     }
 
-    @PostMapping("/{serviceId}/pay")
-    public String registerPayment(@PathVariable Long serviceId, @RequestBody PaymentRequestDto dto) {
+    @PostMapping("/{serviceId}/sendToRegister")
+    public String sendServiceExecutionToRegister(@PathVariable Long serviceId) {
 
         ServiceExecution s = service.findById(serviceId);
-        List<Payment> payments = new ArrayList<>();
+        service.finish(s);
 
-        for (PaymentItemDto p : dto.getPayments()) {
-
-            payments.add(new Payment(
-                    LocalDate.now(),
-                    paymentTypeService.findById(p.getPaymentTypeId()),
-                    p.getAmount(),
-                    s,
-                    PaymentStatus.ACTIVE));
-
-        }
-
-        service.registerPayment(s, payments);
-        return "redirect:/serviceExecution";
+        return "redirect:/serviceExecution"
+                + (s.getDate().isEqual(LocalDate.now()) ? "" : "?date=" + s.getDate().toString());
 
     }
-
 }

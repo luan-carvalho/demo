@@ -3,11 +3,15 @@ package br.com.unnamed.demo.domain.serviceExecution.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionItem;
+import br.com.unnamed.demo.domain.tutor.model.Pet;
+import br.com.unnamed.demo.domain.tutor.model.Tutor;
+
 public record ServiceExecutionDto(
         Long id,
-        Long tutorId,
-        Long petId,
-        List<Long> petCareIds) {
+        Tutor tutor,
+        Pet pet,
+        List<ServiceExecutionItem> executedServices) {
 
     public static ServiceExecutionDto empty() {
 

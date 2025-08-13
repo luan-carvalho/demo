@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
-import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentType;
+import br.com.unnamed.demo.domain.payment.model.PaymentMethod;
 import br.com.unnamed.demo.domain.payment.repository.PaymentRepository;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRepository;
@@ -29,9 +29,9 @@ public class PaymentService {
 
     }
 
-    public List<Payment> searchWithOptionalFilters(String name, LocalDate date, PaymentType type) {
+    public List<Payment> searchWithOptionalFilters(String name, LocalDate date, PaymentMethod paymentMethod) {
 
-        return repo.searchWithOptionalFilters(name, type, date);
+        return repo.searchWithOptionalFilters(name, paymentMethod, date);
 
     }
 

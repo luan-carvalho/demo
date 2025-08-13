@@ -11,26 +11,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import br.com.unnamed.demo.domain.payment.dto.PaymentTypeDto;
-import br.com.unnamed.demo.domain.payment.mapper.PaymentTypeMapper;
-import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentType;
-import br.com.unnamed.demo.domain.payment.service.PaymentTypeService;
+import br.com.unnamed.demo.domain.payment.dto.PaymentMethodDto;
+import br.com.unnamed.demo.domain.payment.mapper.PaymentMethodMapper;
+import br.com.unnamed.demo.domain.payment.model.PaymentMethod;
+import br.com.unnamed.demo.domain.payment.model.enums.PaymentMethodType;
+import br.com.unnamed.demo.domain.payment.service.PaymentMethodService;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
 @Controller
 @RequestMapping("paymentType")
-public class PaymentTypeController {
+public class PaymentMethodController {
 
-    private final PaymentTypeService service;
+    private final PaymentMethodService service;
 
-    public PaymentTypeController(PaymentTypeService service) {
+    public PaymentMethodController(PaymentMethodService service) {
         this.service = service;
     }
 
     @GetMapping
-    public String listPaymentTypes(Model model,
+    public String listPaymentMethods(Model model,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) Status status,
+            @RequestParam(required = false) PaymentMethodType type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -51,9 +53,9 @@ public class PaymentTypeController {
     }
 
     @GetMapping("/new")
-    public String newPaymentTypeForm(Model model) {
+    public String newPaymentMethodForm(Model model) {
 
-        model.addAttribute("paymentType", PaymentTypeDto.empty());
+        model.addAttribute("paymentType", PaymentMethodDto.empty());
         model.addAttribute("view", "paymentType/paymentType");
         model.addAttribute("activePage", "tipo-pagamento");
         model.addAttribute("pageTitle", "Tipo de pagamento | Novo");
@@ -62,9 +64,9 @@ public class PaymentTypeController {
     }
 
     @GetMapping("/{id}")
-    public String getPaymentType(@PathVariable Long id, Model model) {
+    public String getPaymentMethod(@PathVariable Long id, Model model) {
 
-        PaymentType p = service.findById(id);
+        PaymentMethod p = service.findById(id);
 
         model.addAttribute("paymentType", p);
         model.addAttribute("view", "paymentType/paymentType");
@@ -74,18 +76,18 @@ public class PaymentTypeController {
     }
 
     @PostMapping
-    public String savePaymentType(PaymentTypeDto paymentType) {
+    public String savePaymentMethod(PaymentMethodDto paymentType) {
 
         if (paymentType.id() != null) {
 
-            PaymentType existingPaymentType = service.findById(paymentType.id());
-            existingPaymentType.updateDescription(paymentType.description());
-            service.save(existingPaymentType);
+            PaymentMethod existingPaymentMethod = service.findById(paymentType.id());
+            existingPaymentMethod.updateDescription(paymentType.description());
+            service.save(existingPaymentMethod);
             return "redirect:/paymentType";
 
         }
 
-        PaymentType p = PaymentTypeMapper.toEntity(paymentType);
+        PaymentMethod p = PaymentMethodMapper.toEntity(paymentType);
         p.activate();
 
         service.save(p);
@@ -95,7 +97,7 @@ public class PaymentTypeController {
     }
 
     @GetMapping("/{id}/inactivate")
-    public String deactivatePaymentType(@PathVariable Long id) {
+    public String deactivatePaymentMethod(@PathVariable Long id) {
 
         service.deactivate(id);
         return "redirect:/paymentType";
@@ -103,7 +105,7 @@ public class PaymentTypeController {
     }
 
     @GetMapping("/{id}/activate")
-    public String activatePaymentType(@PathVariable Long id) {
+    public String activatePaymentMethod(@PathVariable Long id) {
 
         service.activate(id);
         return "redirect:/paymentType";

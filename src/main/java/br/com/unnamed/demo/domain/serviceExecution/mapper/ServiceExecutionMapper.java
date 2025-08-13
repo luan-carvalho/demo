@@ -14,33 +14,19 @@ import br.com.unnamed.demo.domain.tutor.service.TutorService;
 
 public class ServiceExecutionMapper {
 
-    @Autowired
-    private static TutorService tutorService;
-    @Autowired
-    private static PetCareService petCareService;
-
     public static ServiceExecutionDto toDto(ServiceExecution s) {
 
-        return new ServiceExecutionDto(s.getId(),
-                s.getTutor().getId(),
-                s.getPet().getId(),
-                s.getExecutedServices()
-                        .stream()
-                        .map(i -> i.getPetCare().getId())
-                        .toList());
+        return new ServiceExecutionDto(
+                s.getId(),
+                s.getTutor(),
+                s.getPet(),
+                s.getExecutedServices());
 
     }
 
     public static ServiceExecution toEntity(ServiceExecutionDto dto) {
 
-        Tutor tutor = tutorService.findById(dto.tutorId());
-        Pet pet = tutor.getOwnedPet(dto.petId());
-        List<PetCare> petCares = dto.petCareIds().stream().map(i -> petCareService.findById(i)).toList();
-
-        ServiceExecution s = new ServiceExecution(dto.id(), pet, tutor);
-        s.updatePetCares(petCares);
-
-        return s;
+        return new ServiceExecution(dto.id(), dto.pet(), dto.tutor(), dto.executedServices());
 
     }
 
