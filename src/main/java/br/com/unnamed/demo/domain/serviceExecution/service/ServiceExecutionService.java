@@ -52,13 +52,6 @@ public class ServiceExecutionService {
 
     }
 
-    public void checkout(ServiceExecution s) {
-
-        s.checkout();
-        repo.save(s);
-
-    }
-
     public void cancel(ServiceExecution s) {
 
         s.cancel();
@@ -66,16 +59,23 @@ public class ServiceExecutionService {
 
     }
 
-    public List<LocalDate> findNotPaidFromPreviousDates() {
+    public void addPayment(ServiceExecution s, Payment p) {
 
-        return repo.findNotPaidFromPreviousDates();
+        s.addPayment(p);
+        repo.save(s);
 
     }
 
-    public void registerPayment(ServiceExecution s, List<Payment> payments) {
+    public void removePayment(ServiceExecution s, Payment p) {
 
-        s.pay(payments);
+        s.removePayment(p);
         repo.save(s);
+
+    }
+
+    public List<LocalDate> findNotPaidFromPreviousDates() {
+
+        return repo.findNotPaidFromPreviousDates();
 
     }
 

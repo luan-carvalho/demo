@@ -41,8 +41,8 @@
                                     <label for="gender" class="form-label">Sexo</label>
                                     <select class="form-select" id="gender" th:field="*{gender}" required>
                                         <option value="" hidden>-- Selecione --</option>
-                                        <option th:each="g : ${genders}" th:value="${g.name()}"
-                                            th:text="${ g.name()}"></option>
+                                        <option th:each="g : ${genders}" th:value="${g.name()}" th:text="${ g.name()}">
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -78,7 +78,7 @@
                         <div class="card-header">
                             <h5 class="card-title mb-0"><i class="bi bi-clock-history me-2"></i>Histórico de
                                 Atendimentos</h5>
-                                <p class="small mt-2 fw">Últimos 10 atendimentos</p>
+                            <p class="small mt-2 fw">Últimos 10 atendimentos</p>
                         </div>
                         <div class="list-group list-group-flush">
                             <div th:if="${#lists.isEmpty(serviceHistory)}"
@@ -86,12 +86,12 @@
                                 Nenhum atendimento registrado para este pet.
                             </div>
                             <a th:each="service : ${serviceHistory}"
-                                th:href="@{/serviceExecution/{id}(id=${service.id})}",
+                                th:href="@{/serviceExecution/{id}(id=${service.id})}" ,
                                 class="list-group-item list-group-item-action">
                                 <div class="d-flex w-100 justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="mb-1"
-                                            th:text="${#temporals.format(service.date, 'dd/MM/yyyy')}"></h6>
+                                        <h6 class="mb-1" th:text="${#temporals.format(service.date, 'dd/MM/yyyy')}">
+                                        </h6>
                                         <p class="mb-0 small text-muted">
                                             <span th:each="item : ${service.executedServices}"
                                                 class="badge bg-light border text-dark-emphasis rounded-pill me-1"
@@ -145,6 +145,59 @@
                 </div>
             </div>
         </form>
+
+        <script>
+            $(document).ready(function () {
+                const specieSelect = $('#specie');
+                const breedSelect = $('#breed');
+
+                $('.select2-searchable').select2({
+                    theme: 'bootstrap-5'
+                });
+
+                function updateBreedDropdown(specieId, selectedBreedId) {
+                    breedSelect.prop('disabled', true).empty().append('<option value="">Carregando...</option>').trigger('change');
+
+                    if (!specieId) {
+                        breedSelect.empty().append('<option value="" selected disabled>Selecione uma espécie primeiro</option>').trigger('change');
+                        return;
+                    }
+
+                    const apiUrl = `/tutor/pet/specie/${specieId}/breeds`;
+
+                    $.ajax({
+                        url: apiUrl,
+                        type: 'GET',
+                        success: function (breeds) {
+                            breedSelect.empty().append('<option value="" hidden>-- Selecione a raça --</option>');
+                            if (Array.isArray(breeds) && breeds.length > 0) {
+                                breeds.forEach(breed => {
+                                    const isSelected = selectedBreedId && selectedBreedId.toString() === breed.id.toString();
+                                    const option = new Option(breed.description, breed.id, false, isSelected);
+                                    breedSelect.append(option);
+                                });
+                            } else {
+                                breedSelect.append('<option value="" disabled>Nenhuma raça encontrada</option>');
+                            }
+                            breedSelect.prop('disabled', false).trigger('change');
+                        },
+                        error: function () {
+                            console.error('Erro ao carregar raças.');
+                            breedSelect.empty().append('<option value="" disabled>Erro ao carregar raças</option>').trigger('change');
+                        }
+                    });
+                }
+
+                specieSelect.on('change', function () {
+                    updateBreedDropdown($(this).val(), null);
+                });
+
+                if (specieSelect.val()) {
+                    updateBreedDropdown(specieSelect.val(), breedSelect.data('selected'));
+                }
+            });
+        </script>
+
     </div>
 </body>
 

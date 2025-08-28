@@ -1,78 +1,56 @@
-<!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="serviceCard" class="card shadow-sm mb-3 border service-card">
+    <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="card-title mb-0" th:text="${service.pet.name}"></h6>
+            <div class="btn-group btn-group-sm">
+                <a th:href="@{/serviceExecution/{id}(id=${service.id})}" class="btn btn-outline-secondary"
+                    title="Editar"><i class="bi bi-pencil-fill"></i></a>
 
-<body>
-
-    <div th:fragment="serviceCard" class="card shadow-sm mb-3 border service-card">
-        <div class="card-body p-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="card-title mb-0" th:text="${service.pet.name}"></h6>
-                <div class="btn-group btn-group-sm">
-                    <a th:href="@{/serviceExecution/{id}(id=${service.id})}" class="btn btn-outline-secondary"
-                        title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                    <button type="button" class="btn btn-outline-danger" title="Excluir" data-bs-toggle="modal"
-                        data-bs-target="#deleteConfirmationModal"
-                        th:attr="data-service-id=${service.id}, data-service-info=${service.pet.name + ' / ' + service.tutor.info.name}"><i
-                            class="bi bi-trash-fill"></i></button>
-                </div>
-            </div>
-
-            <p class="card-subtitle mb-2 text-muted small"><i class="bi bi-person"></i> <span
-                    th:text="${service.tutor.info.name}"></span></p>
-            <div class="mt-3 border-top pt-2">
-                <p class="small text-muted mb-1 fw-bold">Serviços:</p>
-                <div class="d-flex flex-wrap gap-1">
-                    <span th:each="item : ${service.executedServices}"
-                        class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill"
-                        th:text="${item.petCare.description}"></span>
-                </div>
             </div>
         </div>
-        <div class="card-footer d-flex justify-content-between align-items-center p-2">
-            <div>
-                <strong class="me-1">Total:</strong>
-                <span class="fw-bold"
-                    th:text="'R$ ' + ${#numbers.formatDecimal(service.calculateTotal(), 1, 'POINT', 2, 'COMMA')}"></span>
-            </div>
 
-            <div>
-                <!-- Condition 1: Status is PENDING -->
-                <div th:if="${service.serviceStatus.name() == 'PENDING' and isToday}">
-                    <!-- Use th:action for dynamic URLs -->
-                    <form th:action="@{/serviceExecution/{id}/start(id=${service.id})}" method="post"
-                        class="d-inline">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                        <input type="hidden" name="newStatus" value="IN_PROGRESS" />
-                        <button type="submit" class="btn btn-sm btn-primary" title="Iniciar Atendimento">
-                            <i class="bi bi-play-fill"></i>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Condition 2: Status is IN_PROGRESS -->
-                <div th:if="${service.serviceStatus.name() == 'IN_PROGRESS' and isToday}">
-                    <form th:action="@{/serviceExecution/{id}/finish(id=${service.id})}" method="post"
-                        class="d-inline">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                        <input type="hidden" name="newStatus" value="COMPLETED" />
-                        <button type="submit" class="btn btn-sm btn-info text-dark" title="Finalizar Atendimento">
-                            <i class="bi bi-check-lg"></i>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Condition 3: Status is COMPLETED -->
-                <div th:if="${service.serviceStatus.name() == 'COMPLETED' or not isToday}">
-                    <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
-                        data-bs-target="#paymentModal"
-                        th:attr="data-service-id=${service.id}, data-total-amount=${service.calculateTotal()}"
-                        title="Registrar Pagamento">
-                        <i class="bi bi-currency-dollar"></i>
-                    </button>
-                </div>
+        <p class="card-subtitle mb-2 text-muted small"><i class="bi bi-person"></i> <span
+                th:text="${service.tutor.info.name}"></span></p>
+        <div class="mt-3 border-top pt-2">
+            <p class="small text-muted mb-1 fw-bold">Serviços:</p>
+            <div class="d-flex flex-wrap gap-1">
+                <span th:each="item : ${service.executedServices}"
+                    class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill"
+                    th:text="${item.petCare.description}"></span>
             </div>
         </div>
     </div>
-</body>
+    <div class="card-footer d-flex justify-content-between align-items-center p-2">
+        <div>
+            <strong class="me-1">Total:</strong>
+            <span class="fw-bold"
+                th:text="'R$ ' + ${#numbers.formatDecimal(service.calculateTotal(), 1, 'POINT', 2, 'COMMA')}"></span>
+        </div>
 
-</html>
+        <div>
+
+            <div th:if="${service.serviceStatus.name() == 'PENDING' and isToday}">
+                <form th:action="@{/serviceExecution/{id}/start(id=${service.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-primary" title="Iniciar Atendimento">
+                        <i class="bi bi-play-fill"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div th:if="${service.serviceStatus.name() == 'IN_PROGRESS' and isToday}">
+                <form th:action="@{/serviceExecution/{id}/finish(id=${service.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-info text-dark" title="Finalizar Atendimento">
+                        <i class="bi bi-check-lg"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div th:if="${service.serviceStatus.name() == 'COMPLETED' or not isToday}">
+                <a th:href="@{/serviceExecution/{id}/checkout(id = ${service.id})}" class="btn btn-sm btn-success" title="Registrar Pagamento">
+                    <i class="bi bi-currency-dollar"></i>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

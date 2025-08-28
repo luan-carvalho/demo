@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.unnamed.demo.domain.petCare.dtos.PetCareDto;
-import br.com.unnamed.demo.domain.petCare.mapper.PetCareGroupMapper;
 import br.com.unnamed.demo.domain.petCare.mapper.PetCareMapper;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
-import br.com.unnamed.demo.domain.petCare.service.PetCareGroupService;
+import br.com.unnamed.demo.domain.petCare.model.PetCareGroup;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
@@ -24,17 +23,16 @@ import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 public class PetCareController {
 
     private PetCareService petCareService;
-    private PetCareGroupService petCareGroupService;
 
-    public PetCareController(PetCareService petCareService, PetCareGroupService petCareGroupService) {
+    public PetCareController(PetCareService petCareService) {
         this.petCareService = petCareService;
-        this.petCareGroupService = petCareGroupService;
     }
 
     @GetMapping
     public String listPetCares(Model model,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) Status status,
+            @RequestParam(required = false) PetCareGroup petCareGroup,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -42,13 +40,13 @@ public class PetCareController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("description").ascending());
 
-        model.addAttribute("petCarePage", petCareService.searchWithOptionalFilters(description, status, pageable));
+        model.addAttribute("petCarePage",
+                petCareService.searchWithOptionalFilters(description, petCareGroup, status, pageable));
         model.addAttribute("status", status);
         model.addAttribute("statuses", Status.values());
         model.addAttribute("description", description);
         model.addAttribute("view", "petCare/petCare-list");
         model.addAttribute("activePage", "services");
-        model.addAttribute("pageScript", "/js/script.js");
         model.addAttribute("pageTitle", "Serviços");
         return "layout/base-layout";
 
@@ -57,7 +55,7 @@ public class PetCareController {
     @GetMapping("/new")
     public String newPetCareForm(Model model) {
 
-        model.addAttribute("petCareGroups", PetCareGroupMapper.toDtoList(petCareGroupService.findAllActive()));
+        model.addAttribute("petCareGroups", petCareService.findAllGroups());
         model.addAttribute("petCare", PetCareDto.empty());
         model.addAttribute("view", "petCare/petCare");
         model.addAttribute("activePage", "services");
@@ -71,7 +69,7 @@ public class PetCareController {
 
         PetCare p = petCareService.findById(id);
 
-        model.addAttribute("petCareGroups", PetCareGroupMapper.toDtoList(petCareGroupService.findAllActive()));
+        model.addAttribute("petCareGroups", petCareService.findAllGroups());
         model.addAttribute("petCare", p);
         model.addAttribute("view", "petCare/petCare");
         model.addAttribute("activePage", "services");

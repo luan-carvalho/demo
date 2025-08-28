@@ -3,6 +3,8 @@ package br.com.unnamed.demo.domain.payment.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
+import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,11 +27,9 @@ public class Payment {
     @NotNull
     private LocalDate date;
 
-    @NotNull
-    private String tutorName;
-
-    @NotNull
-    private String petName;
+    @ManyToOne
+    @JoinColumn(name = "service_execution_id")
+    private ServiceExecution serviceExecution;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_type_id")
@@ -45,11 +45,10 @@ public class Payment {
     public Payment() {
     }
 
-    public Payment(@NotNull LocalDate date, String tutorName, String petName, @NotNull PaymentMethod paymentMethod,
-            @NotNull BigDecimal amount, String observation) {
+    public Payment(@NotNull LocalDate date, @NotNull ServiceExecution serviceExecution,
+            @NotNull PaymentMethod paymentMethod, @NotNull BigDecimal amount, String observation) {
         this.date = date;
-        this.tutorName = tutorName;
-        this.petName = petName;
+        this.serviceExecution = serviceExecution;
         this.paymentMethod = paymentMethod;
         this.amount = amount;
         this.observation = observation;

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
+import br.com.unnamed.demo.domain.petCare.model.PetCareGroup;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
 @Repository
@@ -20,10 +21,13 @@ public interface PetCareRepository extends JpaRepository<PetCare, Long> {
     @Query("SELECT p FROM PetCare p WHERE p.status = 'INACTIVE'")
     List<PetCare> findAllInactive();
 
-    @Query("SELECT DISTINCT p FROM PetCare p " +
-            "WHERE (:description IS NULL OR LOWER(p.description) LIKE LOWER(CONCAT('%', CAST(:description AS STRING), '%')))"
-            +
-            "AND (:status IS NULL OR p.status = :status)")
-    Page<PetCare> searchWithOptionalFilters(String description, Status status, Pageable pageable);
+    @Query("""
+            SELECT DISTINCT p
+            FROM PetCare p
+            WHERE (:description IS NULL OR LOWER(p.description) LIKE LOWER(CONCAT('%', CAST(:description AS STRING), '%')))
+            AND (:status IS NULL OR p.status = :status)
+            AND (:group IS NULL OR p.group = :group)
+            """)
+    Page<PetCare> searchWithOptionalFilters(String description, Status status, PetCareGroup group, Pageable pageable);
 
 }

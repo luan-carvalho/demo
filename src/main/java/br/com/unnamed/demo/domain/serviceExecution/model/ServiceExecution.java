@@ -52,8 +52,7 @@ public class ServiceExecution {
     @NotNull
     private ServiceStatus serviceStatus;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "service_execution_id")
+    @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments;
 
     public ServiceExecution() {
@@ -88,12 +87,6 @@ public class ServiceExecution {
 
     }
 
-    public void checkout() {
-
-        this.serviceStatus = ServiceStatus.CHECKOUT;
-
-    }
-
     public void cancel() {
 
         this.payments.clear();
@@ -101,20 +94,15 @@ public class ServiceExecution {
 
     }
 
-    public void pay(List<Payment> payments) {
+    public void addPayment(Payment payment) {
 
-        if (getAmountPaid() == calculateTotal())
-            throw new IllegalArgumentException("Service already fully paid");
-
-        this.payments.addAll(payments);
-        this.serviceStatus = ServiceStatus.PAID;
+        this.payments.add(payment);
 
     }
 
-    public void deletePayment(Payment payment) {
+    public void removePayment(Payment payment) {
 
         this.payments.remove(payment);
-        this.serviceStatus = ServiceStatus.COMPLETED;
 
     }
 

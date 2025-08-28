@@ -9,8 +9,7 @@ public class PaymentMapper {
 
         return new Payment(
                 dto.date(),
-                dto.tutorName(),
-                dto.petName(),
+                dto.serviceExecution(),
                 dto.paymentMethod(),
                 dto.amount(),
                 dto.observation());
@@ -21,8 +20,7 @@ public class PaymentMapper {
 
         return new PaymentDto(
                 p.getId(),
-                p.getTutorName(),
-                p.getPetName(),
+                p.getServiceExecution(),
                 p.getAmount(),
                 p.getDate(),
                 p.getPaymentMethod(),

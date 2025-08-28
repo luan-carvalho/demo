@@ -7,27 +7,31 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
+import br.com.unnamed.demo.domain.petCare.model.PetCareGroup;
+import br.com.unnamed.demo.domain.petCare.repository.PetCareGroupRepository;
 import br.com.unnamed.demo.domain.petCare.repository.PetCareRepository;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
 @Service
 public class PetCareService {
 
-    private PetCareRepository repo;
+    private final PetCareGroupRepository groupRepo;
+    private final PetCareRepository repo;
 
-    public PetCareService(PetCareRepository repo) {
+    public PetCareService(PetCareGroupRepository groupRepo, PetCareRepository repo) {
+        this.groupRepo = groupRepo;
         this.repo = repo;
     }
 
     public List<PetCare> findAllActive() {
 
-        return repo.findAll().stream().filter(pc -> pc.isActive()).toList();
+        return repo.findAllActive();
 
     }
 
-    public List<PetCare> findAllInactive() {
+    public List<PetCareGroup> findAllGroups() {
 
-        return repo.findAll().stream().filter(pc -> pc.isInactive()).toList();
+        return groupRepo.findAll();
 
     }
 
@@ -59,9 +63,10 @@ public class PetCareService {
 
     }
 
-    public Page<PetCare> searchWithOptionalFilters(String description, Status status, Pageable pageable) {
+    public Page<PetCare> searchWithOptionalFilters(String description, PetCareGroup group, Status status,
+            Pageable pageable) {
 
-        return repo.searchWithOptionalFilters(description, status, pageable);
+        return repo.searchWithOptionalFilters(description, status, group, pageable);
 
     }
 

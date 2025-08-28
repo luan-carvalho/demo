@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
@@ -23,6 +24,7 @@ import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Gender;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
+import br.com.unnamed.demo.domain.tutor.model.valueObjects.Breed;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
 import br.com.unnamed.demo.domain.tutor.service.PetInfoService;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
@@ -206,5 +208,11 @@ public class TutorController {
         tutorService.activatePet(tutorId, petId);
         return "redirect:/tutor/" + tutorId;
 
+    }
+
+    @GetMapping("/pet/specie/{specieId}/breeds")
+    @ResponseBody
+    public List<Breed> getBreedsBasedOnSpecies(@PathVariable Long specieId) {
+        return petInfoService.findAllBreedsFromSpecieId(specieId);
     }
 }

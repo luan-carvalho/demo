@@ -7,27 +7,36 @@ import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
-import br.com.unnamed.demo.domain.payment.model.PaymentMethod;
+import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
+import br.com.unnamed.demo.domain.payment.repository.PaymentMethodRepository;
 import br.com.unnamed.demo.domain.payment.repository.PaymentRepository;
 
 @Service
 public class PaymentService {
 
-    private final PaymentRepository repo;
+    private final PaymentRepository payRepo;
+    private final PaymentMethodRepository payMethodRepo;
 
-    public PaymentService(PaymentRepository repo) {
-        this.repo = repo;
+    public PaymentService(PaymentRepository payRepo, PaymentMethodRepository payMethodRepo) {
+        this.payRepo = payRepo;
+        this.payMethodRepo = payMethodRepo;
+    }
+
+    public List<PaymentMethod> getAllPaymentMethods() {
+
+        return payMethodRepo.findAll();
+
     }
 
     public Payment findById(Long id) {
 
-        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("No payment found with id" + id));
+        return payRepo.findById(id).orElseThrow(() -> new NoSuchElementException("No payment found with id" + id));
 
     }
 
     public List<Payment> searchWithOptionalFilters(String name, LocalDate date, PaymentMethod paymentMethod) {
 
-        return repo.searchWithOptionalFilters(name, paymentMethod, date);
+        return payRepo.searchWithOptionalFilters(name, paymentMethod, date);
 
     }
 

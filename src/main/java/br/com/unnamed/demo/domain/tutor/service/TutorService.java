@@ -22,9 +22,9 @@ public class TutorService {
 
     }
 
-    public List<Tutor> findAll() {
+    public List<Tutor> findAllActive() {
 
-        return tutorRepo.findAll();
+        return tutorRepo.findAllActive();
 
     }
 

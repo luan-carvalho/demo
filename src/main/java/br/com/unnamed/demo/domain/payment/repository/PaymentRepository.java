@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
-import br.com.unnamed.demo.domain.payment.model.PaymentMethod;
+import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
@@ -18,8 +18,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
                 WHERE
                     (
                         :name IS NULL
-                        OR LOWER(p.tutorName) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
-                        OR LOWER(p.petName) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
+                        OR LOWER(p.serviceExecution.tutor.info.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
+                        OR LOWER(p.serviceExecution.pet.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
                     )
                     AND (CAST(:date AS DATE) IS NULL OR p.date = CAST(:date AS DATE))
                     AND (:paymentMethod IS NULL OR p.paymentMethod = :paymentMethod)
