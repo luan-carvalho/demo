@@ -14,26 +14,11 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <strong>Atenção:</strong> Existem serviços não finalizado de dias anteriores.
+                    <strong>Atenção:</strong> Existem serviços não finalizados de dias anteriores.
                 </div>
-                <a class="btn btn-sm btn-outline-dark" data-bs-toggle="collapse" href="#pendingDatesList" role="button"
-                    aria-expanded="false" aria-controls="pendingDatesList">
-                    Ver Datas
+                <a class="btn btn-sm btn-outline-dark" href="/serviceExecution/list" role="button">
+                    Conferir
                 </a>
-            </div>
-
-            <div class="collapse mt-3" id="pendingDatesList">
-                <hr>
-                <p class="mb-2">Clique para ver os atendimentos com pagamentos pendentes:</p>
-                <div class="list-group">
-                    <a th:each="date : ${dates_with_not_paid}"
-                        th:href="@{/serviceExecution/list(paymentStatus=T())}"
-                        class="list-group-item list-group-item-action list-group-item-warning text-dark text-capitalize">
-                        <i class="bi bi-calendar-range me-2"></i>
-                        <span
-                            th:text="${#temporals.format(date, 'EEEE, d ''de'' MMMM ''de'' yyyy', new java.util.Locale('pt', 'BR'))}"></span>
-                    </a>
-                </div>
             </div>
         </div>
 

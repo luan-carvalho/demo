@@ -3,7 +3,7 @@
 # Geral
 
 [ ] Validação em todos os forms (tirar aquele negócio de required do html)
-[ ] Popup para mensagem de erro/sucesso
+[ ] Popup para mensagem de erro/sucesso em todas as telas
 [ ] Tela de erro para erros genéricos
 [ ] Exceções personalizadas para gerar erros personalizados
 
