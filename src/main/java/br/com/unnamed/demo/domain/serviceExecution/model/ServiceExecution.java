@@ -7,6 +7,7 @@ import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
+import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
@@ -44,6 +45,10 @@ public class ServiceExecution {
     @NotNull
     private Tutor tutor;
 
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ServicePaymentStatus paymentStatus;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "service_execution_id")
     private List<ServiceExecutionItem> executedServices;
@@ -60,11 +65,12 @@ public class ServiceExecution {
         this.executedServices = new ArrayList<>();
         this.date = LocalDate.now();
         this.serviceStatus = ServiceStatus.PENDING;
+        this.paymentStatus = ServicePaymentStatus.NOT_PAID;
 
     }
 
     public ServiceExecution(Long id, Pet pet, Tutor tutor, ServiceStatus serviceStatus,
-            List<ServiceExecutionItem> executedServices) {
+            List<ServiceExecutionItem> executedServices, ServicePaymentStatus paymentStatus) {
 
         this.id = id;
         this.pet = pet;
@@ -72,6 +78,7 @@ public class ServiceExecution {
         this.date = LocalDate.now();
         this.serviceStatus = serviceStatus;
         this.executedServices = executedServices;
+        this.paymentStatus = paymentStatus;
 
     }
 
@@ -90,11 +97,15 @@ public class ServiceExecution {
     public void cancel() {
 
         this.payments.clear();
-        this.serviceStatus = ServiceStatus.CANCELED;
+        this.serviceStatus = ServiceStatus.CANCELLED;
 
     }
 
     public void addPayment(Payment payment) {
+
+        if (getAmountPaid().add(payment.getAmount()).compareTo(this.calculateTotal()) > 0)
+            throw new IllegalArgumentException(
+                    "Não é possível adicionar este pagamento, pois o serviço já foi totalmente pago");
 
         this.payments.add(payment);
 
@@ -116,6 +127,12 @@ public class ServiceExecution {
     public BigDecimal getBalance() {
 
         return calculateTotal().subtract(getAmountPaid());
+
+    }
+
+    public void markAsPaid() {
+
+        this.paymentStatus = ServicePaymentStatus.PAID;
 
     }
 

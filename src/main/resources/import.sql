@@ -37,6 +37,8 @@ INSERT INTO public.pet_coat_colors (description) VALUES ('Bege Mesclado');
 INSERT INTO public.pet_species (description) VALUES ('Canina');
 INSERT INTO public.pet_species (description) VALUES ('Felina');
 
+INSERT INTO public.pet_breeds (description, specie_id) VALUES ('SRD', 1);
+INSERT INTO public.pet_breeds (description, specie_id) VALUES ('SRD', 2);
 INSERT INTO public.pet_breeds (description, specie_id) VALUES ('Labrador Retriever', 1);
 INSERT INTO public.pet_breeds (description, specie_id) VALUES ('Poodle', 1);
 INSERT INTO public.pet_breeds (description, specie_id) VALUES ('Bulldog Francês', 1);
@@ -90,19 +92,18 @@ INSERT INTO pet_care_group (description) VALUES ('Tosa');
 INSERT INTO pet_care_group (description) VALUES ('Outros serviços');
 
 INSERT INTO tutor (name, phone, status) VALUES ('Luan Carvalho de Souza', '63992932615', 'ACTIVE');
-
 INSERT INTO pet (name, gender, specie_id, breed_id, coat_color_id, tutor_id, status) VALUES ('Dox', 'Macho', 1, 5, 19, 1, 'ACTIVE');
 
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Banho', 1, 45.00, 'ACTIVE');
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Tosa higiênica', 2, 40.00, 'ACTIVE');
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Corte de unha', 3, 15.00, 'ACTIVE');
 
-INSERT INTO role (description) VALUES ('ROLE_ADMIN');
-
-INSERT INTO users (username, password, status) VALUES ('luan', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'ACTIVE');
-
-INSERT INTO user_role (role_id, user_id) VALUES (1, 1);
-
-INSERT INTO service_execution (tutor_id, pet_id, service_status, date) VALUES (1, 1, 'COMPLETED', CURRENT_DATE);
+INSERT INTO service_execution (tutor_id, pet_id, service_status, date, payment_status) VALUES (1, 1, 'IN_PROGRESS', CURRENT_DATE, 'NOT_PAID');
 INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (1, 1, 45.00);
 
+INSERT INTO service_execution (tutor_id, pet_id, service_status, date, payment_status) VALUES (1, 1, 'COMPLETED', CURRENT_DATE - INTERVAL '1 day', 'PAID');
+INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (2, 1, 45.00);
+
+INSERT INTO role (description) VALUES ('ROLE_ADMIN');
+INSERT INTO users (username, password, status) VALUES ('luan', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'ACTIVE');
+INSERT INTO user_role (role_id, user_id) VALUES (1, 1);

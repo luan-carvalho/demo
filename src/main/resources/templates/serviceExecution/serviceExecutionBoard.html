@@ -5,7 +5,7 @@
     <div th:fragment="content">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">Atendimentos</h1>
+            <h1 class="h3 mb-0">Quadro de execução</h1>
             <a th:href="@{/serviceExecution/new}" class="btn btn-primary shadow-sm">
                 <i class="bi bi-plus-lg me-1"></i> Novo
             </a>
@@ -24,55 +24,15 @@
 
             <div class="collapse mt-3" id="pendingDatesList">
                 <hr>
-                <p class="mb-2">Clique em uma data para ver os atendimentos com pagamentos pendentes:</p>
+                <p class="mb-2">Clique para ver os atendimentos com pagamentos pendentes:</p>
                 <div class="list-group">
                     <a th:each="date : ${dates_with_not_paid}"
-                        th:href="@{/serviceExecution(date=${#temporals.format(date, 'yyyy-MM-dd')})}"
+                        th:href="@{/serviceExecution/list(paymentStatus=T())}"
                         class="list-group-item list-group-item-action list-group-item-warning text-dark text-capitalize">
                         <i class="bi bi-calendar-range me-2"></i>
                         <span
                             th:text="${#temporals.format(date, 'EEEE, d ''de'' MMMM ''de'' yyyy', new java.util.Locale('pt', 'BR'))}"></span>
                     </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div class="d-none d-lg-block">
-                        <a th:href="@{/serviceExecution(date=${previousDate})}" class="btn btn-outline-secondary"
-                            title="Dia Anterior">
-                            <i class="bi bi-arrow-left-short"></i>
-                        </a>
-                    </div>
-
-                    <div id="date-picker-container" class="mx-auto" style="cursor: pointer;"
-                        th:data-current-date="${currentDateISO}">
-
-                        <div class="d-none d-lg-flex align-items-center gap-3">
-                            <h5 class="mb-0 text-primary">
-                                <i class="bi bi-calendar-event me-2"></i>
-                                <span id="dateISO" hidden th:text="${currentDateISO}"></span>
-                                <span th:text="${currentDate}" class="text-capitalize"></span>
-                            </h5>
-                            <div th:if="${not isToday}" class="border-start ps-3">
-                                <a th:href="@{/serviceExecution}" class="btn btn-secondary"
-                                    title="Ir para hoje">Hoje</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-none d-lg-block">
-                        <a th:if="${not isToday}" th:href="@{/serviceExecution(date=${nextDate})}"
-                            class="btn btn-outline-secondary" title="Próximo Dia">
-                            <i class="bi bi-arrow-right-short"></i>
-                        </a>
-                        <div th:if="${isToday}" class="btn" style="visibility: hidden;"><i
-                                class="bi bi-arrow-right-short"></i></div>
-                    </div>
-
                 </div>
             </div>
         </div>

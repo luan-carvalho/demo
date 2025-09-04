@@ -12,8 +12,6 @@
             <div class="card-body">
                 <form th:action="@{/payment}" method="get" class="row g-2 align-items-end">
 
-                    <span hidden id="dateISO" name="date" th:text="${currentDateISO}"></span>
-
                     <div class="col-lg-4">
                         <label for="name" class="form-label">Tutor / Pet</label>
                         <input type="text" id="name" name="name" class="form-control" placeholder="Digite o nome..."

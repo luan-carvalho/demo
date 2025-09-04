@@ -4,10 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
+import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRepository;
 
@@ -29,6 +32,13 @@ public class ServiceExecutionService {
     public void save(ServiceExecution serviceExecution) {
 
         repo.save(serviceExecution);
+
+    }
+
+    public Page<ServiceExecution> searchWithOptionalFilters(String name, LocalDate date, ServiceStatus status,
+            ServicePaymentStatus paymentStatus, Pageable pageable) {
+
+        return repo.findWithOptionalFilters(name, date, status, paymentStatus, pageable);
 
     }
 

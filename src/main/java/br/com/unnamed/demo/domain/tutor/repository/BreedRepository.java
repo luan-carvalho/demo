@@ -10,7 +10,7 @@ import br.com.unnamed.demo.domain.tutor.model.valueObjects.Breed;
 
 public interface BreedRepository extends JpaRepository<Breed, Long> {
 
-    @Query("SELECT b FROM Breed b WHERE b.specie.id = :specieId")
+    @Query("SELECT b FROM Breed b WHERE b.specie.id = :specieId ORDER BY b.description ASC")
     List<Breed> findBySpecieId(@Param("specieId") Long specieId);
     
 }

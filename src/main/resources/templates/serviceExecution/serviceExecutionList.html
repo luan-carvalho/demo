@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="content">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0" th:text="${pageTitle}">Serviços executados</h1>
+            <a th:href="@{/serviceExecution/new}" class="btn btn-primary shadow-sm">
+                <i class="bi bi-plus-lg me-1"></i> Novo
+            </a>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form th:action="@{/serviceExecution/list}" method="get" class="row g-2 align-items-end">
+
+                    <div class="col-lg-4">
+                        <label for="name" class="form-label">Tutor / Pet</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Digite o nome..."
+                            th:value="${name}">
+                    </div>
+
+                    <div class="col-lg-2">
+                        <label for="date" class="form-label">Data</label>
+                        <input type="date" id="date" name="date" class="form-control" th:value="${date}">
+                    </div>
+
+                    <div class="col-lg-2">
+                        <label for="status" class="form-label">Status</label>
+                        <select id="status" name="status" class="form-select">
+                            <option value="">Todos</option>
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"
+                                th:selected="${status == s}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2">
+                        <label for="paymentStatus" class="form-label">Pagamento</label>
+                        <select id="paymentStatus" name="paymentStatus" class="form-select">
+                            <option value="">Todos</option>
+                            <option th:each="s : ${paymentStatuses}" th:value="${s}" th:text="${s.label}"
+                                th:selected="${paymentStatus == s}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-1 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
+                        <a th:href="@{/serviceExecution/list}" class="btn btn-secondary w-100"><i
+                                class="bi bi-x-lg"></i></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Data</th>
+                                <th scope="col">Pet</th>
+                                <th scope="col">Tutor</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="service : ${services.content}" class="clickable-row"
+                                th:data-href="@{/serviceExecution/{id}(id=${service.id})}">
+
+                                <td th:text="${#temporals.format(service.date, 'dd/MM/yyyy')}"></td>
+
+                                <td th:text="${service.pet.name}"> </td>
+                                <td th:text="${service.tutor.info.name}"> </td>
+
+                                <td>
+                                    <span th:text="${service.serviceStatus.label}" class="badge fw-bold me-1"
+                                        th:classappend="${service.serviceStatus.label == 'Pendente' ? ' bg-secondary' :
+                 service.serviceStatus.label == 'Em execução' ? ' bg-warning text-dark' :
+                 service.serviceStatus.label == 'Finalizado' ? ' bg-success' :
+                 service.serviceStatus.label == 'Cancelado' ? ' bg-danger' : ''}">
+                                    </span>
+                                </td>
+
+
+                                <td class="text-end"
+                                    th:text="'R$ ' + ${#numbers.formatDecimal(service.calculateTotal(), 1, 'POINT', 2, 'COMMA')}">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <!-- <nav th:if="${tutorPage.totalPages > 1}" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${tutorPage.first} ? 'disabled'">
+                <a class="page-link"
+                    th:href="@{/tutor(page=${tutorPage.number - 1}, size=${tutorPage.size}, search=${search})}">Anterior</a>
+            </li>
+
+            <li th:each="i : ${#numbers.sequence(0, tutorPage.totalPages - 1)}" class="page-item"
+                th:classappend="${i == tutorPage.number} ? 'active'">
+                <a class="page-link" th:href="@{/tutor(page=${i}, size=${tutorPage.size}, search=${search})}"
+                    th:text="${i + 1}"></a>
+            </li>
+
+            <li class="page-item" th:classappend="${tutorPage.last} ? 'disabled'">
+                <a class="page-link"
+                    th:href="@{/tutor(page=${tutorPage.number + 1}, size=${tutorPage.size}, search=${search})}">Próxima</a>
+            </li>
+        </ul>
+    </nav> -->
+
+        <script>
+
+            if ($(".clickable-row").length) {
+                $(".clickable-row").on("click", function (event) {
+                    if ($(event.target).closest('a.badge').length === 0) {
+                        window.location = $(this).data("href");
+                    }
+                });
+            }
+
+        </script>
+</body>
+
+</html>

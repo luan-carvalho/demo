@@ -12,13 +12,15 @@ public class ServiceExecutionMapper {
                 s.getTutor(),
                 s.getPet(),
                 s.getServiceStatus(),
+                s.getPaymentStatus(),
                 s.getExecutedServices());
 
     }
 
     public static ServiceExecution toEntity(ServiceExecutionDto dto) {
 
-        return new ServiceExecution(dto.id(), dto.pet(), dto.tutor(), dto.serviceStatus(), dto.executedServices());
+        return new ServiceExecution(dto.id(), dto.pet(), dto.tutor(), dto.serviceStatus(), dto.executedServices(),
+                dto.paymentStatus());
 
     }
 

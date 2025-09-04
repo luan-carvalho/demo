@@ -175,16 +175,12 @@ public class TutorController {
         if (pet.id() != null) {
 
             tutor.updatePetInfo(PetMapper.toEntity(pet));
-            System.out.println("Atualizando...");
-            System.out.println("Status = " + pet.status());
 
         }
 
         if (pet.id() == null) {
 
             tutor.addPet(PetMapper.toEntity(pet));
-            System.out.println("Criando...");
-            System.out.println("Status = " + pet.status());
 
         }
 
