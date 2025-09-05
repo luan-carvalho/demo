@@ -92,7 +92,7 @@
                                     <div class="text-end d-flex flex-column align-items-end">
                                         <span class="badge"
                                             th:classappend="${service.serviceStatus.name() == 'COMPLETED' ? 'bg-success' : 'bg-warning text-dark'}"
-                                            th:text="${service.serviceStatus.name() == 'COMPLETED' ? 'Pago' : 'Pendente'}"></span>
+                                            th:text="${service.serviceStatus.label}"></span>
                                         <div class="small mt-1 fw-bold"
                                             th:text="'R$ ' + ${#numbers.formatDecimal(service.calculateTotal(), 1, 'POINT', 2, 'COMMA')}">
                                         </div>
