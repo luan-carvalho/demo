@@ -17,8 +17,7 @@ public interface ServiceExecutionRepository extends JpaRepository<ServiceExecuti
         @Query("SELECT s FROM ServiceExecution s WHERE s.serviceStatus = :serviceStatus AND s.date = :date")
         public List<ServiceExecution> findByStatusAndDate(ServiceStatus serviceStatus, LocalDate date);
 
-        @Query("SELECT DISTINCT s.date FROM ServiceExecution s WHERE s.serviceStatus NOT IN ('PAID', 'CANCELED') AND s.date < CURRENT_DATE")
-        public List<LocalDate> findNotPaidFromPreviousDates();
+        public boolean existsByPaymentStatus(ServicePaymentStatus ps);
 
         List<ServiceExecution> findTop10ByPetIdOrderByDateDesc(Long petId);
 

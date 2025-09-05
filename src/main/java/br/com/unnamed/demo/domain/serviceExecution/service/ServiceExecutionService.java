@@ -83,9 +83,9 @@ public class ServiceExecutionService {
 
     }
 
-    public List<LocalDate> findNotPaidFromPreviousDates() {
+    public boolean existsNotPaid() {
 
-        return repo.findNotPaidFromPreviousDates();
+        return repo.existsByPaymentStatus(ServicePaymentStatus.NOT_PAID);
 
     }
 

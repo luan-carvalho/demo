@@ -11,6 +11,19 @@
             </a>
         </div>
 
+        <div th:if="${existsNotPaid}" class="alert alert-warning shadow-sm" role="alert">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Atenção:</strong> Existem serviços não finalizados de dias anteriores.
+                </div>
+                <a class="btn btn-sm btn-outline-dark" href="/serviceExecution/list/pendingPayment" role="button">
+                    Conferir
+                </a>
+            </div>
+        </div>
+
+
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <form th:action="@{/serviceExecution/list}" method="get" class="row g-2 align-items-end">

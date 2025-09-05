@@ -1,7 +1,6 @@
 package br.com.unnamed.demo.domain.serviceExecution.web;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,10 +48,7 @@ public class ServiceExecutionController {
     @GetMapping("/board")
     public String showServiceExecutionBoard(Model model) {
 
-        List<LocalDate> datesWithNotPaid = service.findNotPaidFromPreviousDates();
-
-        if (!datesWithNotPaid.isEmpty())
-            model.addAttribute("dates_with_not_paid", datesWithNotPaid);
+        model.addAttribute("existsNotPaid", service.existsNotPaid());
 
         model.addAttribute("pending_services", service.findByStatusAndDate(ServiceStatus.PENDING, LocalDate.now()));
         model.addAttribute("in_progress_services",
@@ -85,6 +81,7 @@ public class ServiceExecutionController {
 
         model.addAttribute("statuses", ServiceStatus.values());
         model.addAttribute("paymentStatuses", ServicePaymentStatus.values());
+        model.addAttribute("existsNotPaid", service.existsNotPaid());
 
         model.addAttribute("services", service.searchWithOptionalFilters(name, date, status, paymentStatus, pageable));
 
@@ -96,14 +93,21 @@ public class ServiceExecutionController {
 
     }
 
+    @GetMapping("/list/pendingPayment")
+    public String showServicesWithPendingPayment() {
+
+        return "redirect:/serviceExecution/list?paymentStatus=" + ServicePaymentStatus.NOT_PAID;
+
+    }
+
     @GetMapping("/new")
     public String newServicePage(Model model) {
 
         model.addAttribute("all_tutors", tutorService.findAllActive());
-        model.addAttribute("all_pet_cares", petCareService.findAllActive());
+        model.addAttribute("all_pet_care_groups", petCareService.findAllGroups());
 
         model.addAttribute("activePage", "serviceExecution");
-        model.addAttribute("view", "serviceExecution/newServiceExecution");
+        model.addAttribute("view", "serviceExecution/serviceExecution");
         model.addAttribute("pageTitle", "Atendimento | Novo");
         return "layout/base-layout";
 
