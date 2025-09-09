@@ -9,6 +9,7 @@ public class ServiceExecutionMapper {
 
         return new ServiceExecutionDto(
                 s.getId(),
+                s.getServiceStatus(),
                 s.getTutor().getInfo().getName(),
                 s.getPet().getName(),
                 s.getExecutedServices().stream().map(ex -> ex.getPetCare().getId()).toList());

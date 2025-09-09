@@ -30,38 +30,6 @@
                                     <label for="name" class="form-label">Nome</label>
                                     <input type="text" class="form-control" id="name" th:field="*{name}" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="gender" class="form-label">Sexo</label>
-                                    <select class="form-select" id="gender" th:field="*{gender}" required>
-                                        <option value="" hidden>-- Selecione --</option>
-                                        <option th:each="g : ${genders}" th:value="${g.name()}" th:text="${ g.name()}">
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="specie" class="form-label">Espécie</label>
-                                    <select class="form-select" id="specie" th:field="*{specie}" required>
-                                        <option value="" hidden>-- Selecione --</option>
-                                        <option th:each="s : ${species}" th:value="${s.id}" th:text="${s.description}">
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="breed" class="form-label">Raça</label>
-                                    <select class="form-select select2-searchable" id="breed" th:field="*{breed}"
-                                        th:data-selected="${pet.breed?.id}" required>
-                                        <option value="" hidden>-- Selecione a espécie primeiro --</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="coatColor" class="form-label">Pelagem</label>
-                                    <select class="form-select select2-searchable" id="coatColor"
-                                        th:field="*{coatColor}" required>
-                                        <option value="" hidden>-- Selecione --</option>
-                                        <option th:each="cc : ${coatColors}" th:value="${cc.id}"
-                                            th:text="${cc.description}"></option>
-                                    </select>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -132,58 +100,6 @@
                 </div>
             </div>
         </form>
-
-        <script>
-            $(document).ready(function () {
-                const specieSelect = $('#specie');
-                const breedSelect = $('#breed');
-
-                $('.select2-searchable').select2({
-                    theme: 'bootstrap-5'
-                });
-
-                function updateBreedDropdown(specieId, selectedBreedId) {
-                    breedSelect.prop('disabled', true).empty().append('<option value="">Carregando...</option>').trigger('change');
-
-                    if (!specieId) {
-                        breedSelect.empty().append('<option value="" selected disabled>Selecione uma espécie primeiro</option>').trigger('change');
-                        return;
-                    }
-
-                    const apiUrl = `/tutor/pet/specie/${specieId}/breeds`;
-
-                    $.ajax({
-                        url: apiUrl,
-                        type: 'GET',
-                        success: function (breeds) {
-                            breedSelect.empty().append('<option value="" hidden>-- Selecione a raça --</option>');
-                            if (Array.isArray(breeds) && breeds.length > 0) {
-                                breeds.forEach(breed => {
-                                    const isSelected = selectedBreedId && selectedBreedId.toString() === breed.id.toString();
-                                    const option = new Option(breed.description, breed.id, false, isSelected);
-                                    breedSelect.append(option);
-                                });
-                            } else {
-                                breedSelect.append('<option value="" disabled>Nenhuma raça encontrada</option>');
-                            }
-                            breedSelect.prop('disabled', false).trigger('change');
-                        },
-                        error: function () {
-                            console.error('Erro ao carregar raças.');
-                            breedSelect.empty().append('<option value="" disabled>Erro ao carregar raças</option>').trigger('change');
-                        }
-                    });
-                }
-
-                specieSelect.on('change', function () {
-                    updateBreedDropdown($(this).val(), null);
-                });
-
-                if (specieSelect.val()) {
-                    updateBreedDropdown(specieSelect.val(), breedSelect.data('selected'));
-                }
-            });
-        </script>
 
     </div>
 </body>

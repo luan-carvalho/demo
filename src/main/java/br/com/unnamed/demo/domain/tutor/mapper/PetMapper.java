@@ -10,10 +10,6 @@ public class PetMapper {
         return new PetFormDto(
                 pet.getId(),
                 pet.getName(),
-                pet.getGender(),
-                pet.getSpecie(),
-                pet.getBreed(),
-                pet.getCoatColor(),
                 pet.getStatus());
 
     }
@@ -23,10 +19,6 @@ public class PetMapper {
         return new Pet(
                 dto.id(),
                 dto.name(),
-                dto.gender(),
-                dto.specie(),
-                dto.breed(),
-                dto.coatColor(),
                 dto.status());
 
     }

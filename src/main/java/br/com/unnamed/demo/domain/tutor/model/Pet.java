@@ -1,19 +1,12 @@
 package br.com.unnamed.demo.domain.tutor.model;
 
-import br.com.unnamed.demo.domain.tutor.model.enums.Gender;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
-import br.com.unnamed.demo.domain.tutor.model.valueObjects.Breed;
-import br.com.unnamed.demo.domain.tutor.model.valueObjects.CoatColor;
-import br.com.unnamed.demo.domain.tutor.model.valueObjects.Specie;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,21 +22,6 @@ public class Pet {
     private Long id;
 
     private String name;
-
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "specie_id")
-    private Specie Specie;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "breed_id")
-    private Breed breed;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coat_color_id")
-    private CoatColor coatColor;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -83,12 +61,9 @@ public class Pet {
 
     }
 
-    public void updateInfo(String name,  Specie specie, Breed breed, CoatColor coatColor) {
+    public void updateInfo(String name) {
 
         this.name = name;
-        this.Specie = specie;
-        this.breed = breed;
-        this.coatColor = coatColor;
 
     }
 }

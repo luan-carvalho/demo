@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
@@ -22,11 +21,8 @@ import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
 import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
 import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
-import br.com.unnamed.demo.domain.tutor.model.enums.Gender;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
-import br.com.unnamed.demo.domain.tutor.model.valueObjects.Breed;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
-import br.com.unnamed.demo.domain.tutor.service.PetInfoService;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
 import jakarta.validation.Valid;
 
@@ -35,12 +31,10 @@ import jakarta.validation.Valid;
 public class TutorController {
 
     private final TutorService tutorService;
-    private final PetInfoService petInfoService;
     private final ServiceExecutionService service;
 
-    public TutorController(TutorService tutorService, PetInfoService petInfoService, ServiceExecutionService service) {
+    public TutorController(TutorService tutorService, ServiceExecutionService service) {
         this.tutorService = tutorService;
-        this.petInfoService = petInfoService;
         this.service = service;
     }
 
@@ -136,9 +130,6 @@ public class TutorController {
         PetFormDto pet = PetMapper.toFormDto(tutorService.findByTutorAndPetId(tutorId, petId));
         List<ServiceExecution> serviceHistory = service.findTop10ByPetIdOrderByDateDesc(petId);
 
-        model.addAttribute("species", petInfoService.findAllSpecies());
-        model.addAttribute("coatColors", petInfoService.findAllCoatColors());
-        model.addAttribute("genders", Gender.values());
         model.addAttribute("tutorId", tutorId);
         model.addAttribute("pet", pet);
         model.addAttribute("serviceHistory", serviceHistory);
@@ -154,9 +145,6 @@ public class TutorController {
     @GetMapping("/{tutorId}/pet/new")
     public String findNewPetForm(@PathVariable Long tutorId, Model model) {
 
-        model.addAttribute("species", petInfoService.findAllSpecies());
-        model.addAttribute("coatColors", petInfoService.findAllCoatColors());
-        model.addAttribute("genders", Gender.values());
         model.addAttribute("pet", PetFormDto.empty());
 
         model.addAttribute("activePage", "clients");
@@ -204,11 +192,5 @@ public class TutorController {
         tutorService.activatePet(tutorId, petId);
         return "redirect:/tutor/" + tutorId;
 
-    }
-
-    @GetMapping("/pet/specie/{specieId}/breeds")
-    @ResponseBody
-    public List<Breed> getBreedsBasedOnSpecies(@PathVariable Long specieId) {
-        return petInfoService.findAllBreedsFromSpecieId(specieId);
     }
 }

@@ -2,9 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <main class="container py-4" th:fragment="content">
+    <main class="container" th:fragment="content">
 
-        <!-- Page Header -->
         <header class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0" th:text="${tutor.id == null} ? 'Novo Tutor' : 'Editar Tutor'"></h1>
             <a th:href="@{/tutor}" class="btn btn-outline-secondary btn-sm" aria-label="Voltar para a Lista">
@@ -50,24 +49,14 @@
                         </div>
                         <div class="list-group list-group-flush">
 
-                            <!-- Pet Item -->
                             <a th:each="pet : ${tutor.pets}"
                                 th:href="@{/tutor/{tutorId}/pet/{petId}(tutorId=${tutor.id}, petId=${pet.id})}"
                                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                                 th:classappend="${pet.isInactive()} ? 'bg-light text-muted' : ''">
 
                                 <div class="d-flex align-items-center">
-                                    <i th:if="${pet.specie.description == 'Canina'}" class="fa-solid fa-dog me-2"></i>
-                                    <i th:if="${pet.specie.description == 'Felina'}" class="fa-solid fa-cat me-2"></i>
                                     <span th:text="${pet.name}"></span>
                                     <span th:if="${pet.isInactive()}" class="badge bg-danger ms-2">Inativo</span>
-                                </div>
-
-                                <div class="d-flex gap-2 small text-muted">
-                                    <span class="badge bg-light text-dark"
-                                        th:text="${pet.breed?.description} ?: 'Raça não definida'"></span>
-                                    <span class="badge bg-light text-dark"
-                                        th:text="${pet.coatColor?.description} ?: 'Pelagem não definida'"></span>
                                 </div>
                             </a>
 

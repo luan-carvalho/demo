@@ -17,20 +17,19 @@
 
 # Atendimento <= trabalhando nesse aqui agora
 
-[ ] Melhorar a abertura de novo serviço
-    [ ] Adicionar um fluxo de seleção de cliente e, depois, seleção dos serviços
-    [ ] Usar o mesmo fluxo para editar o cliente
+[ x ] Melhorar a abertura de novo serviço
+    [ x ] Adicionar um fluxo de seleção de cliente e, depois, seleção dos serviços
+    [ x ] Usar o mesmo fluxo para editar o cliente
     [ ] Permitir cadastrar cliente e, após cadastrar, já setar no serviço
     [ ] Como adicionar um pet a um cliente já existente?
-[ ] Tirar essa diferenciação entre novo e editar
-[ ] Na tela do atendimento, mostrar o status do serviço e permitir atualizar
-[ ] Na tela do atendimento, permitir mandar para o checkout
-[ ] Fazer aquele esquema de agrupar os serviços por grupo (só para deixar mais agradável)
+[ x ] Na tela do atendimento, mostrar o status do serviço e permitir atualizar
+[ x ] Na tela do atendimento, permitir mandar para o checkout
+[ x ] Fazer aquele esquema de agrupar os serviços por grupo (só para deixar mais agradável)
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar a chegada de um novo pet
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar que o tutor chegou para buscar o pet
 [ ] (FUTURO) Ao finalizar um serviço, enviar uma mensagem para o tutor
 
-# Usuários <= trabalhar nesse agora
+# Usuários
 
 [ ] Listar usuários
 [ ] Cadastrar/editar usuários (ao cadastrar, deixar automático a senha 1234)
