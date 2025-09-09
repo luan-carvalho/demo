@@ -1,6 +1,7 @@
 package br.com.unnamed.demo.domain.serviceExecution.web;
 
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -110,13 +111,30 @@ public class ServiceExecutionController {
     public String newServicePage(Model model) {
 
         model.addAttribute("all_tutors", tutorService.findAllActive());
-        model.addAttribute("all_pet_care_groups", petCareService.findAllGroups());
-        model.addAttribute("serviceExecution", ServiceExecutionDto.empty());
 
         model.addAttribute("activePage", "serviceExecution");
-        model.addAttribute("view", "serviceExecution/serviceExecution");
-        model.addAttribute("pageTitle", "Atendimento | Novo");
+        model.addAttribute("view", "serviceExecution/clientSelection");
+        model.addAttribute("pageTitle", "Atendimento | Cliente");
         return "layout/base-layout";
+
+    }
+
+    @PostMapping("/create")
+    public String createNewServiceExecution(Model model, Long tutorId, Long petId) {
+
+        Tutor t = tutorService.findById(tutorId);
+        Pet p = t.getOwnedPet(petId);
+
+        ServiceExecutionBuilder b = new ServiceExecutionBuilder();
+        b.tutor(t);
+        b.pet(p);
+        b.date(LocalDate.now());
+        b.status(ServiceStatus.PENDING);
+        b.paymentStatus(ServicePaymentStatus.NOT_PAID);
+
+        ServiceExecution created = service.save(b.build());
+
+        return "redirect:/serviceExecution/" + created.getId();
 
     }
 
@@ -137,29 +155,49 @@ public class ServiceExecutionController {
 
     }
 
+    @GetMapping("/{id}/updateClient")
+    public String updateClient(Model model, @PathVariable Long id) {
+
+        model.addAttribute("all_tutors", tutorService.findAllActive());
+        model.addAttribute("serviceExecutionId", id);
+
+        model.addAttribute("activePage", "serviceExecution");
+        model.addAttribute("view", "serviceExecution/clientSelection");
+        model.addAttribute("pageTitle", "Atendimento | Cliente");
+        return "layout/base-layout";
+
+    }
+
+    @PostMapping("/updateClient")
+    public String updateClient(Long serviceExecutionId, Long tutorId, Long petId) {
+
+        ServiceExecution toBeUpdated = service.findById(serviceExecutionId);
+        Tutor t = tutorService.findById(tutorId);
+        Pet p = t.getOwnedPet(petId);
+
+        toBeUpdated.updateTutorAndPet(t, p);
+
+        service.save(toBeUpdated);
+
+        return "redirect:/serviceExecution/" + serviceExecutionId;
+
+    }
+
     @PostMapping("/save")
-    public String save(ServiceExecutionDto serviceExecution) {
+    public String save(Model model, ServiceExecutionDto s) {
 
-        Tutor t = tutorService.findById(Long.valueOf(1));
-        Pet p = tutorService.findByTutorAndPetId(Long.valueOf(1), Long.valueOf(1));
+        if (!s.selectedPetCareIds().isEmpty()) {
 
-        ServiceExecutionBuilder builder = new ServiceExecutionBuilder();
+            ServiceExecution toBeUpdated = service.findById(s.id());
+            toBeUpdated.updateExecutedServices(s.selectedPetCareIds().stream()
+                    .map(id -> new ServiceExecutionItem(petCareService.findById(id))).collect(Collectors.toList()));
 
-        builder.id(serviceExecution.id());
-        builder.date(serviceExecution.date());
-        builder.status(serviceExecution.status());
-        builder.pet(p);
-        builder.tutor(t);
-        builder.items(serviceExecution.selectedPetCareIds()
-                .stream()
-                .map(id -> new ServiceExecutionItem(petCareService.findById(id)))
-                .toList());
-        builder.payments(serviceExecution.payments());
-        builder.paymentStatus(serviceExecution.paymentStatus());
+            service.save(toBeUpdated);
 
-        service.save(builder.build());
+        }
 
-        return "redirect:/serviceExecution";
+        return "redirect:/serviceExecution/" + s.id();
+
     }
 
     @PostMapping("/{serviceId}/delete")

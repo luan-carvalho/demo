@@ -66,6 +66,7 @@ public class ServiceExecution {
         this.executedServices = new ArrayList<>();
         this.date = LocalDate.now();
         this.serviceStatus = ServiceStatus.PENDING;
+        this.payments = new ArrayList<>();
         this.paymentStatus = ServicePaymentStatus.NOT_PAID;
 
     }
@@ -77,8 +78,8 @@ public class ServiceExecution {
         this.pet = builder.getPet();
         this.date = builder.getDate();
         this.serviceStatus = builder.getStatus();
-        this.executedServices = builder.getItems();
-        this.payments = builder.getPayments();
+        this.executedServices = new ArrayList<>();
+        this.payments = new ArrayList<>();
         this.paymentStatus = builder.getPaymentStatus();
 
     }
@@ -151,6 +152,20 @@ public class ServiceExecution {
 
         return this.executedServices.stream().map(ServiceExecutionItem::getUnitPrice).reduce(BigDecimal.ZERO,
                 BigDecimal::add);
+
+    }
+
+    public void updateTutorAndPet(Tutor t, Pet p) {
+
+        this.tutor = t;
+        this.pet = p;
+
+    }
+
+    public void updateExecutedServices(List<ServiceExecutionItem> newExecutedServices) {
+
+        this.executedServices.clear();
+        this.executedServices.addAll(newExecutedServices);
 
     }
 

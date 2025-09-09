@@ -1,11 +1,8 @@
 package br.com.unnamed.demo.domain.serviceExecution.builder;
 
 import java.time.LocalDate;
-import java.util.List;
 
-import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionItem;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -20,8 +17,6 @@ public class ServiceExecutionBuilder {
     private Pet pet;
     private LocalDate date;
     private ServiceStatus status;
-    private List<ServiceExecutionItem> items;
-    private List<Payment> payments;
     private ServicePaymentStatus paymentStatus;
 
     public ServiceExecutionBuilder() {
@@ -49,16 +44,6 @@ public class ServiceExecutionBuilder {
 
     public ServiceExecutionBuilder status(ServiceStatus status) {
         this.status = status;
-        return this;
-    }
-
-    public ServiceExecutionBuilder items(List<ServiceExecutionItem> items) {
-        this.items = items;
-        return this;
-    }
-
-    public ServiceExecutionBuilder payments(List<Payment> payments) {
-        this.payments = payments;
         return this;
     }
 

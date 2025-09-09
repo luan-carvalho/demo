@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">Clientes</h1>
+            <a th:href="@{/tutor/new}" class="btn btn-primary d-flex align-items-center">
+                <i class="bi bi-person-plus-fill me-2"></i>
+                Novo Tutor
+            </a>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form th:action="@{/tutor}" method="get" class="row g-2 align-items-end">
+                    <div class="col-lg-6">
+                        <label for="search" class="form-label">Buscar por Nome</label>
+                        <input type="text" id="search" name="name" class="form-control"
+                            placeholder="Nome do tutor ou do pet..." th:value="${name}">
+                    </div>
+                    <div class="col-lg-1 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <th:block th:each="tutor : ${all_tutors}">
+                        <form
+                            th:action="${serviceExecutionId == null} ? @{/serviceExecution/create} : @{/serviceExecution/updateClient}"
+                            method="post">
+
+                            <div th:each="pet : ${tutor.getActivePets()}"
+                                class="list-group-item list-group-item-action client-pet-item">
+
+                                <input th:if="${serviceExecutionId}" type="hidden" name="serviceExecutionId"
+                                    th:value="${serviceExecutionId}">
+                                <input type="hidden" name="tutorId" th:value="${tutor.id}">
+                                <input type="hidden" name="petId" th:value="${pet.id}">
+
+
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1" th:text="${pet.name}">Nome do Pet</h6>
+                                    <small class="text-muted" th:text="${pet.breed?.description} ?: 'SRD'">Raça</small>
+                                </div>
+                                <p class="mb-1 text-muted">Tutor: <span th:text="${tutor.info.name}"></span></p>
+
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">Selecionar</button>
+
+                        </form>
+                    </th:block>
+                </div>
+
+            </div>
+            <!-- <nav th:if="${tutorPage.totalPages > 1}" aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${tutorPage.first} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/tutor(page=${tutorPage.number - 1}, size=${tutorPage.size}, search=${search})}">Anterior</a>
+                    </li>
+
+                    <li th:each="i : ${#numbers.sequence(0, tutorPage.totalPages - 1)}" class="page-item"
+                        th:classappend="${i == tutorPage.number} ? 'active'">
+                        <a class="page-link" th:href="@{/tutor(page=${i}, size=${tutorPage.size}, search=${search})}"
+                            th:text="${i + 1}"></a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${tutorPage.last} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/tutor(page=${tutorPage.number + 1}, size=${tutorPage.size}, search=${search})}">Próxima</a>
+                    </li>
+                </ul>
+            </nav> -->
+        </div>
+    </div>
+</body>
+
+</html>

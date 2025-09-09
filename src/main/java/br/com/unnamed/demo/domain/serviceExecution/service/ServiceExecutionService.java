@@ -29,9 +29,9 @@ public class ServiceExecutionService {
 
     }
 
-    public void save(ServiceExecution serviceExecution) {
+    public ServiceExecution save(ServiceExecution serviceExecution) {
 
-        repo.save(serviceExecution);
+        return repo.save(serviceExecution);
 
     }
 

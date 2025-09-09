@@ -3,34 +3,30 @@
 
 <body>
     <div th:fragment="content" class="container my-4">
-        <h4 class="mb-4">Execução de Serviço</h4>
-
         <form th:action="@{/serviceExecution/save}" method="post" th:object="${serviceExecution}" class="row g-3">
-
-            <input type="hidden" th:if="${serviceExecution.id}" th:field="*{id}">
-            <input type="hidden" class="form-control" th:field="*{date}">
-            <input type="hidden" class="form-control" th:field="*{status}">
-            <input type="hidden" class="form-control" th:field="*{paymentStatus}">
-
-            <div class="col-md-6">
-                <label class="form-label">Cliente / Pet</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" th:field="*{pet.name}" id="selectedPetName" readonly>
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                        data-bs-target="#selectPetModal">
-                        Selecionar
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0" th:text="'Atendimento - #' + ${serviceExecution.id}"></h1>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Salvar
                     </button>
                 </div>
-                <input type="hidden" th:field="*{pet.id}" id="selectedPetId">
             </div>
 
-            <div class="col-12" th:if="${not #lists.isEmpty(serviceExecution.payments)}">
-                <label class="form-label">Pagamentos</label>
-                <input type="text" class="form-control" th:field="*{payments}">
+            <div>
+
+                <p>Tutor: <span th:text="${serviceExecution.tutorName}"></span></p>
+                <p>Pet: <span th:text="${serviceExecution.petName}"></span></p>
+                <a th:href="@{/serviceExecution/{id}/updateClient(id = ${serviceExecution.id})}" class="btn btn-primary lg-2">
+                    Editar cliente
+                </a>
+
             </div>
+
+            <input type="hidden" th:field="*{id}">
 
             <div class="col-12">
-                <h6 class="fw-bold">Cuidados com o Pet</h6>
+                <h6 class="fw-bold">Serviços</h6>
                 <div class="row g-3">
                     <div class="col-md-4" th:each="group : ${all_pet_care_groups}">
                         <div class="p-2 border rounded">
@@ -46,88 +42,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Submit Button -->
-            <div class="col-12 text-end">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-save"></i> Salvar
-                </button>
-            </div>
         </form>
-
-        <div class="modal fade" id="selectPetModal" tabindex="-1" aria-labelledby="selectPetModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Selecionar Cliente / Pet</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                    </div>
-                    <div class="modal-body">
-
-                        <!-- Search box -->
-                        <input type="text" id="petSearchInput" class="form-control mb-3"
-                            placeholder="Buscar tutor ou pet...">
-
-                        <!-- Table -->
-                        <table class="table table-hover align-middle" id="petTable">
-                            <thead>
-                                <tr>
-                                    <th>Tutor</th>
-                                    <th>Pet</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="tutor : ${all_tutors}">
-                                    <td colspan="2" class="fw-bold bg-light" th:text="${tutor.info.name}"></td>
-                                </tr>
-                                <tr th:each="pet : ${tutor.pets}"
-                                    th:attr="data-pet-id=${pet.id},data-pet-name=${pet.name},data-tutor-name=${tutor.info.name}"
-                                    class="pet-row">
-                                    <td th:text="${tutor.info.name}"></td>
-                                    <td th:text="${pet.name}"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Script: Search and Select -->
-        <script>
-            // Search filter
-            document.getElementById("petSearchInput").addEventListener("keyup", function () {
-                const filter = this.value.toLowerCase();
-                const rows = document.querySelectorAll("#petTable tbody tr.pet-row");
-
-                rows.forEach(row => {
-                    const tutorName = row.getAttribute("data-tutor-name").toLowerCase();
-                    const petName = row.getAttribute("data-pet-name").toLowerCase();
-
-                    if (tutorName.includes(filter) || petName.includes(filter)) {
-                        row.style.display = "";
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
-            });
-
-            document.querySelectorAll(".pet-row").forEach(row => {
-                row.addEventListener("click", function () {
-                    const petId = this.getAttribute("data-pet-id");
-                    const petName = this.getAttribute("data-pet-name");
-                    const tutorName = this.getAttribute("data-tutor-name");
-
-                    document.getElementById("selectedPetId").value = petId;
-                    document.getElementById("selectedPetName").value = tutorName + " - " + petName;
-
-                    const modal = bootstrap.Modal.getInstance(document.getElementById("selectPetModal"));
-                    modal.hide();
-                });
-            });
-        </script>
-
     </div>
 </body>
 

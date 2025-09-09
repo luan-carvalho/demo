@@ -55,7 +55,7 @@
                 <i class="bi bi-chevron-down small"></i>
             </a>
             <div class="collapse" id="service-collapse"
-                th:classappend="${#lists.contains({'serviceExecution-board', 'serviceExecution-list'}, activePage) ? 'show' : ''}">
+                th:classappend="${#lists.contains({'serviceExecution-board', 'serviceExecution-list', 'serviceExecution'}, activePage) ? 'show' : ''}">
                 <ul class="nav flex-column ps-4 mt-2">
                     <li><a th:href="@{/serviceExecution}"
                             th:class="${activePage == 'serviceExecution-board' ? 'nav-link active' : 'nav-link text-white'}"
