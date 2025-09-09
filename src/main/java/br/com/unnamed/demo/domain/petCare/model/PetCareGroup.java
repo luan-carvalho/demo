@@ -27,7 +27,7 @@ public class PetCareGroup {
 
     private String description;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PetCare> petcares;
 
     public PetCareGroup() {
@@ -68,6 +68,11 @@ public class PetCareGroup {
 
         this.status = Status.ACTIVE;
 
+    }
+
+    @Override
+    public String toString() {
+        return "PetCareGroup [id=" + id + ", description=" + description + "]";
     }
 
 }

@@ -28,7 +28,7 @@ public class TutorService {
 
     }
 
-    public Tutor findById(long id) {
+    public Tutor findById(Long id) {
 
         return tutorRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Tutor not found"));
 

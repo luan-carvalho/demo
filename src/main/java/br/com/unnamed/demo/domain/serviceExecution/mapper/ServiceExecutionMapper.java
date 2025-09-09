@@ -11,16 +11,11 @@ public class ServiceExecutionMapper {
                 s.getId(),
                 s.getTutor(),
                 s.getPet(),
+                s.getDate(),
+                s.getExecutedServices().stream().map(ex -> ex.getPetCare().getId()).toList(),
                 s.getServiceStatus(),
-                s.getPaymentStatus(),
-                s.getExecutedServices());
-
-    }
-
-    public static ServiceExecution toEntity(ServiceExecutionDto dto) {
-
-        return new ServiceExecution(dto.id(), dto.pet(), dto.tutor(), dto.serviceStatus(), dto.executedServices(),
-                dto.paymentStatus());
+                s.getPayments(),
+                s.getPaymentStatus());
 
     }
 

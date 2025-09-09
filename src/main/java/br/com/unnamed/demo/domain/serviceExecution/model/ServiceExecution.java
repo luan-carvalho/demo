@@ -7,6 +7,7 @@ import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
+import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -69,16 +70,16 @@ public class ServiceExecution {
 
     }
 
-    public ServiceExecution(Long id, Pet pet, Tutor tutor, ServiceStatus serviceStatus,
-            List<ServiceExecutionItem> executedServices, ServicePaymentStatus paymentStatus) {
+    public ServiceExecution(ServiceExecutionBuilder builder) {
 
-        this.id = id;
-        this.pet = pet;
-        this.tutor = tutor;
-        this.date = LocalDate.now();
-        this.serviceStatus = serviceStatus;
-        this.executedServices = executedServices;
-        this.paymentStatus = paymentStatus;
+        this.id = builder.getId();
+        this.tutor = builder.getTutor();
+        this.pet = builder.getPet();
+        this.date = builder.getDate();
+        this.serviceStatus = builder.getStatus();
+        this.executedServices = builder.getItems();
+        this.payments = builder.getPayments();
+        this.paymentStatus = builder.getPaymentStatus();
 
     }
 

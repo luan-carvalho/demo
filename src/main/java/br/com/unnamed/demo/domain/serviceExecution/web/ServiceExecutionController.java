@@ -15,10 +15,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
+import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
+import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionDto;
+import br.com.unnamed.demo.domain.serviceExecution.mapper.ServiceExecutionMapper;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
+import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionItem;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
+import br.com.unnamed.demo.domain.tutor.model.Pet;
+import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
 
 @Controller
@@ -105,6 +111,7 @@ public class ServiceExecutionController {
 
         model.addAttribute("all_tutors", tutorService.findAllActive());
         model.addAttribute("all_pet_care_groups", petCareService.findAllGroups());
+        model.addAttribute("serviceExecution", ServiceExecutionDto.empty());
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecution");
@@ -116,8 +123,12 @@ public class ServiceExecutionController {
     @GetMapping("/{id}")
     public String newServicePage(@PathVariable Long id, Model model) {
 
+        ServiceExecution s = service.findById(id);
+
         model.addAttribute("all_tutors", tutorService.findAllActive());
-        model.addAttribute("all_pet_cares", petCareService.findAllActive());
+        model.addAttribute("all_pet_care_groups", petCareService.findAllGroups());
+
+        model.addAttribute("serviceExecution", ServiceExecutionMapper.toDto(s));
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecution");
@@ -127,10 +138,26 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/save")
-    public String save(ServiceExecution dto) {
+    public String save(ServiceExecutionDto serviceExecution) {
 
-        ServiceExecution s = new ServiceExecution();
-        service.save(s);
+        Tutor t = tutorService.findById(Long.valueOf(1));
+        Pet p = tutorService.findByTutorAndPetId(Long.valueOf(1), Long.valueOf(1));
+
+        ServiceExecutionBuilder builder = new ServiceExecutionBuilder();
+
+        builder.id(serviceExecution.id());
+        builder.date(serviceExecution.date());
+        builder.status(serviceExecution.status());
+        builder.pet(p);
+        builder.tutor(t);
+        builder.items(serviceExecution.selectedPetCareIds()
+                .stream()
+                .map(id -> new ServiceExecutionItem(petCareService.findById(id)))
+                .toList());
+        builder.payments(serviceExecution.payments());
+        builder.paymentStatus(serviceExecution.paymentStatus());
+
+        service.save(builder.build());
 
         return "redirect:/serviceExecution";
     }

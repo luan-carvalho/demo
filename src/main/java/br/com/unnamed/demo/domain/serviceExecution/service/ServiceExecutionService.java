@@ -85,7 +85,7 @@ public class ServiceExecutionService {
 
     public boolean existsNotPaid() {
 
-        return repo.existsByPaymentStatus(ServicePaymentStatus.NOT_PAID);
+        return !repo.existsWithPendingPayment().isEmpty();
 
     }
 

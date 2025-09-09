@@ -113,4 +113,10 @@ public class PetCare {
     public Status getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return "PetCare [id=" + id + ", description=" + description + ", price=" + price + "]";
+    }
+
 }

@@ -1,9 +1,10 @@
 package br.com.unnamed.demo.domain.serviceExecution.dto;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionItem;
+import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -13,13 +14,17 @@ public record ServiceExecutionDto(
         Long id,
         Tutor tutor,
         Pet pet,
-        ServiceStatus serviceStatus,
-        ServicePaymentStatus paymentStatus,
-        List<ServiceExecutionItem> executedServices) {
+        LocalDate date,
+        List<Long> selectedPetCareIds,
+        ServiceStatus status,
+        List<Payment> payments,
+        ServicePaymentStatus paymentStatus) {
 
     public static ServiceExecutionDto empty() {
 
-        return new ServiceExecutionDto(null, null, null, null, null, new ArrayList<>());
+        return new ServiceExecutionDto(null, null, null, LocalDate.now(), new ArrayList<>(), ServiceStatus.PENDING,
+                new ArrayList<>(),
+                ServicePaymentStatus.NOT_PAID);
 
     }
 
