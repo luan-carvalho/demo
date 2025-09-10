@@ -3,6 +3,7 @@ package br.com.unnamed.demo.domain.serviceExecution.web;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,6 +27,7 @@ import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
+import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
 
 @Controller
@@ -110,12 +112,7 @@ public class ServiceExecutionController {
     @GetMapping("/new")
     public String newServicePage(Model model) {
 
-        model.addAttribute("all_tutors", tutorService.findAllActive());
-
-        model.addAttribute("activePage", "serviceExecution");
-        model.addAttribute("view", "serviceExecution/clientSelection");
-        model.addAttribute("pageTitle", "Atendimento | Cliente");
-        return "layout/base-layout";
+        return "redirect:/serviceExecution/clientSelection?context=create";
 
     }
 
@@ -155,11 +152,21 @@ public class ServiceExecutionController {
 
     }
 
-    @GetMapping("/{id}/updateClient")
-    public String updateClient(Model model, @PathVariable Long id) {
+    @GetMapping("/clientSelection")
+    public String updateClient(Model model,
+            @RequestParam(required = false) String search,
+            @RequestParam String context,
+            @RequestParam(required = false) Long serviceExecutionId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        model.addAttribute("all_tutors", tutorService.findAllActive());
-        model.addAttribute("serviceExecutionId", id);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Pet> tutorPage = tutorService.searchPetsWithOptionalFilters(search, pageable, Status.ACTIVE);
+
+        model.addAttribute("petsPage", tutorPage);
+        model.addAttribute("search", search);
+        model.addAttribute("context", context);
+        model.addAttribute("serviceExecutionId", serviceExecutionId);
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/clientSelection");

@@ -66,7 +66,7 @@
                             <h5 class="card-title mb-0">
                                 <i class="bi bi-person-fill me-2"></i>Cliente
                             </h5>
-                            <a th:href="@{/serviceExecution/{id}/updateClient(id = ${serviceExecution.id})}"
+                            <a th:href="@{/serviceExecution/clientSelection?context=update(serviceExecutionId = ${serviceExecution.id})}"
                                 class="btn btn-sm btn-outline-secondary d-flex align-items-center">
                                 <i class="bi bi-pencil-square me-1"></i> Editar
                             </a>

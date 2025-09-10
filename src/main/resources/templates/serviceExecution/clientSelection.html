@@ -1,27 +1,32 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 
 <body>
     <div th:fragment="content">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">Selecionar cliente</h1>
+            <h1 class="h3 mb-0">Selecionar Cliente</h1>
             <a th:href="@{/tutor/new}" class="btn btn-primary d-flex align-items-center">
                 <i class="bi bi-person-plus-fill me-2"></i>
                 Novo Tutor
             </a>
         </div>
 
+        <!-- Formulário de busca -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <form th:action="@{/tutor}" method="get" class="row g-3 align-items-end">
+                <form th:action="@{/serviceExecution/clientSelection}" method="get" class="row g-3 align-items-end">
+                    <input type="hidden" name="context" th:value="${context}">
+                    <input type="hidden" name="serviceExecutionId" th:value="${serviceExecutionId}">
+
                     <div class="col-lg-6">
                         <label for="search" class="form-label">Buscar por Nome</label>
-                        <input type="text" id="search" name="name" class="form-control"
-                               placeholder="Nome do tutor ou do pet..." th:value="${name}">
+                        <input type="text" id="search" name="search" class="form-control"
+                            placeholder="Nome do tutor ou do pet..." th:value="${search}">
                     </div>
                     <div class="col-lg-2">
-                        <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                        <button type="submit"
+                            class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
                             <i class="bi bi-search me-2"></i> Buscar
                         </button>
                     </div>
@@ -29,27 +34,27 @@
             </div>
         </div>
 
-        <!-- Results Card -->
         <div class="card shadow-sm">
             <div class="card-header">
                 <h5 class="card-title mb-0"><i class="bi bi-people-fill me-2"></i>Lista de Clientes</h5>
             </div>
             <div class="list-group list-group-flush">
 
-                <!-- Tutors & Pets -->
-                <th:block th:each="tutor : ${all_tutors}">
-                    <form th:action="${serviceExecutionId == null} ? @{/serviceExecution/create} : @{/serviceExecution/updateClient}"
-                          method="post" th:each="pet : ${tutor.getActivePets()}">
+                <th:block th:each="pet : ${petsPage.content}">
+                    <form
+                        th:action="${context == 'create'} ? @{/serviceExecution/create} : @{/serviceExecution/updateClient}"
+                        method="post">
 
-                        <input th:if="${serviceExecutionId}" type="hidden" name="serviceExecutionId" th:value="${serviceExecutionId}">
-                        <input type="hidden" name="tutorId" th:value="${tutor.id}">
+                        <input type="hidden" name="tutorId" th:value="${pet.tutor.id}">
                         <input type="hidden" name="petId" th:value="${pet.id}">
+                        <input th:if="${context == 'update'}" type="hidden" name="serviceExecutionId"
+                            th:value="${serviceExecutionId}">
 
                         <div class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="mb-1 fw-semibold" th:text="${pet.name}">Nome do Pet</h6>
                                 <p class="mb-0 small text-muted">
-                                    Tutor: <span th:text="${tutor.info.name}"></span>
+                                    Tutor: <span th:text="${pet.tutor.name}"></span>
                                 </p>
                             </div>
                             <div class="d-flex align-items-center gap-3">
@@ -61,13 +66,39 @@
                     </form>
                 </th:block>
 
-                <!-- Empty State -->
-                <div th:if="${#lists.isEmpty(all_tutors)}"
-                     class="list-group-item text-center text-muted p-3">
+                <div th:if="${#lists.isEmpty(petsPage.content)}" class="list-group-item text-center text-muted p-3">
                     Nenhum cliente encontrado.
                 </div>
             </div>
         </div>
+
+        <nav th:if="${petsPage.totalPages > 1}" aria-label="Page navigation" class="mt-3">
+            <ul class="pagination justify-content-center">
+
+                <li class="page-item" th:classappend="${petsPage.first} ? 'disabled'">
+                    <a class="page-link"
+                        th:href="@{/serviceExecution/clientSelection(page=${petsPage.number - 1}, size=${petsPage.size}, search=${search}, context=${context}, serviceExecutionId=${serviceExecutionId})}">
+                        Anterior
+                    </a>
+                </li>
+
+                <li th:each="i : ${#numbers.sequence(0, petsPage.totalPages - 1)}" class="page-item"
+                    th:classappend="${i == petsPage.number} ? 'active'">
+                    <a class="page-link"
+                        th:href="@{/serviceExecution/clientSelection(page=${i}, size=${petsPage.size}, search=${search}, context=${context}, serviceExecutionId=${serviceExecutionId})}"
+                        th:text="${i + 1}">
+                    </a>
+                </li>
+
+                <li class="page-item" th:classappend="${petsPage.last} ? 'disabled'">
+                    <a class="page-link"
+                        th:href="@{/serviceExecution/clientSelection(page=${petsPage.number + 1}, size=${petsPage.size}, search=${search}, context=${context}, serviceExecutionId=${serviceExecutionId})}">
+                        Próxima
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </body>
+
 </html>

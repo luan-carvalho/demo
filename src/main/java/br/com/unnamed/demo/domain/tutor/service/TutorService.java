@@ -91,4 +91,10 @@ public class TutorService {
 
     }
 
+    public Page<Pet> searchPetsWithOptionalFilters(String name, Pageable pageable, Status status) {
+
+        return tutorRepo.searchPetWithOptionalFilters(name, status, pageable);
+
+    }
+
 }

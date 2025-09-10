@@ -8,17 +8,37 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
 public interface TutorRepository extends JpaRepository<Tutor, Long> {
 
-        @Query("SELECT DISTINCT t FROM Tutor t LEFT JOIN t.pets p WHERE " +
-                        "(:searchTerm IS NULL OR " +
-                        "LOWER(t.info.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS STRING), '%')) OR " +
-                        "LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS STRING), '%'))) " +
-                        "AND (:status IS NULL OR t.status = :status)")
+        @Query("""
+                        SELECT DISTINCT t
+                        FROM Tutor t
+                        LEFT JOIN t.pets p
+                        WHERE (:status IS NULL OR t.status = :status)
+                        AND (
+                                :searchTerm IS NULL OR
+                                LOWER(t.info.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%'))
+                                OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')))
+                        """)
         Page<Tutor> searchWithOptionalFilters(@Param("searchTerm") String searchTerm, @Param("status") Status status,
+                        Pageable pageable);
+
+        @Query("""
+                        SELECT p
+                        FROM Pet p
+                        JOIN p.tutor t
+                        WHERE (:status IS NULL OR p.status = :status)
+                        AND (
+                             :searchTerm IS NULL OR
+                             LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')) OR
+                             LOWER(t.info.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%'))
+                        )
+                        """)
+        Page<Pet> searchPetWithOptionalFilters(@Param("searchTerm") String searchTerm, @Param("status") Status status,
                         Pageable pageable);
 
         @Query("""
