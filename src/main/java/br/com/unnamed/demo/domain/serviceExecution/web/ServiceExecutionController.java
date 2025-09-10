@@ -117,19 +117,37 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/create")
-    public String createNewServiceExecution(Model model, Long tutorId, Long petId) {
+    public String createNewServiceExecution(Model model, Long tutorId, @RequestParam(required = false) Long petId,
+            @RequestParam(required = false) String petName) {
 
         Tutor t = tutorService.findById(tutorId);
-        Pet p = t.getOwnedPet(petId);
+        Pet p = null;
 
-        ServiceExecutionBuilder b = new ServiceExecutionBuilder();
-        b.tutor(t);
-        b.pet(p);
-        b.date(LocalDate.now());
-        b.status(ServiceStatus.PENDING);
-        b.paymentStatus(ServicePaymentStatus.NOT_PAID);
+        System.out.println("AAAAAAAAA: " + petName);
 
-        ServiceExecution created = service.save(b.build());
+        if (petId == null && petName != null && !petName.isBlank()) {
+
+            p = new Pet(null, petName, Status.ACTIVE);
+            t.addPet(p);
+            p = tutorService.save(p);
+            t = tutorService.save(t);
+
+        }
+
+        if (petId != null) {
+
+            p = t.getOwnedPet(petId);
+
+        }
+
+        ServiceExecution created = service.save(
+                new ServiceExecutionBuilder()
+                        .tutor(t)
+                        .pet(p)
+                        .date(LocalDate.now())
+                        .status(ServiceStatus.PENDING)
+                        .paymentStatus(ServicePaymentStatus.NOT_PAID)
+                        .build());
 
         return "redirect:/serviceExecution/" + created.getId();
 
@@ -161,9 +179,9 @@ public class ServiceExecutionController {
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Pet> tutorPage = tutorService.searchPetsWithOptionalFilters(search, pageable, Status.ACTIVE);
+        Page<Tutor> tutorPage = tutorService.searchWithOptionalFilters(search, pageable, Status.ACTIVE);
 
-        model.addAttribute("petsPage", tutorPage);
+        model.addAttribute("tutorsPage", tutorPage);
         model.addAttribute("search", search);
         model.addAttribute("context", context);
         model.addAttribute("serviceExecutionId", serviceExecutionId);

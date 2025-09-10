@@ -44,7 +44,8 @@
                         <i class="bi bi-save me-2"></i> Salvar
                     </button>
 
-                    <a th:href="@{/serviceExecution}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+                    <a th:href="@{/serviceExecution}"
+                        class="btn btn-outline-secondary btn-sm d-flex align-items-center">
                         <i class="bi bi-arrow-left-circle me-1"></i> Voltar
                     </a>
                 </div>
@@ -97,9 +98,10 @@
                                         </div>
                                         <div class="card-body py-2">
                                             <div class="form-check mb-2" th:each="petcare : ${group.petcares}">
-                                                <input class="form-check-input" type="checkbox"
+                                                <input class="form-check-input service-checkbox" type="checkbox"
                                                     th:field="*{selectedPetCareIds}" th:value="${petcare.id}"
-                                                    th:id="'petcare-' + ${petcare.id}">
+                                                    th:id="'petcare-' + ${petcare.id}"
+                                                    th:attr="data-price=${petcare.price}" />
                                                 <label
                                                     class="form-check-label d-flex justify-content-between align-items-center"
                                                     th:for="'petcare-' + ${petcare.id}">
@@ -108,6 +110,7 @@
                                                         th:text="'R$ ' + ${#numbers.formatDecimal(petcare.price, 1, 'POINT', 2, 'COMMA')}"></span>
                                                 </label>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -124,7 +127,8 @@
                             <h5 class="card-title mb-0"><i class="bi bi-cash-coin me-2"></i>Valor Total</h5>
                         </div>
                         <div class="card-body d-flex align-items-center justify-content-center">
-                            <h3 class="fw-bold text-dark mb-0">R$ 0,00</h3>
+                            <h3 id="totalValue" class="fw-bold text-dark mb-0">R$ 0,00</h3>
+
                         </div>
                     </div>
 
@@ -132,6 +136,31 @@
 
             </div>
         </form>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const checkboxes = document.querySelectorAll(".service-checkbox");
+                const totalElement = document.querySelector("#totalValue");
+
+                function updateTotal() {
+                    let total = 0;
+                    checkboxes.forEach(cb => {
+                        if (cb.checked) {
+                            total += parseFloat(cb.dataset.price);
+                        }
+                    });
+                    totalElement.textContent = "R$ " + total.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                }
+
+                checkboxes.forEach(cb => cb.addEventListener("change", updateTotal));
+
+                updateTotal();
+            });
+        </script>
+
+
     </main>
 </body>
 

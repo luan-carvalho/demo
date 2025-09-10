@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
@@ -25,20 +24,6 @@ public interface TutorRepository extends JpaRepository<Tutor, Long> {
                                 OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')))
                         """)
         Page<Tutor> searchWithOptionalFilters(@Param("searchTerm") String searchTerm, @Param("status") Status status,
-                        Pageable pageable);
-
-        @Query("""
-                        SELECT p
-                        FROM Pet p
-                        JOIN p.tutor t
-                        WHERE (:status IS NULL OR p.status = :status)
-                        AND (
-                             :searchTerm IS NULL OR
-                             LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')) OR
-                             LOWER(t.info.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%'))
-                        )
-                        """)
-        Page<Pet> searchPetWithOptionalFilters(@Param("searchTerm") String searchTerm, @Param("status") Status status,
                         Pageable pageable);
 
         @Query("""

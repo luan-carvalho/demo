@@ -47,8 +47,8 @@ INSERT INTO tutor (name, phone, status) VALUES ('Sofia Almeida Barbosa', '319443
 INSERT INTO tutor (name, phone, status) VALUES ('Gustavo Pereira Souza', '21933221188', 'ACTIVE');
 
 -- Tutor 2
-INSERT INTO pet (name, tutor_id, status) VALUES ('Luna', 2, 'ACTIVE');
-INSERT INTO pet (name, tutor_id, status) VALUES ('Thor', 2, 'ACTIVE');
+INSERT INTO pet (name, tutor_id, status) VALUES ('Luna', 1, 'ACTIVE');
+INSERT INTO pet (name, tutor_id, status) VALUES ('Thor', 1, 'ACTIVE');
 
 -- Tutor 3
 INSERT INTO pet (name, tutor_id, status) VALUES ('Mel', 3, 'ACTIVE');
