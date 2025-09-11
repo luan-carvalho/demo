@@ -9,6 +9,7 @@ public class ServiceExecutionMapper {
 
         return new ServiceExecutionDto(
                 s.getId(),
+                s.getDate(),
                 s.getServiceStatus(),
                 s.getTutor().getInfo().getName(),
                 s.getPet().getName(),

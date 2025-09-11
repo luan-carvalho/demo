@@ -25,9 +25,11 @@
 [ x ] Na tela do atendimento, mostrar o status do serviço e permitir atualizar
 [ x ] Na tela do atendimento, permitir mandar para o checkout
 [ x ] Fazer aquele esquema de agrupar os serviços por grupo (só para deixar mais agradável)
+[ ] Não permitir iniciar ou ir para o checkout se não tiver serviços adicionados
 [ ] Implementar checkout
     [ ] Permitir adicionar pagamentos antecipadamente
-    [ ]
+    [ ] 
+[ ] Melhorar a UI (mto botão um em cima do outro)
 [ ] Quando atualizar o status de um atendimento pela tela de edição, não mandar de volta para o board
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar a chegada de um novo pet
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar que o tutor chegou para buscar o pet
@@ -40,6 +42,8 @@
 [ ] Usuário informar nome completo -> username = nome1.nome2 sem acento tudo minusculo se já existir adicionar numero
 [ ] Permitir ao usuário mudar a senha
 [ ] Roles (recepcionista, atendente e admin)
+    [ ] Recepcionista não tem acesso aos serviços totais, somente o dashboard
+    [ ] Recepcionista não consegue atualizar o status de um atendimento e nem adicionar serviços, apenas abrir e finalizar
 
 # Relatórios
 
