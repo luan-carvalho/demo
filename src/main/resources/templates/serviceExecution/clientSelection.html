@@ -63,8 +63,12 @@
                                                             <div class="d-flex flex-wrap gap-1 align-items-center">
                                                                 <!-- Pets -->
                                                                 <th:block th:each="pet : ${tutor.getActivePets()}">
-                                                                    <form th:action="@{/serviceExecution/create}"
+                                                                    <form
+                                                                        th:action="${serviceExecutionId == null} ? @{/serviceExecution/create} : @{/serviceExecution/updateClient}"
                                                                         method="post" class="m-0">
+                                                                        <input th:if="${serviceExecutionId != null}"
+                                                                            type="hidden" name="serviceExecutionId"
+                                                                            th:value="${serviceExecutionId}" />
                                                                         <input type="hidden" name="tutorId"
                                                                             th:value="${tutor.id}" />
                                                                         <input type="hidden" name="petId"
@@ -76,7 +80,6 @@
                                                                     </form>
                                                                 </th:block>
 
-                                                                <!-- Add Pet Trigger -->
                                                                 <a href="#"
                                                                     class="badge bg-light text-muted rounded-pill"
                                                                     data-bs-toggle="modal"
@@ -91,7 +94,7 @@
                                                                         class="modal-dialog modal-dialog-centered modal-sm">
                                                                         <div class="modal-content">
                                                                             <form
-                                                                                th:action="@{/serviceExecution/create}"
+                                                                                th:action="${serviceExecutionId == null} ? @{/serviceExecution/create} : @{/serviceExecution/updateClient}"
                                                                                 method="post">
                                                                                 <div class="modal-header">
                                                                                     <h6 class="modal-title">Novo Pet
@@ -101,10 +104,13 @@
                                                                                         data-bs-dismiss="modal"></button>
                                                                                 </div>
                                                                                 <div class="modal-body">
+                                                                                    <input type="hidden"
+                                                                                        th:if="${serviceExecutionId != null}"
+                                                                                        name="serviceExecutionId"
+                                                                                        th:value="${serviceExecutionId}" />
                                                                                     <input type="hidden" name="tutorId"
                                                                                         th:value="${tutor.id}" />
-                                                                                    <input type="text"
-                                                                                        name="petName"
+                                                                                    <input type="text" name="petName"
                                                                                         class="form-control form-control-sm"
                                                                                         placeholder="Nome do pet"
                                                                                         required />

@@ -34,9 +34,22 @@ public class PaymentService {
 
     }
 
+    public PaymentMethod findPaymentMethodById(Long id) {
+
+        return payMethodRepo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Forma de pagamento não encontrada"));
+
+    }
+
     public List<Payment> searchWithOptionalFilters(String name, LocalDate date, PaymentMethod paymentMethod) {
 
         return payRepo.searchWithOptionalFilters(name, paymentMethod, date);
+
+    }
+
+    public Payment save(Payment p) {
+
+        return payRepo.save(p);
 
     }
 

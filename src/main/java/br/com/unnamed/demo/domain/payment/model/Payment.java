@@ -3,10 +3,13 @@ package br.com.unnamed.demo.domain.payment.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,10 +17,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Payment {
 
     @Id
@@ -27,8 +34,8 @@ public class Payment {
     @NotNull
     private LocalDate date;
 
-    @ManyToOne
-    @JoinColumn(name = "service_execution_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_execution_id", nullable = false)
     private ServiceExecution serviceExecution;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,18 +47,15 @@ public class Payment {
     @NotNull
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
+
     private String observation;
 
-    public Payment() {
-    }
+    public void linkToServiceExecution(ServiceExecution s) {
 
-    public Payment(@NotNull LocalDate date, @NotNull ServiceExecution serviceExecution,
-            @NotNull PaymentMethod paymentMethod, @NotNull BigDecimal amount, String observation) {
-        this.date = date;
-        this.serviceExecution = serviceExecution;
-        this.paymentMethod = paymentMethod;
-        this.amount = amount;
-        this.observation = observation;
+        this.serviceExecution = s;
+
     }
 
 }

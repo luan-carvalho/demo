@@ -90,9 +90,9 @@ public class ServiceExecution {
 
     }
 
-    public void finish() {
+    public void markAsDone() {
 
-        this.serviceStatus = ServiceStatus.COMPLETED;
+        this.serviceStatus = ServiceStatus.DONE;
 
     }
 
@@ -105,17 +105,19 @@ public class ServiceExecution {
 
     public void addPayment(Payment payment) {
 
-        if (getAmountPaid().add(payment.getAmount()).compareTo(this.calculateTotal()) > 0)
+        if (getBalance().compareTo(payment.getAmount()) < 0)
             throw new IllegalArgumentException(
                     "Não é possível adicionar este pagamento, pois o serviço já foi totalmente pago");
 
         this.payments.add(payment);
+        payment.linkToServiceExecution(this);
 
     }
 
     public void removePayment(Payment payment) {
 
         this.payments.remove(payment);
+        payment.linkToServiceExecution(null);
 
     }
 
@@ -135,6 +137,7 @@ public class ServiceExecution {
     public void markAsPaid() {
 
         this.paymentStatus = ServicePaymentStatus.PAID;
+        this.serviceStatus = ServiceStatus.COMPLETED;
 
     }
 

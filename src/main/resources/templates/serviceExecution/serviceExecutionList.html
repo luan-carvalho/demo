@@ -94,7 +94,8 @@
                                         th:classappend="${service.serviceStatus.label == 'Pendente' ? ' bg-secondary' :
                  service.serviceStatus.label == 'Em execução' ? ' bg-warning text-dark' :
                  service.serviceStatus.label == 'Finalizado' ? ' bg-success' :
-                 service.serviceStatus.label == 'Cancelado' ? ' bg-danger' : ''}">
+                 service.serviceStatus.label == 'Cancelado' ? ' bg-danger' :
+                 service.serviceStatus.label == 'Baixado' ? ' bg-primary' : ''}">
                                     </span>
                                 </td>
 
@@ -111,24 +112,25 @@
         </div>
 
         <nav th:if="${services.totalPages > 1}" aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${services.first} ? 'disabled'">
-                <a class="page-link"
-                    th:href="@{/serviceExecution/list(page=${services.number - 1}, size=${services.size}, name=${name})}">Anterior</a>
-            </li>
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${services.first} ? 'disabled'">
+                    <a class="page-link"
+                        th:href="@{/serviceExecution/list(page=${services.number - 1}, size=${services.size}, name=${name})}">Anterior</a>
+                </li>
 
-            <li th:each="i : ${#numbers.sequence(0, services.totalPages - 1)}" class="page-item"
-                th:classappend="${i == services.number} ? 'active'">
-                <a class="page-link" th:href="@{/serviceExecution/list(page=${i}, size=${services.size}, name=${name})}"
-                    th:text="${i + 1}"></a>
-            </li>
+                <li th:each="i : ${#numbers.sequence(0, services.totalPages - 1)}" class="page-item"
+                    th:classappend="${i == services.number} ? 'active'">
+                    <a class="page-link"
+                        th:href="@{/serviceExecution/list(page=${i}, size=${services.size}, name=${name})}"
+                        th:text="${i + 1}"></a>
+                </li>
 
-            <li class="page-item" th:classappend="${services.last} ? 'disabled'">
-                <a class="page-link"
-                    th:href="@{/serviceExecution/list(page=${services.number + 1}, size=${services.size}, name=${name})}">Próxima</a>
-            </li>
-        </ul>
-    </nav>
+                <li class="page-item" th:classappend="${services.last} ? 'disabled'">
+                    <a class="page-link"
+                        th:href="@{/serviceExecution/list(page=${services.number + 1}, size=${services.size}, name=${name})}">Próxima</a>
+                </li>
+            </ul>
+        </nav>
 
         <script>
 

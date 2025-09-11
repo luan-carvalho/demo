@@ -1,77 +1,74 @@
 <body>
     <main class="container py-4" th:fragment="content">
 
-        <!-- Header com título e status -->
         <div class="card shadow-sm mb-4">
             <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
 
-                <!-- Título + Data -->
                 <div>
                     <h1 class="h3 mb-1" th:text="'Atendimento #' + ${serviceExecution.id}"></h1>
                     <small class="badge bg-primary" th:if="${serviceExecution.date != null}"
                         th:text="${#temporals.format(serviceExecution.date, 'dd/MM/yy')}"></small>
                 </div>
 
-                <!-- Status -->
                 <span th:text="${serviceExecution.status.label}" class="badge fw-bold fs-6" th:classappend="${serviceExecution.status.label == 'Pendente' ? ' bg-secondary' :
                               serviceExecution.status.label == 'Em execução' ? ' bg-warning text-dark' :
                               serviceExecution.status.label == 'Finalizado' ? ' bg-success' :
-                              serviceExecution.status.label == 'Cancelado' ? ' bg-danger' : ' bg-light text-dark'}">
+                              serviceExecution.status.label == 'Cancelado' ? ' bg-danger' :
+                              serviceExecution.status.label == 'Baixado' ? ' bg-primary' : ' bg-light text-dark'}">
                 </span>
 
-                <!-- Botões -->
                 <div class="d-flex flex-wrap gap-2">
+
                     <form
-                        th:if="${serviceExecution.status.label == 'Pendente' and not serviceExecution.selectedPetCareIds.isEmpty()}"
+                        th:if="${serviceExecution.status.label == 'Pendente' and not serviceExecution.selectedPetCareIds.isEmpty()} and serviceExecution.status.label != 'Baixado'"
                         th:action="@{/serviceExecution/{id}/start(id=${serviceExecution.id})}" method="post"
                         class="m-0">
-                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                        <button type="submit" class="btn btn-success btn-sm d-flex align-items-center">
                             <i class="bi bi-play-circle me-1"></i> Iniciar
                         </button>
                     </form>
 
                     <form th:if="${serviceExecution.status.label == 'Em execução'}"
-                        th:action="@{/serviceExecution/{id}/finish(id=${serviceExecution.id})}" method="post"
+                        th:action="@{/serviceExecution/{id}/markAsDone(id=${serviceExecution.id})}" method="post"
                         class="m-0">
-                        <button type="submit" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-flag-checkered me-1"></i> Finalizar
+                        <button type="submit" class="btn btn-warning btn-sm d-flex align-items-center text-dark">
+                            <i class="bi bi-check-lg me-1"></i> Finalizar
                         </button>
                     </form>
 
-                    <a th:if="${not serviceExecution.selectedPetCareIds.isEmpty()}"
-                        th:href="@{/checkout/{id}(id=${serviceExecution.id})}" class="btn btn-success btn-sm">
-                        <i class="bi bi-credit-card me-1"></i> Pagamento
+                    <a th:if="${serviceExecution.status.label == 'Finalizado' and serviceExecution.status.label != 'Baixado'}"
+                        th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}"
+                        class="btn btn-success btn-sm d-flex align-items-center">
+                        <i class="bi bi-check2-circle me-1"></i> Concluir
                     </a>
 
-                    <button type="submit" form="serviceExecutionForm"
-                        class="btn btn-primary btn-sm d-flex align-items-center">
-                        <i class="bi bi-save me-2"></i> Salvar
+                    <button th:if="${serviceExecution.status.label != 'Baixado'}" type="submit"
+                        form="serviceExecutionForm" class="btn btn-primary btn-sm d-flex align-items-center">
+                        <i class="bi bi-save me-1"></i> Salvar
                     </button>
 
-                    <a th:href="@{/serviceExecution}"
-                        class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+                    <a th:href="@{/serviceExecution}" class="btn btn-secondary btn-sm d-flex align-items-center">
                         <i class="bi bi-arrow-left-circle me-1"></i> Voltar
                     </a>
                 </div>
+
             </div>
         </div>
 
 
-        <!-- Formulário principal -->
         <form id="serviceExecutionForm" th:action="@{/serviceExecution/save}" method="post"
             th:object="${serviceExecution}">
             <input type="hidden" th:field="*{id}" />
 
             <div class="row g-4">
 
-                <!-- Coluna esquerda: Cliente + Serviços -->
                 <section class="col-lg-8">
 
-                    <!-- Cliente -->
                     <div class="card shadow-sm mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Cliente</h5>
-                            <a th:href="@{/serviceExecution/clientSelection?context=update(serviceExecutionId = ${serviceExecution.id})}"
+                            <a th:if="${serviceExecution.status.label != 'Baixado'}"
+                                th:href="@{/serviceExecution/clientSelection?context=update(serviceExecutionId = ${serviceExecution.id})}"
                                 class="btn btn-sm btn-outline-secondary d-flex align-items-center">
                                 <i class="bi bi-pencil-square me-1"></i> Editar
                             </a>
@@ -88,7 +85,6 @@
                         </div>
                     </div>
 
-                    <!-- Serviços -->
                     <div class="card shadow-sm">
                         <div class="card-header">
                             <h5 class="card-title mb-0"><i class="bi bi-list-check me-2"></i>Serviços Selecionados</h5>
@@ -105,7 +101,7 @@
                                                 <input class="form-check-input service-checkbox" type="checkbox"
                                                     th:field="*{selectedPetCareIds}" th:value="${petcare.id}"
                                                     th:id="'petcare-' + ${petcare.id}"
-                                                    th:attr="data-price=${petcare.price}" />
+                                                    th:attr="data-price=${petcare.price}, disabled=${serviceExecution.status.label == 'Baixado'}" />
                                                 <label
                                                     class="form-check-label d-flex justify-content-between align-items-center"
                                                     th:for="'petcare-' + ${petcare.id}">
@@ -122,30 +118,8 @@
                     </div>
                 </section>
 
-                <!-- Coluna direita: Status, Pagamentos, Data, Total -->
                 <aside class="col-lg-4">
 
-                    <!-- Pagamentos -->
-                    <div class="card shadow-sm mb-4">
-                        <div class="card-header bg-light">
-                            <h5 class="card-title mb-0"><i class="bi bi-cash-stack me-2"></i>Pagamentos</h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="small text-muted">Adiantamentos:</p>
-                            <!-- Aqui futuramente: lista de pagamentos já feitos -->
-                            <button type="button" class="btn btn-sm btn-outline-success w-100 mb-2">
-                                <i class="bi bi-plus-circle me-1"></i> Adicionar Adiantamento
-                            </button>
-
-                            <p class="small text-muted mt-3">Pagamentos finais:</p>
-                            <!-- Aqui futuramente: inputs para fechamento -->
-                            <button type="button" class="btn btn-sm btn-outline-primary w-100">
-                                <i class="bi bi-credit-card me-1"></i> Finalizar Pagamento
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Total -->
                     <div class="card shadow-sm">
                         <div class="card-header bg-light">
                             <h5 class="card-title mb-0"><i class="bi bi-cash-coin me-2"></i>Valor Total</h5>
@@ -154,11 +128,43 @@
                             <h3 id="totalValue" class="fw-bold text-dark mb-0">R$ 0,00</h3>
                         </div>
                     </div>
+
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0"><i class="bi bi-cash-stack me-2"></i>Pagamentos</h5>
+                            <button
+                                th:if="${serviceExecution.status.label != 'Finalizado' and serviceExecution.status.label != 'Baixado'}"
+                                type="button" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-credit-card me-1"></i> Adicionar
+                            </button>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush" th:if="${!payments.isEmpty()}">
+                                <li class="list-group-item d-flex justify-content-between align-items-center py-2"
+                                    th:each="payment : ${payments}">
+                                    <span>
+                                        <i class="bi bi-credit-card-2-front text-muted me-1"></i>
+                                        <span th:text="${payment.type}"></span>
+                                    </span>
+                                    <span class="badge bg-light text-dark fs-6">
+                                        <span
+                                            th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}"></span>
+                                    </span>
+                                </li>
+                            </ul>
+
+                            <p class="text-center text-muted py-3 mb-0" th:if="${payments.isEmpty()}">
+                                Nenhum pagamento adicionado.
+                            </p>
+                        </div>
+                    </div>
+
+
+
                 </aside>
             </div>
         </form>
 
-        <!-- Script totalizador -->
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const checkboxes = document.querySelectorAll(".service-checkbox");

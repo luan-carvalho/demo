@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
@@ -57,7 +56,7 @@ public class ServiceExecutionService {
 
     public void finish(ServiceExecution s) {
 
-        s.finish();
+        s.markAsDone();
         repo.save(s);
 
     }
@@ -65,20 +64,6 @@ public class ServiceExecutionService {
     public void cancel(ServiceExecution s) {
 
         s.cancel();
-        repo.save(s);
-
-    }
-
-    public void addPayment(ServiceExecution s, Payment p) {
-
-        s.addPayment(p);
-        repo.save(s);
-
-    }
-
-    public void removePayment(ServiceExecution s, Payment p) {
-
-        s.removePayment(p);
         repo.save(s);
 
     }

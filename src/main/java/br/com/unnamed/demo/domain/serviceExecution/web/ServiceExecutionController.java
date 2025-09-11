@@ -1,5 +1,6 @@
 package br.com.unnamed.demo.domain.serviceExecution.web;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
@@ -15,9 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import br.com.unnamed.demo.domain.payment.mapper.PaymentMapper;
 import br.com.unnamed.demo.domain.payment.model.Payment;
+import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
+import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
+import br.com.unnamed.demo.domain.payment.service.PaymentService;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
 import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
+import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionCheckoutDto;
 import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionDto;
 import br.com.unnamed.demo.domain.serviceExecution.mapper.ServiceExecutionMapper;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
@@ -34,17 +40,17 @@ import br.com.unnamed.demo.domain.tutor.service.TutorService;
 @RequestMapping("serviceExecution")
 public class ServiceExecutionController {
 
-    private ServiceExecutionService service;
-    private PetCareService petCareService;
-    private TutorService tutorService;
+    private final ServiceExecutionService service;
+    private final PetCareService petCareService;
+    private final TutorService tutorService;
+    private final PaymentService paymentService;
 
     public ServiceExecutionController(ServiceExecutionService service, PetCareService petCareService,
-            TutorService tutorService) {
-
+            TutorService tutorService, PaymentService paymentService) {
         this.service = service;
         this.petCareService = petCareService;
         this.tutorService = tutorService;
-
+        this.paymentService = paymentService;
     }
 
     @GetMapping
@@ -62,7 +68,7 @@ public class ServiceExecutionController {
         model.addAttribute("pending_services", service.findByStatusAndDate(ServiceStatus.PENDING, LocalDate.now()));
         model.addAttribute("in_progress_services",
                 service.findByStatusAndDate(ServiceStatus.IN_PROGRESS, LocalDate.now()));
-        model.addAttribute("completed_services", service.findByStatusAndDate(ServiceStatus.COMPLETED, LocalDate.now()));
+        model.addAttribute("completed_services", service.findByStatusAndDate(ServiceStatus.DONE, LocalDate.now()));
 
         model.addAttribute("pageTitle", "Quadro de execução");
         model.addAttribute("activePage", "serviceExecution-board");
@@ -162,6 +168,7 @@ public class ServiceExecutionController {
         model.addAttribute("all_pet_care_groups", petCareService.findAllGroups());
 
         model.addAttribute("serviceExecution", ServiceExecutionMapper.toDto(s));
+        model.addAttribute("payments", s.getPayments().stream().map(p -> PaymentMapper.toSimpleListDto(p)).toList());
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecution");
@@ -194,11 +201,27 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/updateClient")
-    public String updateClient(Long serviceExecutionId, Long tutorId, Long petId) {
+    public String updateClient(Long serviceExecutionId, Long tutorId, @RequestParam(required = false) Long petId,
+            @RequestParam(required = false) String petName) {
 
         ServiceExecution toBeUpdated = service.findById(serviceExecutionId);
         Tutor t = tutorService.findById(tutorId);
-        Pet p = t.getOwnedPet(petId);
+        Pet p = null;
+
+        if (petId == null && petName != null && !petName.isBlank()) {
+
+            p = new Pet(null, petName, Status.ACTIVE);
+            t.addPet(p);
+            p = tutorService.save(p);
+            t = tutorService.save(t);
+
+        }
+
+        if (petId != null) {
+
+            p = t.getOwnedPet(petId);
+
+        }
 
         toBeUpdated.updateTutorAndPet(t, p);
 
@@ -247,8 +270,8 @@ public class ServiceExecutionController {
 
     }
 
-    @PostMapping("/{serviceId}/finish")
-    public String finishServiceExecution(@PathVariable Long serviceId) {
+    @PostMapping("/{serviceId}/markAsDone")
+    public String markAsDone(@PathVariable Long serviceId) {
 
         ServiceExecution s = service.findById(serviceId);
         service.finish(s);
@@ -259,7 +282,12 @@ public class ServiceExecutionController {
     }
 
     @GetMapping("/{serviceId}/checkout")
-    public String sendServiceExecutionToRegister(@PathVariable Long serviceId, Model model) {
+    public String checkout(@PathVariable Long serviceId, Model model) {
+
+        ServiceExecutionCheckoutDto s = ServiceExecutionMapper.toCheckoutDto(service.findById(serviceId));
+
+        model.addAttribute("serviceExecution", s);
+        model.addAttribute("all_payment_types", paymentService.getAllPaymentMethods());
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecutionCheckout");
@@ -270,12 +298,32 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/{serviceId}/addPayment")
-    public String addPaymentToServiceExecution(@PathVariable Long serviceId, Payment payment) {
+    public String addPaymentToServiceExecution(@PathVariable Long serviceId, Long typeId, BigDecimal amount,
+            @RequestParam(required = false) String obs) {
 
         ServiceExecution s = service.findById(serviceId);
-        service.addPayment(s, payment);
+        PaymentMethod type = paymentService.findPaymentMethodById(typeId);
+
+        PaymentStatus status = s.getServiceStatus() != ServiceStatus.COMPLETED ? PaymentStatus.TEMPORARY
+                : PaymentStatus.FINAL;
+
+        Payment p = new Payment(null, LocalDate.now(), s, type, amount, status, obs);
+        s.addPayment(p);
+        service.save(s);
 
         return "redirect:/serviceExecution/" + serviceId + "/checkout";
 
     }
+
+    @PostMapping("/{serviceId}/checkout/finish")
+    public String finishServiceExecution(@PathVariable Long serviceId, Model model) {
+
+        ServiceExecution s = service.findById(serviceId);
+        s.markAsPaid();
+        service.save(s);
+
+        return "redirect:/serviceExecution";
+
+    }
+
 }

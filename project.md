@@ -25,11 +25,13 @@
 [ x ] Na tela do atendimento, mostrar o status do serviço e permitir atualizar
 [ x ] Na tela do atendimento, permitir mandar para o checkout
 [ x ] Fazer aquele esquema de agrupar os serviços por grupo (só para deixar mais agradável)
-[ ] Não permitir iniciar ou ir para o checkout se não tiver serviços adicionados
-[ ] Implementar checkout
+[ x ] Não permitir iniciar ou ir para o checkout se não tiver serviços adicionados
+[ x ] Implementar checkout
     [ ] Permitir adicionar pagamentos antecipadamente
-    [ ] 
-[ ] Melhorar a UI (mto botão um em cima do outro)
+    [  ] Não permitir finalizar sem pagamento
+[ ] Implementar desconto (% e R$)
+[ x ] Melhorar a UI (mto botão um em cima do outro)
+[ ] Adicionar travas de URL (ex -> editar coisas de uma OS já concluída)
 [ ] Quando atualizar o status de um atendimento pela tela de edição, não mandar de volta para o board
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar a chegada de um novo pet
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar que o tutor chegou para buscar o pet

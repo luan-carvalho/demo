@@ -5,7 +5,8 @@ public enum ServiceStatus {
     CANCELLED("Cancelado"),
     PENDING("Pendente"),
     IN_PROGRESS("Em execução"),
-    COMPLETED("Finalizado");
+    DONE("Finalizado"),
+    COMPLETED("Baixado");
 
     private final String label;
 

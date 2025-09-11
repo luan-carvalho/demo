@@ -47,13 +47,13 @@
                 </form>
             </div>
             <div th:if="${service.serviceStatus.name() == 'IN_PROGRESS'}">
-                <form th:action="@{/serviceExecution/{id}/finish(id=${service.id})}" method="post" class="d-inline">
+                <form th:action="@{/serviceExecution/{id}/markAsDone(id=${service.id})}" method="post" class="d-inline">
                     <button type="submit" class="btn btn-sm btn-info text-dark" title="Finalizar Atendimento">
                         <i class="bi bi-check-lg"></i>
                     </button>
                 </form>
             </div>
-            <div th:if="${service.serviceStatus.name() == 'COMPLETED'}">
+            <div th:if="${service.serviceStatus.name() == 'DONE'}">
                 <a th:href="@{/serviceExecution/{id}/checkout(id = ${service.id})}" class="btn btn-sm btn-success"
                     title="Registrar Pagamento">
                     <i class="bi bi-currency-dollar"></i>
