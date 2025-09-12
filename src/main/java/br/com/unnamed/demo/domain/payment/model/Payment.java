@@ -58,4 +58,10 @@ public class Payment {
 
     }
 
+    public void updateStatus(PaymentStatus status) {
+
+        this.status = status;
+
+    }
+
 }

@@ -39,7 +39,7 @@
         </div>
 
         <div>
-            <div th:if="${service.serviceStatus.name() == 'PENDING'}">
+            <div th:if="${service.serviceStatus.name() == 'PENDING' and not service.isEmpty()}">
                 <form th:action="@{/serviceExecution/{id}/start(id=${service.id})}" method="post" class="d-inline">
                     <button type="submit" class="btn btn-sm btn-primary" title="Iniciar Atendimento">
                         <i class="bi bi-play-fill"></i>

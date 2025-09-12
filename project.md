@@ -27,8 +27,8 @@
 [ x ] Fazer aquele esquema de agrupar os serviços por grupo (só para deixar mais agradável)
 [ x ] Não permitir iniciar ou ir para o checkout se não tiver serviços adicionados
 [ x ] Implementar checkout
-    [ ] Permitir adicionar pagamentos antecipadamente
-    [  ] Não permitir finalizar sem pagamento
+    [ x ] Permitir adicionar pagamentos antecipadamente
+    [ x ] Não permitir finalizar sem pagamento
 [ ] Implementar desconto (% e R$)
 [ x ] Melhorar a UI (mto botão um em cima do outro)
 [ ] Adicionar travas de URL (ex -> editar coisas de uma OS já concluída)

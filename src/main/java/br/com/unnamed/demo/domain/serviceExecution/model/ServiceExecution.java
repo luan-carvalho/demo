@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
+import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
@@ -139,6 +140,9 @@ public class ServiceExecution {
         this.paymentStatus = ServicePaymentStatus.PAID;
         this.serviceStatus = ServiceStatus.COMPLETED;
 
+        this.payments.stream().filter(p -> p.getStatus() == PaymentStatus.TEMPORARY)
+                .forEach(p -> p.updateStatus(PaymentStatus.FINAL));
+
     }
 
     public void addService(PetCare petCare) {
@@ -169,6 +173,12 @@ public class ServiceExecution {
 
         this.executedServices.clear();
         this.executedServices.addAll(newExecutedServices);
+
+    }
+
+    public boolean isEmpty() {
+
+        return this.executedServices.isEmpty();
 
     }
 

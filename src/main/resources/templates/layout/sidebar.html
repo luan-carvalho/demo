@@ -46,28 +46,19 @@
     <ul th:fragment="menu-links" class="nav nav-pills flex-column mb-auto">
 
         <li class="nav-item">
-            <a href="#" class="nav-link d-flex justify-content-between align-items-center"
-                th:classappend="${#lists.contains({'serviceExecution-board', 'serviceExecution-list'}, activePage) ? 'active' : 'text-white'}"
-                data-bs-toggle="collapse" data-bs-target="#service-collapse" aria-expanded="false">
-                <span>
-                    <i class="bi bi-gear me-2"></i>Atendimentos
-                </span>
-                <i class="bi bi-chevron-down small"></i>
-            </a>
-            <div class="collapse" id="service-collapse"
-                th:classappend="${#lists.contains({'serviceExecution-board', 'serviceExecution-list', 'serviceExecution'}, activePage) ? 'show' : ''}">
-                <ul class="nav flex-column ps-4 mt-2">
-                    <li><a th:href="@{/serviceExecution}"
-                            th:class="${activePage == 'serviceExecution-board' ? 'nav-link active' : 'nav-link text-white'}"
-                            class="py-1"><i class="bi bi-kanban me-2"></i>Quadro de execução</a>
-                    </li>
-                    <li><a th:href="@{/serviceExecution/list}"
-                            th:class="${activePage == 'serviceExecution-list' ? 'nav-link active' : 'nav-link text-white'}"
-                            class="py-1"><i class="bi bi-card-list me-2"></i>Consulta</a>
-                    </li>
-                </ul>
-            </div>
+            <a th:href="@{/serviceExecution}"
+                th:class="${activePage == 'serviceExecution-board' ? 'nav-link active' : 'nav-link text-white'}"
+                class="py-1"><i class="bi bi-kanban me-2"></i>Quadro de execução</a>
+
         </li>
+
+        <li class="nav-item">
+
+            <a th:href="@{/serviceExecution/list}"
+                th:class="${activePage == 'serviceExecution-list' ? 'nav-link active' : 'nav-link text-white'}"
+                class="py-1"><i class="bi bi-card-list me-2"></i>Atendimentos</a>
+        </li>
+
         <li class="nav-item">
             <a th:href="@{/tutor}" th:class="${activePage == 'clients' ? 'nav-link active' : 'nav-link text-white'}">
                 <i class="bi bi-people bi-fw me-2"></i>Clientes

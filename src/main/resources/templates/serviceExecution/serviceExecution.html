@@ -132,11 +132,11 @@
                     <div class="card shadow-sm mt-4">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-cash-stack me-2"></i>Pagamentos</h5>
-                            <button
-                                th:if="${serviceExecution.status.label != 'Finalizado' and serviceExecution.status.label != 'Baixado'}"
-                                type="button" class="btn btn-sm btn-outline-primary">
+                            <a th:if="${serviceExecution.status.label != 'Finalizado' and serviceExecution.status.label != 'Baixado' and not serviceExecution.selectedPetCareIds.isEmpty()}"
+                                type="button" class="btn btn-sm btn-outline-primary"
+                                th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}">
                                 <i class="bi bi-credit-card me-1"></i> Adicionar
-                            </button>
+                            </a>
                         </div>
                         <div class="card-body p-0">
                             <ul class="list-group list-group-flush" th:if="${!payments.isEmpty()}">
