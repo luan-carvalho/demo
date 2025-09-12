@@ -129,8 +129,6 @@ public class ServiceExecutionController {
         Tutor t = tutorService.findById(tutorId);
         Pet p = null;
 
-        System.out.println("AAAAAAAAA: " + petName);
-
         if (petId == null && petName != null && !petName.isBlank()) {
 
             p = new Pet(null, petName, Status.ACTIVE);
@@ -248,7 +246,7 @@ public class ServiceExecutionController {
 
     }
 
-    @PostMapping("/{serviceId}/delete")
+    @PostMapping("/{serviceId}/cancel")
     public String cancelService(@PathVariable Long serviceId) {
 
         ServiceExecution s = service.findById(serviceId);

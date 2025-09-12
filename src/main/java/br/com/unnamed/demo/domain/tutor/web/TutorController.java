@@ -1,5 +1,6 @@
 package br.com.unnamed.demo.domain.tutor.web;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -14,12 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
+import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
+import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
 import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
 import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
 import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
+import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
@@ -75,7 +80,15 @@ public class TutorController {
     }
 
     @GetMapping("/new")
-    public String showTutorRegistrationForm(Model model) {
+    public String showTutorRegistrationForm(Model model,
+            @RequestParam(required = false) String context,
+            @RequestParam(required = false) Long serviceId) {
+
+        if (context != null)
+            model.addAttribute("context", context);
+
+        if (context != null && serviceId != null)
+            model.addAttribute("serviceId", serviceId);
 
         model.addAttribute("tutor", TutorFormDto.empty());
         model.addAttribute("activePage", "clients");
@@ -87,7 +100,9 @@ public class TutorController {
     }
 
     @PostMapping
-    public String saveTutor(@Valid TutorFormDto tutorDto) {
+    public String saveTutor(@Valid TutorFormDto tutorDto,
+            @RequestParam(required = false) String context,
+            @RequestParam(required = false) Long serviceId) {
 
         if (tutorDto.id() != null) {
 
@@ -104,7 +119,8 @@ public class TutorController {
 
         Tutor savedtutor = tutorService.save(TutorMapper.toEntity(tutorDto));
 
-        return "redirect:/tutor/" + savedtutor.getId() + "/pet/new";
+        return "redirect:/tutor/" + savedtutor.getId() + "/pet/new"
+                + (context != null ? "?context=" + context + (serviceId != null ? "&serviceId=" + serviceId : "") : "");
 
     }
 
@@ -143,9 +159,19 @@ public class TutorController {
     }
 
     @GetMapping("/{tutorId}/pet/new")
-    public String findNewPetForm(@PathVariable Long tutorId, Model model) {
+    public String findNewPetForm(@PathVariable Long tutorId, Model model,
+            @RequestParam(required = false) String context,
+            @RequestParam(required = false) Long serviceId) {
+
+        // Tutor t = tutorService.findById(tutorId); travar para não permitir entrar nessa url se o tutor não existir
 
         model.addAttribute("pet", PetFormDto.empty());
+
+        if (context != null)
+            model.addAttribute("context", context);
+
+        if (context != null && serviceId != null)
+            model.addAttribute("serviceId", serviceId);
 
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "pet/pet");
@@ -156,23 +182,55 @@ public class TutorController {
     }
 
     @PostMapping("/{tutorId}/pet/save")
-    public String savePet(@PathVariable Long tutorId, @Valid PetFormDto pet) {
+    public String savePet(@PathVariable Long tutorId, @Valid PetFormDto petDto,
+            @RequestParam(required = false) String context,
+            @RequestParam(required = false) Long serviceId) {
 
         Tutor tutor = tutorService.findById(tutorId);
+        Pet pet = PetMapper.toEntity(petDto);
 
-        if (pet.id() != null) {
+        if (petDto.id() != null) {
 
-            tutor.updatePetInfo(PetMapper.toEntity(pet));
-
-        }
-
-        if (pet.id() == null) {
-
-            tutor.addPet(PetMapper.toEntity(pet));
+            tutor.updatePetInfo(pet);
 
         }
 
-        tutorService.save(tutor);
+        if (petDto.id() == null) {
+
+            tutor.addPet(pet);
+            pet = tutorService.save(pet);
+
+        }
+
+        tutor = tutorService.save(tutor);
+
+        if (context != null && serviceId != null) {
+
+            if (context.equals("update")) {
+
+                ServiceExecution toBeUpdated = service.findById(serviceId);
+                toBeUpdated.updateTutorAndPet(tutor, pet);
+                service.save(toBeUpdated);
+                return "redirect:/serviceExecution/" + toBeUpdated.getId();
+
+            }
+
+            if (context.equals("create")) {
+
+                ServiceExecution created = this.service.save(
+                        new ServiceExecutionBuilder()
+                                .tutor(tutor)
+                                .pet(pet)
+                                .date(LocalDate.now())
+                                .status(ServiceStatus.PENDING)
+                                .paymentStatus(ServicePaymentStatus.NOT_PAID)
+                                .build());
+
+                return "redirect:/serviceExecution/" + created.getId();
+
+            }
+
+        }
 
         return "redirect:/tutor/" + tutorId;
 

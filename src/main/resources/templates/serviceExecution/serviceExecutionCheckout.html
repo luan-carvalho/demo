@@ -76,7 +76,7 @@
                         <div class="col-lg-4">
                             <label for="type" class="form-label">Forma de Pagamento</label>
                             <select id="type" name="typeId" class="form-select"
-                                th:disabled="${serviceExecution.isFullyPaid()}">
+                                th:disabled="${serviceExecution.isFullyPaid()}" required>
                                 <option value="">-- Selecione --</option>
                                 <option th:each="pt : ${all_payment_types}" th:value="${pt.id}"
                                     th:text="${pt.description}"></option>
@@ -156,7 +156,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </body>
 

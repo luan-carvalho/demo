@@ -20,7 +20,7 @@
                 <div class="d-flex flex-wrap gap-2">
 
                     <form
-                        th:if="${serviceExecution.status.label == 'Pendente' and not serviceExecution.selectedPetCareIds.isEmpty()} and serviceExecution.status.label != 'Baixado'"
+                        th:if="${serviceExecution.status.label == 'Pendente' and not serviceExecution.selectedPetCareIds.isEmpty()}"
                         th:action="@{/serviceExecution/{id}/start(id=${serviceExecution.id})}" method="post"
                         class="m-0">
                         <button type="submit" class="btn btn-success btn-sm d-flex align-items-center">
@@ -36,16 +36,53 @@
                         </button>
                     </form>
 
-                    <a th:if="${serviceExecution.status.label == 'Finalizado' and serviceExecution.status.label != 'Baixado'}"
+                    <a th:if="${serviceExecution.status.label == 'Finalizado'}"
                         th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}"
                         class="btn btn-success btn-sm d-flex align-items-center">
                         <i class="bi bi-check2-circle me-1"></i> Concluir
                     </a>
-
-                    <button th:if="${serviceExecution.status.label != 'Baixado'}" type="submit"
-                        form="serviceExecutionForm" class="btn btn-primary btn-sm d-flex align-items-center">
+                    <button type="submit" form="serviceExecutionForm" class="btn btn-primary btn-sm d-flex align-items-center">
                         <i class="bi bi-save me-1"></i> Salvar
                     </button>
+
+                    <button th:if="${serviceExecution.status.label != 'Cancelado'}" type="button"
+                        class="btn btn-danger btn-sm d-flex align-items-center" data-bs-toggle="modal"
+                        data-bs-target="#cancelConfirmModal">
+                        <i class="bi bi-trash me-1"></i> Cancelar
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="cancelConfirmModal" tabindex="-1"
+                        aria-labelledby="cancelConfirmModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="cancelConfirmModalLabel">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmar Cancelamento
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Tem certeza que deseja <strong>cancelar este atendimento</strong>?
+                                    Essa ação não poderá ser desfeita.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Voltar
+                                    </button>
+                                    <form th:action="@{/serviceExecution/{id}/cancel(id=${serviceExecution.id})}"
+                                        method="post">
+                                        <button type="submit"
+                                            th:href="@{/serviceExecution/{id}/cancel(id=${serviceExecution.id})}"
+                                            class="btn btn-danger">
+                                            Confirmar Cancelamento
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <a th:href="@{/serviceExecution}" class="btn btn-secondary btn-sm d-flex align-items-center">
                         <i class="bi bi-arrow-left-circle me-1"></i> Voltar
@@ -67,7 +104,7 @@
                     <div class="card shadow-sm mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Cliente</h5>
-                            <a th:if="${serviceExecution.status.label != 'Baixado'}"
+                            <a th:if="${not #lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}"
                                 th:href="@{/serviceExecution/clientSelection?context=update(serviceExecutionId = ${serviceExecution.id})}"
                                 class="btn btn-sm btn-outline-secondary d-flex align-items-center">
                                 <i class="bi bi-pencil-square me-1"></i> Editar
@@ -86,8 +123,9 @@
                     </div>
 
                     <div class="card shadow-sm">
-                        <div class="card-header">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-list-check me-2"></i>Serviços Selecionados</h5>
+
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
@@ -101,13 +139,11 @@
                                                 <input class="form-check-input service-checkbox" type="checkbox"
                                                     th:field="*{selectedPetCareIds}" th:value="${petcare.id}"
                                                     th:id="'petcare-' + ${petcare.id}"
-                                                    th:attr="data-price=${petcare.price}, disabled=${serviceExecution.status.label == 'Baixado'}" />
+                                                    th:attr="data-price=${petcare.price}, disabled=${#lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}" />
                                                 <label
                                                     class="form-check-label d-flex justify-content-between align-items-center"
                                                     th:for="'petcare-' + ${petcare.id}">
                                                     <span th:text="${petcare.description}"></span>
-                                                    <span class="text-muted small ms-2"
-                                                        th:text="'R$ ' + ${#numbers.formatDecimal(petcare.price, 1, 'POINT', 2, 'COMMA')}"></span>
                                                 </label>
                                             </div>
                                         </div>
@@ -125,14 +161,15 @@
                             <h5 class="card-title mb-0"><i class="bi bi-cash-coin me-2"></i>Valor Total</h5>
                         </div>
                         <div class="card-body text-center">
-                            <h3 id="totalValue" class="fw-bold text-dark mb-0">R$ 0,00</h3>
+                            <h3 th:text="'R$ ' + ${#numbers.formatDecimal(serviceExecution.total, 1, 'POINT', 2, 'COMMA')}"
+                                class="fw-bold text-dark mb-0"></h3>
                         </div>
                     </div>
 
                     <div class="card shadow-sm mt-4">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-cash-stack me-2"></i>Pagamentos</h5>
-                            <a th:if="${serviceExecution.status.label != 'Finalizado' and serviceExecution.status.label != 'Baixado' and not serviceExecution.selectedPetCareIds.isEmpty()}"
+                            <a th:if="${not #lists.contains({'Finalizado','Baixado','Cancelado'}, serviceExecution.status.label) and not serviceExecution.selectedPetCareIds.isEmpty()}"
                                 type="button" class="btn btn-sm btn-outline-primary"
                                 th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}">
                                 <i class="bi bi-credit-card me-1"></i> Adicionar
@@ -164,28 +201,5 @@
                 </aside>
             </div>
         </form>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const checkboxes = document.querySelectorAll(".service-checkbox");
-                const totalElement = document.querySelector("#totalValue");
-
-                function updateTotal() {
-                    let total = 0;
-                    checkboxes.forEach(cb => {
-                        if (cb.checked) {
-                            total += parseFloat(cb.dataset.price);
-                        }
-                    });
-                    totalElement.textContent = "R$ " + total.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                }
-
-                checkboxes.forEach(cb => cb.addEventListener("change", updateTotal));
-                updateTotal();
-            });
-        </script>
     </main>
 </body>

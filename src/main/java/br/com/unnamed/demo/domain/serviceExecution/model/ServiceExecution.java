@@ -99,8 +99,8 @@ public class ServiceExecution {
 
     public void cancel() {
 
-        this.payments.clear();
         this.serviceStatus = ServiceStatus.CANCELLED;
+        this.payments.stream().forEach(p -> p.updateStatus(PaymentStatus.CANCELLED));
 
     }
 

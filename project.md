@@ -7,6 +7,7 @@
 [ ] Tela de erro para erros genéricos
 [ ] Exceções personalizadas para gerar erros personalizados
 [ ] Adicionar "back logic" em páginas mais críticas
+[ ] Adicionar travas de URL
 
 # Cadastro de tutor
 
@@ -14,6 +15,10 @@
 [ ] Melhorar o layout da tela de pet
 [ ] Grupo de tutor/pet (para poder ver quem é do plano infinite, quem é permuta, etc) (será que precisa???)
 [ ] (FUTURO) link para o tutor ver o perfil do pet
+
+# Cadastro de serviços
+
+[ ] Não está funcionando atualizar preço
 
 # Atendimento <= trabalhando nesse aqui agora
 
@@ -31,7 +36,6 @@
     [ x ] Não permitir finalizar sem pagamento
 [ ] Implementar desconto (% e R$)
 [ x ] Melhorar a UI (mto botão um em cima do outro)
-[ ] Adicionar travas de URL (ex -> editar coisas de uma OS já concluída)
 [ ] Quando atualizar o status de um atendimento pela tela de edição, não mandar de volta para o board
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar a chegada de um novo pet
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar que o tutor chegou para buscar o pet

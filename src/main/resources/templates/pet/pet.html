@@ -5,14 +5,15 @@
     <div th:fragment="content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0" th:text="${pet.id == null} ? 'Novo Pet' : 'Editar Pet'"></h1>
-            <a th:href="@{/tutor/{id}(id=${tutorId})}" class="btn btn-secondary">
+            <a th:href="@{/tutor/{id}(id=${tutorId})}" class="btn btn-secondary btn-sm" >
                 <i class="bi bi-arrow-left"></i>
                 <span class="d-none d-md-inline ms-2">Voltar para o Tutor</span>
             </a>
         </div>
 
-        <form id="petForm" th:action="@{/tutor/{tutorId}/pet/save (tutorId=${tutorId})}" method="post"
-            th:object="${pet}">
+        <form id="petForm"
+            th:action="@{/tutor/{tutorId}/pet/save (tutorId=${tutorId}, context=${context}, serviceId=${serviceId})}"
+            method="post" th:object="${pet}">
 
             <div class="row g-4">
                 <div class="col-lg-8">
@@ -58,8 +59,11 @@
                                         </p>
                                     </div>
                                     <div class="text-end d-flex flex-column align-items-end">
-                                        <span class="badge"
-                                            th:classappend="${service.serviceStatus.name() == 'COMPLETED' ? 'bg-success' : 'bg-warning text-dark'}"
+                                        <span class="badge" th:classappend="${service.serviceStatus.label == 'Pendente' ? ' bg-secondary' :
+                              service.serviceStatus.label == 'Em execução' ? ' bg-warning text-dark' :
+                              service.serviceStatus.label == 'Finalizado' ? ' bg-success' :
+                              service.serviceStatus.label == 'Cancelado' ? ' bg-danger' :
+                              service.serviceStatus.label == 'Baixado' ? ' bg-primary' : ' bg-light text-dark'}"
                                             th:text="${service.serviceStatus.label}"></span>
                                         <div class="small mt-1 fw-bold"
                                             th:text="'R$ ' + ${#numbers.formatDecimal(service.calculateTotal(), 1, 'POINT', 2, 'COMMA')}">

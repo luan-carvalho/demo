@@ -84,6 +84,8 @@ public class PetCareController {
 
             PetCare existingPetCare = petCareService.findById(petCare.id());
             existingPetCare.updateDescription(petCare.description());
+            existingPetCare.updatePrice(petCare.price());
+            existingPetCare.updateGroup(petCare.group());
             petCareService.save(existingPetCare);
             return "redirect:/petCare";
 
