@@ -22,7 +22,8 @@ public class PaymentController {
     }
 
     @GetMapping
-    public String all(Model model, @RequestParam(required = false) LocalDate date,
+    public String all(Model model,
+            @RequestParam(required = false) LocalDate date,
             @RequestParam(required = false) PaymentMethod method,
             @RequestParam(required = false) String name) {
 

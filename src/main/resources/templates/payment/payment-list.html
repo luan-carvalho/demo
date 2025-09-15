@@ -25,10 +25,10 @@
 
                     <div class="col-lg-3">
                         <label for="type" class="form-label">Tipo de Pagamento</label>
-                        <select id="type" name="type" class="form-select">
+                        <select id="method" name="type" class="form-select">
                             <option value="">Todos os Tipos</option>
-                            <option th:each="pt : ${all_payment_types}" th:value="${pt.id}" th:text="${pt.description}"
-                                th:selected="${type != null and type.id == pt.id}">
+                            <option th:each="m : ${all_payment_methods}" th:value="${m.id}" th:text="${m.description}"
+                                th:selected="${method    != null and method.id == m.id}">
                             </option>
                         </select>
                     </div>
@@ -46,7 +46,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table align-middle">
                         <thead class="table-light">
                             <tr>
                                 <th scope="col">Data</th>
@@ -57,7 +57,7 @@
                         </thead>
                         <tbody>
 
-                            <tr th:each="payment : ${payments}" th:data-href="@{/payment/{id}(id=${payment.id})}" class="clickable-row">
+                            <tr th:each="payment : ${payments}" th:data-href="@{/payment/{id}(id=${payment.id})}">
 
                                 <td th:text="${#temporals.format(payment.date, 'dd/MM/yyyy')}"></td>
 
@@ -67,10 +67,10 @@
                                     </div>
                                 </td>
 
-                                <td th:text="${payment.type.description}"></td>
+                                <td th:text="${payment.paymentMethod.description}"></td>
 
                                 <td class="text-end fw-bold"
-                                    th:text="'R$ ' + ${#numbers.formatDecimal(payment.value, 1, 'POINT', 2, 'COMMA')}">
+                                    th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}">
                                 </td>
                             </tr>
 
