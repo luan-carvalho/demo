@@ -1,12 +1,5 @@
 package br.com.unnamed.demo.domain.authentication.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,55 +9,45 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class UserImpl implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     private Status status;
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> userRoles;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
 
-    public UserImpl() {
-
-        userRoles = new ArrayList<>();
+    public User() {
 
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.userRoles;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.username;
+    public User(Long id, String name, Status status, String password, Role role) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.password = password;
+        this.role = role;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getName() {
+        return name;
     }
 
     public void deactivate() {
@@ -95,8 +78,18 @@ public class UserImpl implements UserDetails {
 
     }
 
-    public List<Role> getUserRoles() {
-        return userRoles;
+    public String getPassword() {
+        return password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public String getSimpleName() {
+
+        return this.name.split(" ")[0];
+
     }
 
 }

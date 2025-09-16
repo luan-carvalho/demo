@@ -11,7 +11,8 @@
             </a>
         </header>
 
-        <form id="tutorForm" th:action="@{/tutor(context=${context}, serviceId=${serviceId})}" method="post" th:object="${tutor}">
+        <form id="tutorForm" th:action="@{/tutor(context=${context}, serviceId=${serviceId})}" method="post"
+            th:object="${tutor}">
             <input type="hidden" th:field="*{id}" />
             <input type="hidden" th:if="${tutor.id}" th:field="*{status}" />
 
@@ -99,20 +100,24 @@
                 </aside>
             </div>
         </form>
+        <script>
+            const phoneElement = document.getElementById('phone');
+            IMask(phoneElement, {
+                mask: [{
+                    mask: '(00) 0000-0000'
+                }, {
+                    mask: '(00) 00000-0000'
+                }],
+                dispatch: function (appended, dynamicMasked) {
+                    const number = (dynamicMasked.value + appended).replace(/\D/g, '');
+                    // Check if the number's length is sufficient for the 9th digit pattern
+                    return dynamicMasked.compiledMasks.find(m => number.length <= m.mask.replace(/\D/g, '').length);
+                }
+            });
+        </script>
     </main>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const phoneInput = document.getElementById('phone');
-            if (phoneInput) {
-                new Cleave(phoneInput, {
-                    delimiters: ['(', ') ', '-'],
-                    blocks: [0, 2, 5, 4],
-                    numericOnly: true
-                });
-            }
-        });
-    </script>
+
 </body>
 
 </html>

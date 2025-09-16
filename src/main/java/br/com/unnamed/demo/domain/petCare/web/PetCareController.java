@@ -2,7 +2,6 @@ package br.com.unnamed.demo.domain.petCare.web;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +37,7 @@ public class PetCareController {
 
         status = status == null ? Status.ACTIVE : status;
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("description").ascending());
+        Pageable pageable = PageRequest.of(page, size);
 
         model.addAttribute("petCarePage",
                 petCareService.searchWithOptionalFilters(description, petCareGroup, status, pageable));

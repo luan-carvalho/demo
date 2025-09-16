@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <main th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0" th:text="${user.id == null} ? 'Novo Usuário' : 'Editar Usuário'"></h1>
+            <a th:href="@{/user}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Voltar para a Lista
+            </a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Informações do Usuário</h5>
+                    </div>
+                    <form th:action="@{/user}" method="post" th:object="${user}">
+                        <div class="card-body">
+                            <input type="hidden" th:field="*{id}" />
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="description" th:field="*{name}" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="group" class="form-label">Atribuição</label>
+                                <select class="form-select" id="group" name="group">
+                                    <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.label}"
+                                        th:selected="${user.role != null and role.id == user.role.id}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <div>
+                                <a th:if="${user.id != null and user.status.name() == 'ACTIVE'}" href="#"
+                                    th:href="@{/user/{id}/inactivate(id=${user.id})}"
+                                    class="btn btn-sm btn-outline-danger">Inativar Usuário</a>
+
+                                <a th:if="${user.id != null and user.status.name() == 'INACTIVE'}" href="#"
+                                    th:href="@{/user/{id}/activate(id=${user.id})}"
+                                    class="btn btn-sm btn-outline-success">Reativar Usuário</a>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <span th:text="*{id != null} ? 'Salvar Alterações' : 'Cadastrar Usuário'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+    </main>
+
+</body>
+
+</html>

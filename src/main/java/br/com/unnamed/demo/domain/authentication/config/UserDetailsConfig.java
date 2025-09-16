@@ -1,12 +1,12 @@
 package br.com.unnamed.demo.domain.authentication.config;
 
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.domain.authentication.model.UserImpl;
+import br.com.unnamed.demo.domain.authentication.model.CustomUserDetails;
+import br.com.unnamed.demo.domain.authentication.model.User;
 import br.com.unnamed.demo.domain.authentication.repository.UserRepository;
 
 @Service
@@ -19,13 +19,12 @@ public class UserDetailsConfig implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String login) {
+    public UserDetails loadUserByUsername(String id) {
 
-        UserImpl user = repository.findByUsername(login)
+        User user = repository.findById(Long.parseLong(id))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
 
-        return new User(user.getUsername(), user.getPassword(), true, true, true,
-                true, user.getAuthorities());
+        return new CustomUserDetails(user);
 
     }
 }

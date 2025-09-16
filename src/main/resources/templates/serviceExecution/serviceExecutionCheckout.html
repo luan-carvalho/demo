@@ -4,17 +4,11 @@
 <body>
     <div th:fragment="content">
 
-        <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <!-- Back button -->
             <a th:href="@{/serviceExecution}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
                 <i class="bi bi-arrow-left me-2"></i> Voltar
             </a>
 
-            <!-- Title -->
-            <h1 class="h4 mb-0 text-center flex-grow-1">Checkout</h1>
-
-            <!-- Finish button -->
             <form th:action="@{/serviceExecution/{id}/checkout/finish(id=${serviceExecution.id})}" method="post"
                 class="m-0">
                 <button type="submit" class="btn btn-success btn-sm d-flex align-items-center"
@@ -24,7 +18,6 @@
             </form>
         </div>
 
-        <!-- Totals section -->
         <div class="container mb-4">
             <div class="row g-3">
                 <div class="col-md-4">
@@ -134,7 +127,7 @@
                                 <td th:text="${payment.method.description}"></td>
                                 <td th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}">
                                 </td>
-                                <td class="text-end" th:text="${payment.observation}"></td>
+                                <td th:text="${payment.observation}"></td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
                                         <button type="button" class="btn btn-outline-secondary" title="Editar">

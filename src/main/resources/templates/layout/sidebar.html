@@ -108,7 +108,7 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a href="#" th:class="${activePage == 'users' ? 'nav-link active' : 'nav-link text-white'}">
+                <a th:href="@{/user}" th:class="${activePage == 'users' ? 'nav-link active' : 'nav-link text-white'}">
                     <i class="bi bi-person-gear bi-fw me-2"></i>Usuários
                 </a>
             </li>
@@ -121,7 +121,7 @@
             <div class="d-flex align-items-center text-white text-decoration-none">
                 <i class="bi bi-person-circle fs-4 me-2"></i>
                 <span class="fw-bold"
-                    th:text="${#strings.capitalizeWords(#authentication.principal.username)}">Usuário</span>
+                    sec:authentication="principal.name"></span>
             </div>
 
             <!-- Right Side: Logout Button -->

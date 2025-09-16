@@ -25,6 +25,8 @@ INSERT INTO pet_care (description, group_id, price, status) VALUES ('Escovação
 INSERT INTO service_execution (tutor_id, pet_id, service_status, payment_status, date) VALUES (1, 1, 'DONE', 'NOT_PAID', CURRENT_DATE);
 INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (1, 1, 45.00);
 
-INSERT INTO role (description) VALUES ('ROLE_ADMIN');
-INSERT INTO users (username, password, status) VALUES ('luan', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'ACTIVE');
-INSERT INTO user_role (role_id, user_id) VALUES (1, 1);
+INSERT INTO role (description, label) VALUES ('ROLE_ADMIN', 'Administrador');
+INSERT INTO role (description, label) VALUES ('ROLE_ATTENDANT', 'Atendente');
+INSERT INTO role (description, label) VALUES ('ROLE_RECEPCIONIST', 'Recepcionista');
+INSERT INTO users (name, password, status, role_id) VALUES ('Luan Carvalho de Souza', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'ACTIVE', 1);
+

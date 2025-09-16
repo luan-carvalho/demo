@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="content">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">Usuários</h1>
+            <a th:href="@{/user/new}" class="btn btn-primary d-flex align-items-center">
+                <i class="bi bi-plus-lg me-2"></i>
+                Novo Usuário
+            </a>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form th:action="@{/user}" method="get" class="row g-2 align-items-end">
+                    <div class="col-lg-6">
+                        <label for="name" class="form-label">Buscar pelo nome</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Nome do usuário..."
+                            th:value="${name}">
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select id="status" name="status" class="form-select">
+                            <option th:each="s : ${statuses}" th:value="${s}"
+                                th:text="${s.name() == 'ACTIVE'} ? 'Ativo' : 'Inativo'" th:selected="${status == s}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        <a th:href="@{/user}" class="btn btn-secondary">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Nome</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${users.content}" class="clickable-row"
+                                th:data-href="@{/user/{id}(id=${user.id})}">
+
+                                <td class="fw" th:text="${user.id}"></td>
+                                <td class="fw" th:text="${user.name}"></td>
+                            </tr>
+
+                            <tr th:if="${users.isEmpty()}" style="pointer-events: none;">
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    Nenhum usuário cadastrado.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <nav th:if="${users.totalPages > 1}" aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${users.first} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/petCare(page=${users.number - 1}, size=${users.size}, description=${description})}">Anterior</a>
+                    </li>
+
+
+                    <li th:each="i : ${#numbers.sequence(0, users.totalPages - 1)}" class="page-item"
+                        th:classappend="${i == users.number} ? 'active'">
+                        <a class="page-link"
+                            th:href="@{/petCare(page=${i}, size=${users.size}, description=${description})}"
+                            th:text="${i + 1}"></a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${users.last} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/petCare(page=${users.number + 1}, size=${users.size}, description=${description})}">Próxima</a>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+        <script>
+
+            if ($(".clickable-row").length) {
+                $(".clickable-row").on("click", function (event) {
+                    if ($(event.target).closest('a.badge').length === 0) {
+                        window.location = $(this).data("href");
+                    }
+                });
+            }
+
+        </script>
+    </div>
+</body>
+
+</html>

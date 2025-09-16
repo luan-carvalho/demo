@@ -27,6 +27,7 @@ public interface PetCareRepository extends JpaRepository<PetCare, Long> {
             WHERE (:description IS NULL OR LOWER(p.description) LIKE LOWER(CONCAT('%', CAST(:description AS STRING), '%')))
             AND (:status IS NULL OR p.status = :status)
             AND (:group IS NULL OR p.group = :group)
+            ORDER BY p.description ASC
             """)
     Page<PetCare> searchWithOptionalFilters(String description, Status status, PetCareGroup group, Pageable pageable);
 
