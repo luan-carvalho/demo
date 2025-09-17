@@ -48,6 +48,7 @@
                             <tr>
                                 <th scope="col">Id</th>
                                 <th scope="col">Nome</th>
+                                <th scope="col">Atribuição</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,6 +57,7 @@
 
                                 <td class="fw" th:text="${user.id}"></td>
                                 <td class="fw" th:text="${user.name}"></td>
+                                <td class="fw" th:text="${user.role.label}"></td>
                             </tr>
 
                             <tr th:if="${users.isEmpty()}" style="pointer-events: none;">

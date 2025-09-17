@@ -204,9 +204,9 @@ public class TutorController {
 
         tutor = tutorService.save(tutor);
 
-        if (context != null && serviceId != null) {
+        if (context != null) {
 
-            if (context.equals("update")) {
+            if (context.equals("update") && serviceId != null) {
 
                 ServiceExecution toBeUpdated = service.findById(serviceId);
                 toBeUpdated.updateTutorAndPet(tutor, pet);
