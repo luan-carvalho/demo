@@ -23,20 +23,30 @@
                     <div class="card-header">
                         <h5 class="card-title mb-0">Informações do Usuário</h5>
                     </div>
-                    <form th:action="@{/user}" method="post" th:object="${user}">
+                    <form th:action="${user.id != null} ? @{/user/update} : @{/user/new}" method="post"
+                        th:object="${user}">
+
                         <div class="card-body">
-                            <input type="hidden" th:field="*{id}" />
+
+                            <input type="hidden" th:if="${user.id != null}" th:field="*{id}" />
+
+                            <div class="mb-3 col-md-1" th:if="${user.id != null}">
+                                <label for="id" class="form-label">Id</label>
+                                <p class="form-control-plaintext border rounded bg-light px-2" th:text="${user.id}" name="id"></p>
+                            </div>
 
                             <div class="mb-3">
-                                <label for="description" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="description" th:field="*{name}" />
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" th:field="*{name}" />
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="group" class="form-label">Atribuição</label>
-                                <select class="form-select" id="group" name="group">
+                                <label for="roleId" class="form-label">Perfil de acesso</label>
+                                <select class="form-select" id="roleId" name="roleId">
+                                    <option th:if="${user.roleId == null}" value=""
+                                        th:text="'--- Selecione um perfil ---'"></option>
                                     <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.label}"
-                                        th:selected="${user.role != null and role.id == user.role.id}">
+                                        th:selected="${user.roleId != null and role.id == user.roleId}">
                                     </option>
                                 </select>
                             </div>

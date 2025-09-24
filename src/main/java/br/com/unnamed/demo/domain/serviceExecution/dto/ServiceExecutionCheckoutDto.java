@@ -19,4 +19,16 @@ public record ServiceExecutionCheckoutDto(Long id,
 
     }
 
+    public boolean isCompleted() {
+
+        return status == ServiceStatus.COMPLETED;
+
+    }
+
+    public boolean isCanceled() {
+
+        return status == ServiceStatus.CANCELLED;
+
+    }
+
 }

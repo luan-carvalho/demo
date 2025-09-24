@@ -46,18 +46,18 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col">Id</th>
                                 <th scope="col">Nome</th>
                                 <th scope="col">Atribuição</th>
+                                <th scope="col" class="text-end">Id</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="user : ${users.content}" class="clickable-row"
                                 th:data-href="@{/user/{id}(id=${user.id})}">
 
-                                <td class="fw" th:text="${user.id}"></td>
                                 <td class="fw" th:text="${user.name}"></td>
                                 <td class="fw" th:text="${user.role.label}"></td>
+                                <td class="fw text-end" th:text="${user.id}"></td>
                             </tr>
 
                             <tr th:if="${users.isEmpty()}" style="pointer-events: none;">

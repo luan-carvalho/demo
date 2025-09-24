@@ -172,12 +172,12 @@
                             <a th:if="${not #lists.contains({'Finalizado','Baixado','Cancelado'}, serviceExecution.status.label) and not serviceExecution.selectedPetCareIds.isEmpty()}"
                                 type="button" class="btn btn-sm btn-outline-primary"
                                 th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}">
-                                <i class="bi bi-credit-card me-1"></i> Adicionar
+                                <i class="bi bi-credit-card me-1"></i> Adiantamento
                             </a>
                         </div>
                         <div class="card-body p-0">
-                            <ul class="list-group list-group-flush" th:if="${!payments.isEmpty()}">
-                                <li class="list-group-item d-flex justify-content-between align-items-center py-2"
+                            <div class="list-group list-group-flush" th:if="${!payments.isEmpty()}">
+                                <div class="list-group-item d-flex justify-content-between align-items-center py-2"
                                     th:each="payment : ${payments}">
                                     <span>
                                         <i class="bi bi-credit-card-2-front text-muted me-1"></i>
@@ -187,8 +187,8 @@
                                         <span
                                             th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}"></span>
                                     </span>
-                                </li>
-                            </ul>
+                                </div>
+                            </div>
 
                             <p class="text-center text-muted py-3 mb-0" th:if="${payments.isEmpty()}">
                                 Nenhum pagamento adicionado.

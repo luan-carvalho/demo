@@ -64,4 +64,22 @@ public class Payment {
 
     }
 
+    public void updateAmount(BigDecimal amount) {
+
+        this.amount = amount;
+
+    }
+
+    public void updatePaymentMethod(PaymentMethod paymentMethod) {
+
+        this.paymentMethod = paymentMethod;
+
+    }
+
+    public void updateObservation(String observation) {
+
+        this.observation = observation;
+
+    }
+
 }

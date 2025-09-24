@@ -23,14 +23,11 @@ public class SecurityConfiguration {
 
                 http.authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
-                                .requestMatchers("/api/**").permitAll()
                                 .requestMatchers("/**").authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/login")
                                                 .successHandler(new LoginSuccessHandler())
                                                 .permitAll())
-                                // .httpBasic(withDefaults())
-                                // .logout(LogoutConfigurer::permitAll)
                                 .rememberMe(rememberMe -> rememberMe
                                                 .userDetailsService(userDetailsConfig)
                                                 .key("Q1b7UzLYkZ++kJaZGapB/r/SVn4Xq3tvG3ECXElGr1w=")

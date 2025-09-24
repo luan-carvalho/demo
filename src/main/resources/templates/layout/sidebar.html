@@ -120,16 +120,23 @@
             <!-- Left Side: User Info -->
             <div class="d-flex align-items-center text-white text-decoration-none">
                 <i class="bi bi-person-circle fs-4 me-2"></i>
-                <span class="fw-bold"
-                    sec:authentication="principal.name"></span>
+                <span class="fw-bold" sec:authentication="principal.name"></span>
             </div>
 
-            <!-- Right Side: Logout Button -->
-            <form th:action="@{/logout}" method="post" class="ms-2">
-                <button type="submit" class="btn btn-sm btn-outline-danger" title="Sair">
-                    <i class="bi bi-box-arrow-right"></i>
-                </button>
-            </form>
+            <!-- Right Side: Buttons -->
+            <div class="d-flex align-items-center ms-2">
+                <!-- Update Password -->
+                <a th:href="@{/user/updatePassword}" class="btn btn-sm btn-outline-light me-2" title="Alterar Senha">
+                    <i class="bi bi-key"></i>
+                </a>
+
+                <!-- Logout -->
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Sair">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 

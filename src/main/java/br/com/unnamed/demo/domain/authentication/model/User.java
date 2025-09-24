@@ -92,4 +92,13 @@ public class User {
 
     }
 
+    public void updateInfo(String name, Role role) {
+        this.name = name;
+        this.role = role;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
 }

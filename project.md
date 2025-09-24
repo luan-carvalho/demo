@@ -18,7 +18,7 @@
 
 # Cadastro de serviços
 
-[ ] Não está funcionando atualizar preço
+[ x ] Não está funcionando atualizar preço
 
 # Atendimento <= trabalhando nesse aqui agora
 
@@ -34,20 +34,23 @@
 [ x ] Implementar checkout
     [ x ] Permitir adicionar pagamentos antecipadamente
     [ x ] Não permitir finalizar sem pagamento
+    [ ] Pensar em um lógica para adicionar parcelamento
 [ ] Implementar desconto (% e R$)
 [ x ] Melhorar a UI (mto botão um em cima do outro)
-[ ] Quando atualizar o status de um atendimento pela tela de edição, não mandar de volta para o board
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar a chegada de um novo pet
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar que o tutor chegou para buscar o pet
 [ ] (FUTURO) Ao finalizar um serviço, enviar uma mensagem para o tutor
 
+# Pagamentos
+
+[ ] Pensar em uma lógica para edição de pagamentos (edição simples)
+
 # Usuários
 
-[ ] Listar usuários
-[ ] Cadastrar/editar usuários (ao cadastrar, deixar automático a senha 1234)
-[ ] Usuário informar nome completo -> username = nome1.nome2 sem acento tudo minusculo se já existir adicionar numero
-[ ] Permitir ao usuário mudar a senha
-[ ] Roles (recepcionista, atendente e admin)
+[ x ] Listar usuários
+[ x ] Cadastrar/editar usuários (ao cadastrar, deixar automático a senha 1234)
+[ x ] Permitir ao usuário mudar a senha
+[ x ] Roles (recepcionista, atendente e admin)
     [ ] Recepcionista não tem acesso aos serviços totais, somente o dashboard
     [ ] Recepcionista não consegue atualizar o status de um atendimento e nem adicionar serviços, apenas abrir e finalizar
 

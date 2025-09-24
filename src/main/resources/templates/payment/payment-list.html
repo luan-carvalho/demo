@@ -24,8 +24,8 @@
                     </div>
 
                     <div class="col-lg-3">
-                        <label for="type" class="form-label">Tipo de Pagamento</label>
-                        <select id="method" name="type" class="form-select">
+                        <label for="methodId" class="form-label">Tipo de Pagamento</label>
+                        <select id="methodId" name="methodId" class="form-select">
                             <option value="">Todos os Tipos</option>
                             <option th:each="m : ${all_payment_methods}" th:value="${m.id}" th:text="${m.description}"
                                 th:selected="${method    != null and method.id == m.id}">
@@ -48,6 +48,7 @@
                             <tr>
                                 <th scope="col">Data</th>
                                 <th scope="col">Cliente / Pet</th>
+                                <th scope="col">Atendimento</th>
                                 <th scope="col">Tipo de Pagamento</th>
                                 <th scope="col" class="text-end">Valor</th>
                             </tr>
@@ -63,7 +64,8 @@
                                     <div class="small text-muted" th:text="${payment.serviceExecution.pet.name}">
                                     </div>
                                 </td>
-
+                                
+                                <td th:text="'#' + ${payment.serviceExecution.id}"></td>
                                 <td th:text="${payment.paymentMethod.description}"></td>
 
                                 <td class="text-end fw-bold"
@@ -72,7 +74,7 @@
                             </tr>
 
                             <tr th:if="${payments.isEmpty()}">
-                                <td colspan="4" class="text-center text-muted py-4">
+                                <td colspan="5" class="text-center text-muted py-4">
                                     <span>Nenhum pagamento encontrado</span>
                                 </td>
                             </tr>

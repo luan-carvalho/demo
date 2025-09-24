@@ -324,4 +324,51 @@ public class ServiceExecutionController {
 
     }
 
+    @PostMapping("/{serviceId}/checkout/payment/{id}/delete")
+    public String removePayment(@PathVariable Long serviceId, @PathVariable Long id) {
+
+        ServiceExecution s = service.findById(serviceId);
+        Payment p = paymentService.findById(id);
+
+        if (p.getStatus() == PaymentStatus.TEMPORARY) {
+            s.removePayment(p);
+            service.save(s);
+        }
+
+        return "redirect:/serviceExecution/" + serviceId + "/checkout";
+
+    }
+
+    @PostMapping("/{serviceId}/checkout/payment/{id}/update")
+    public String updatePayment(@PathVariable Long serviceId,
+            @PathVariable Long id,
+            @RequestParam(required = false) BigDecimal amount,
+            @RequestParam(required = false) Long methodId,
+            @RequestParam(required = false) String obs) {
+
+        ServiceExecution s = service.findById(serviceId);
+        Payment p = paymentService.findById(id);
+
+        if (p.getStatus() == PaymentStatus.TEMPORARY) {
+
+            if (amount != null && amount.compareTo(BigDecimal.ZERO) > 0) {
+                p.updateAmount(amount);
+            }
+
+            if (methodId != null) {
+                PaymentMethod method = paymentService.findPaymentMethodById(methodId);
+                p.updatePaymentMethod(method);
+            }
+
+            p.updateObservation(obs);
+
+            paymentService.save(p);
+            service.save(s);
+
+        }
+
+        return "redirect:/serviceExecution/" + serviceId + "/checkout";
+
+    }
+
 }
