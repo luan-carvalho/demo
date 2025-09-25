@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.unnamed.demo.domain.payment.mapper.PaymentMapper;
 import br.com.unnamed.demo.domain.payment.model.Payment;
@@ -124,7 +125,7 @@ public class ServiceExecutionController {
 
     @PostMapping("/create")
     public String createNewServiceExecution(Model model, Long tutorId, @RequestParam(required = false) Long petId,
-            @RequestParam(required = false) String petName) {
+            @RequestParam(required = false) String petName, RedirectAttributes attributes) {
 
         Tutor t = tutorService.findById(tutorId);
         Pet p = null;
@@ -153,6 +154,7 @@ public class ServiceExecutionController {
                         .paymentStatus(ServicePaymentStatus.NOT_PAID)
                         .build());
 
+        attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
         return "redirect:/serviceExecution/" + created.getId();
 
     }

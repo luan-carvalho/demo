@@ -104,6 +104,11 @@
                                     th:text="'R$ ' + ${#numbers.formatDecimal(service.calculateTotal(), 1, 'POINT', 2, 'COMMA')}">
                                 </td>
                             </tr>
+                            <tr th:if="${services.isEmpty()}" style="pointer-events: none;">
+                                <td colspan="5" class="text-center text-muted py-5">
+                                    Nenhum atendimento encontrado.
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
