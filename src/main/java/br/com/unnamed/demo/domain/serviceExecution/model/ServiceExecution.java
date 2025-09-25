@@ -106,6 +106,13 @@ public class ServiceExecution {
 
     public void addPayment(Payment payment) {
 
+        if (payment.getAmount().compareTo(BigDecimal.ZERO) < 0)
+            throw new IllegalArgumentException("Não é possível adicionar um pagamento com valor negativo");
+
+        if (payment.getAmount().compareTo(calculateTotal()) > 0)
+            throw new IllegalArgumentException(
+                    "Não é possível adicionar um pagamento maior que o valor total do atendimento");
+
         if (getBalance().compareTo(payment.getAmount()) < 0)
             throw new IllegalArgumentException(
                     "Não é possível adicionar este pagamento, pois o serviço já foi totalmente pago");
@@ -118,7 +125,6 @@ public class ServiceExecution {
     public void removePayment(Payment payment) {
 
         this.payments.remove(payment);
-        payment.linkToServiceExecution(null);
 
     }
 

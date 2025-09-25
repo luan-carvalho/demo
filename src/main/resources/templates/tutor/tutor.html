@@ -4,20 +4,49 @@
 <body>
     <main class="container" th:fragment="content">
 
-        <header class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0" th:text="${tutor.id == null} ? 'Novo Tutor' : 'Editar Tutor'"></h1>
-            <a th:href="@{/tutor}" class="btn btn-secondary btn-sm" aria-label="Voltar para a Lista">
-                <i class="bi bi-arrow-left me-1"></i> Voltar para a Lista
-            </a>
-        </header>
+        <!-- Header with actions -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <h1 class="h4 mb-1" th:text="${tutor.id == null} ? 'Novo Tutor' : 'Editar Tutor'"></h1>
+                </div>
 
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit" form="tutorForm"
+                        class="btn btn-primary btn-sm d-flex align-items-center px-3">
+                        <i class="bi bi-save me-2"></i>
+                        <span th:text="${tutor.id != null} ? 'Salvar' : 'Cadastrar'"></span>
+                    </button>
+
+                    <a th:href="@{/tutor}" class="btn btn-secondary btn-sm d-flex align-items-center px-3">
+                        <i class="bi bi-arrow-left me-2"></i> Voltar
+                    </a>
+
+                    <a th:if="${tutor.id != null and tutor.isActive()}"
+                        th:href="@{/tutor/{id}/inactivate (id=${tutor.id})}"
+                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3">
+                        <i class="bi bi-person-x me-2"></i> Inativar
+                    </a>
+
+                    <a th:if="${tutor.id != null and tutor.isInactive()}"
+                        th:href="@{/tutor/{id}/activate (id=${tutor.id})}"
+                        class="btn btn-outline-success btn-sm d-flex align-items-center px-3">
+                        <i class="bi bi-person-check me-2"></i> Reativar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
         <form id="tutorForm" th:action="@{/tutor(context=${context}, serviceId=${serviceId})}" method="post"
             th:object="${tutor}">
             <input type="hidden" th:field="*{id}" />
             <input type="hidden" th:if="${tutor.id}" th:field="*{status}" />
 
             <div class="row g-4">
-                <section class="col-lg-8">
+
+                <!-- Dados do Tutor -->
+                <div class="col-lg-6">
                     <div class="card shadow-sm mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Dados do Tutor</h5>
@@ -37,87 +66,53 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Pets Section -->
-                    <div class="card shadow-sm" th:if="${tutor.id != null}">
+                <!-- Pets -->
+                <div class="col-lg-6" th:if="${tutor.id != null}">
+                    <div class="card shadow-sm">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-heart-fill me-2"></i>Pets</h5>
                             <a th:href="@{/tutor/{tutorId}/pet/new (tutorId=${tutor.id})}"
-                                class="btn btn-sm btn-outline-primary" aria-label="Adicionar novo pet">
+                                class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-plus-lg"></i> Novo Pet
                             </a>
                         </div>
                         <div class="list-group list-group-flush">
-
                             <a th:each="pet : ${tutor.pets}"
                                 th:href="@{/tutor/{tutorId}/pet/{petId}(tutorId=${tutor.id}, petId=${pet.id})}"
                                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                                 th:classappend="${pet.isInactive()} ? 'bg-light text-muted' : ''">
-
                                 <div class="d-flex align-items-center">
                                     <span th:text="${pet.name}"></span>
                                     <span th:if="${pet.isInactive()}" class="badge bg-danger ms-2">Inativo</span>
                                 </div>
                             </a>
 
-                            <!-- Empty State -->
                             <div th:if="${#lists.isEmpty(tutor.pets)}"
                                 class="list-group-item text-muted text-center p-3">
                                 Nenhum pet cadastrado.
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
-                <!-- Ações -->
-                <aside class="col-lg-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-light">
-                            <h5 class="card-title mb-0"><i class="bi bi-gear-fill me-2"></i>Ações</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-check-circle-fill me-2"></i>
-                                    <span
-                                        th:text="${tutor.id != null} ? 'Salvar Alterações' : 'Cadastrar Tutor'"></span>
-                                </button>
-                            </div>
-
-                            <div th:if="${tutor.id != null}" class="text-center mt-3">
-                                <hr class="my-3">
-                                <a th:if="${tutor.isActive()}" th:href="@{/tutor/{id}/inactivate (id=${tutor.id})}"
-                                    class="btn btn-outline-danger btn-sm" aria-label="Inativar cadastro do tutor">
-                                    <i class="bi bi-person-x me-1"></i> Inativar Cadastro
-                                </a>
-                                <a th:if="${tutor.isInactive()}" th:href="@{/tutor/{id}/activate (id=${tutor.id})}"
-                                    class="btn btn-outline-success btn-sm" aria-label="Reativar cadastro do tutor">
-                                    <i class="bi bi-person-check me-1"></i> Reativar Cadastro
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
             </div>
         </form>
+
+        <!-- Script mask -->
         <script>
             const phoneElement = document.getElementById('phone');
             IMask(phoneElement, {
-                mask: [{
-                    mask: '(00) 0000-0000'
-                }, {
-                    mask: '(00) 00000-0000'
-                }],
+                mask: [{ mask: '(00) 0000-0000' }, { mask: '(00) 00000-0000' }],
                 dispatch: function (appended, dynamicMasked) {
                     const number = (dynamicMasked.value + appended).replace(/\D/g, '');
-                    // Check if the number's length is sufficient for the 9th digit pattern
                     return dynamicMasked.compiledMasks.find(m => number.length <= m.mask.replace(/\D/g, '').length);
                 }
             });
         </script>
+
     </main>
-
-
 </body>
 
 </html>

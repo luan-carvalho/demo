@@ -19,6 +19,12 @@ public record ServiceExecutionCheckoutDto(Long id,
 
     }
 
+    public boolean isDone() {
+
+        return status == ServiceStatus.DONE;
+
+    }
+
     public boolean isCompleted() {
 
         return status == ServiceStatus.COMPLETED;

@@ -232,7 +232,7 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/save")
-    public String save(Model model, ServiceExecutionDto s) {
+    public String save(Model model, ServiceExecutionDto s, RedirectAttributes attributes) {
 
         if (!s.selectedPetCareIds().isEmpty()) {
 
@@ -241,6 +241,7 @@ public class ServiceExecutionController {
                     .map(id -> new ServiceExecutionItem(petCareService.findById(id))).collect(Collectors.toList()));
 
             service.save(toBeUpdated);
+            attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
 
         }
 
@@ -249,35 +250,56 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/{serviceId}/cancel")
-    public String cancelService(@PathVariable Long serviceId) {
+    public String cancelService(@PathVariable Long serviceId,
+            @RequestParam(required = false) String src, RedirectAttributes attributes) {
 
         ServiceExecution s = service.findById(serviceId);
         service.cancel(s);
+        attributes.addFlashAttribute("errorMessage", "Atendimento cancelado!");
 
-        return "redirect:/serviceExecution"
-                + (s.getDate().isEqual(LocalDate.now()) ? "" : "?date=" + s.getDate().toString());
+        if (src != null && src.equals("editPage")) {
+
+            return "redirect:/serviceExecution/" + serviceId;
+
+        }
+
+        return "redirect:/serviceExecution";
 
     }
 
     @PostMapping("/{serviceId}/start")
-    public String startServiceExecution(@PathVariable Long serviceId) {
+    public String startServiceExecution(@PathVariable Long serviceId,
+            @RequestParam(required = false) String src, RedirectAttributes attributes) {
 
         ServiceExecution s = service.findById(serviceId);
         service.start(s);
+        attributes.addFlashAttribute("successMessage", "Atendimento iniciado!");
 
-        return "redirect:/serviceExecution"
-                + (s.getDate().isEqual(LocalDate.now()) ? "" : "?date=" + s.getDate().toString());
+        if (src != null && src.equals("editPage")) {
+
+            return "redirect:/serviceExecution/" + serviceId;
+
+        }
+
+        return "redirect:/serviceExecution";
 
     }
 
     @PostMapping("/{serviceId}/markAsDone")
-    public String markAsDone(@PathVariable Long serviceId) {
+    public String markAsDone(@PathVariable Long serviceId,
+            @RequestParam(required = false) String src, RedirectAttributes attributes) {
 
         ServiceExecution s = service.findById(serviceId);
         service.finish(s);
+        attributes.addFlashAttribute("successMessage", "Atendimento finalizado!");
 
-        return "redirect:/serviceExecution"
-                + (s.getDate().isEqual(LocalDate.now()) ? "" : "?date=" + s.getDate().toString());
+        if (src != null && src.equals("editPage")) {
+
+            return "redirect:/serviceExecution/" + serviceId;
+
+        }
+
+        return "redirect:/serviceExecution";
 
     }
 
@@ -299,18 +321,13 @@ public class ServiceExecutionController {
 
     @PostMapping("/{serviceId}/addPayment")
     public String addPaymentToServiceExecution(@PathVariable Long serviceId, Long typeId, BigDecimal amount,
-            @RequestParam(required = false) String obs) {
+            @RequestParam(required = false) String obs, RedirectAttributes attributes) {
 
         ServiceExecution s = service.findById(serviceId);
-        PaymentMethod type = paymentService.findPaymentMethodById(typeId);
+        PaymentMethod method = paymentService.findPaymentMethodById(typeId);
 
-        PaymentStatus status = s.getServiceStatus() != ServiceStatus.COMPLETED ? PaymentStatus.TEMPORARY
-                : PaymentStatus.FINAL;
-
-        Payment p = new Payment(null, LocalDate.now(), s, type, amount, status, obs);
-        s.addPayment(p);
-        service.save(s);
-
+        service.addPayment(s, method, amount, obs);
+        attributes.addFlashAttribute("successMessage", "Pagamento adicionado");
         return "redirect:/serviceExecution/" + serviceId + "/checkout";
 
     }
@@ -327,16 +344,13 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/{serviceId}/checkout/payment/{id}/delete")
-    public String removePayment(@PathVariable Long serviceId, @PathVariable Long id) {
+    public String removePayment(@PathVariable Long serviceId, @PathVariable Long id, RedirectAttributes attributes) {
 
         ServiceExecution s = service.findById(serviceId);
         Payment p = paymentService.findById(id);
 
-        if (p.getStatus() == PaymentStatus.TEMPORARY) {
-            s.removePayment(p);
-            service.save(s);
-        }
-
+        service.removePayment(s, p);
+        attributes.addFlashAttribute("errorMessage", "Pagamento removido");
         return "redirect:/serviceExecution/" + serviceId + "/checkout";
 
     }
@@ -346,7 +360,7 @@ public class ServiceExecutionController {
             @PathVariable Long id,
             @RequestParam(required = false) BigDecimal amount,
             @RequestParam(required = false) Long methodId,
-            @RequestParam(required = false) String obs) {
+            @RequestParam(required = false) String obs, RedirectAttributes attributes) {
 
         ServiceExecution s = service.findById(serviceId);
         Payment p = paymentService.findById(id);
@@ -369,6 +383,7 @@ public class ServiceExecutionController {
 
         }
 
+        attributes.addFlashAttribute("successMessage", "Pagamento atualizado");
         return "redirect:/serviceExecution/" + serviceId + "/checkout";
 
     }

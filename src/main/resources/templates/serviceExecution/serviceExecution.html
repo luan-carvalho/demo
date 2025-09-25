@@ -11,47 +11,58 @@
                 </div>
 
                 <span th:text="${serviceExecution.status.label}" class="badge fw-bold fs-6" th:classappend="${serviceExecution.status.label == 'Pendente' ? ' bg-secondary' :
-                              serviceExecution.status.label == 'Em execução' ? ' bg-warning text-dark' :
+                              serviceExecution.status.label == 'Em execução' ? ' bg-primary' :
                               serviceExecution.status.label == 'Finalizado' ? ' bg-success' :
                               serviceExecution.status.label == 'Cancelado' ? ' bg-danger' :
                               serviceExecution.status.label == 'Baixado' ? ' bg-primary' : ' bg-light text-dark'}">
                 </span>
 
-                <div class="d-flex flex-wrap gap-2">
+                <div class="d-flex flex-wrap gap-2 justify-content-end">
 
+                    <!-- Primary action -->
+                    <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center"
+                        form="serviceExecutionForm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-save me-1" viewBox="0 0 16 16" role="img" aria-label="Salvar">
+                            <path
+                                d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
+                            <path
+                                d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z" />
+                        </svg>
+                        Salvar
+                    </button>
+
+                    <!-- Contextual workflow actions -->
                     <form
                         th:if="${serviceExecution.status.label == 'Pendente' and not serviceExecution.selectedPetCareIds.isEmpty()}"
-                        th:action="@{/serviceExecution/{id}/start(id=${serviceExecution.id})}" method="post"
-                        class="m-0">
-                        <button type="submit" class="btn btn-success btn-sm d-flex align-items-center">
+                        th:action="@{/serviceExecution/{id}/start(id=${serviceExecution.id}, src='editPage')}"
+                        method="post" class="m-0">
+                        <button type="submit" class="btn btn-outline-success d-flex align-items-center px-3">
                             <i class="bi bi-play-circle me-1"></i> Iniciar
                         </button>
                     </form>
 
                     <form th:if="${serviceExecution.status.label == 'Em execução'}"
-                        th:action="@{/serviceExecution/{id}/markAsDone(id=${serviceExecution.id})}" method="post"
+                        th:action="@{/serviceExecution/{id}/markAsDone(id=${serviceExecution.id}, src='editPage')}" method="post"
                         class="m-0">
-                        <button type="submit" class="btn btn-warning btn-sm d-flex align-items-center text-dark">
+                        <button type="submit" class="btn btn-outline-success d-flex align-items-center px-3">
                             <i class="bi bi-check-lg me-1"></i> Finalizar
                         </button>
                     </form>
 
                     <a th:if="${serviceExecution.status.label == 'Finalizado'}"
                         th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}"
-                        class="btn btn-success btn-sm d-flex align-items-center">
-                        <i class="bi bi-check2-circle me-1"></i> Concluir
+                        class="btn btn-success d-flex align-items-center px-3">
+                        <i class="bi bi-currency-dollar me-1"></i></i> Concluir
                     </a>
-                    <button type="submit" form="serviceExecutionForm" class="btn btn-primary btn-sm d-flex align-items-center">
-                        <i class="bi bi-save me-1"></i> Salvar
-                    </button>
 
+                    <!-- Destructive action -->
                     <button th:if="${serviceExecution.status.label != 'Cancelado'}" type="button"
-                        class="btn btn-danger btn-sm d-flex align-items-center" data-bs-toggle="modal"
+                        class="btn btn-outline-danger d-flex align-items-center px-3" data-bs-toggle="modal"
                         data-bs-target="#cancelConfirmModal">
                         <i class="bi bi-trash me-1"></i> Cancelar
                     </button>
 
-                    <!-- Modal -->
                     <div class="modal fade" id="cancelConfirmModal" tabindex="-1"
                         aria-labelledby="cancelConfirmModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -71,7 +82,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                         Voltar
                                     </button>
-                                    <form th:action="@{/serviceExecution/{id}/cancel(id=${serviceExecution.id})}"
+                                    <form th:action="@{/serviceExecution/{id}/cancel(id=${serviceExecution.id}, src='editPage')}"
                                         method="post">
                                         <button type="submit"
                                             th:href="@{/serviceExecution/{id}/cancel(id=${serviceExecution.id})}"
@@ -84,7 +95,8 @@
                         </div>
                     </div>
 
-                    <a th:href="@{/serviceExecution}" class="btn btn-secondary btn-sm d-flex align-items-center">
+                    <!-- Navigation -->
+                    <a th:href="@{/serviceExecution}" class="btn btn-secondary d-flex align-items-center px-3">
                         <i class="bi bi-arrow-left-circle me-1"></i> Voltar
                     </a>
                 </div>

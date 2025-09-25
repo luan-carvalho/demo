@@ -52,9 +52,28 @@ public class Payment {
 
     private String observation;
 
+    public Payment(LocalDate date, PaymentMethod paymentMethod,
+            BigDecimal amount, PaymentStatus status, String observation) {
+
+        if (amount.compareTo(BigDecimal.ZERO) < 0)
+            throw new IllegalArgumentException("Não é possível criar um pagamento com valor negativo");
+
+        this.date = date;
+        this.paymentMethod = paymentMethod;
+        this.amount = amount;
+        this.status = status;
+        this.observation = observation;
+    }
+
     public void linkToServiceExecution(ServiceExecution s) {
 
         this.serviceExecution = s;
+
+    }
+
+    public void removeLinkToServiceExecution() {
+
+        this.serviceExecution = null;
 
     }
 

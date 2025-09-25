@@ -64,11 +64,14 @@
                                     <div class="small text-muted" th:text="${payment.serviceExecution.pet.name}">
                                     </div>
                                 </td>
-                                
-                                <td th:text="'#' + ${payment.serviceExecution.id}"></td>
+
+                                <td>
+                                    <a th:href="@{/serviceExecution/{id}(id=${payment.serviceExecution.id})}"
+                                        th:text="'#' + ${payment.serviceExecution.id}"></a>
+                                </td>
                                 <td th:text="${payment.paymentMethod.description}"></td>
 
-                                <td class="text-end fw-bold"
+                                <td class="text-end"
                                     th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}">
                                 </td>
                             </tr>

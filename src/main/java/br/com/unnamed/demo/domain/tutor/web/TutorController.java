@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
@@ -163,8 +164,6 @@ public class TutorController {
             @RequestParam(required = false) String context,
             @RequestParam(required = false) Long serviceId) {
 
-        // Tutor t = tutorService.findById(tutorId); travar para não permitir entrar nessa url se o tutor não existir
-
         model.addAttribute("pet", PetFormDto.empty());
 
         if (context != null)
@@ -184,7 +183,7 @@ public class TutorController {
     @PostMapping("/{tutorId}/pet/save")
     public String savePet(@PathVariable Long tutorId, @Valid PetFormDto petDto,
             @RequestParam(required = false) String context,
-            @RequestParam(required = false) Long serviceId) {
+            @RequestParam(required = false) Long serviceId, RedirectAttributes attributes) {
 
         Tutor tutor = tutorService.findById(tutorId);
         Pet pet = PetMapper.toEntity(petDto);
@@ -211,6 +210,8 @@ public class TutorController {
                 ServiceExecution toBeUpdated = service.findById(serviceId);
                 toBeUpdated.updateTutorAndPet(tutor, pet);
                 service.save(toBeUpdated);
+
+                attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
                 return "redirect:/serviceExecution/" + toBeUpdated.getId();
 
             }
@@ -226,6 +227,7 @@ public class TutorController {
                                 .paymentStatus(ServicePaymentStatus.NOT_PAID)
                                 .build());
 
+                attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
                 return "redirect:/serviceExecution/" + created.getId();
 
             }

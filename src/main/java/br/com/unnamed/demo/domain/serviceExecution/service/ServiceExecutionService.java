@@ -1,5 +1,6 @@
 package br.com.unnamed.demo.domain.serviceExecution.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -8,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.com.unnamed.demo.domain.payment.model.Payment;
+import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
+import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
@@ -77,6 +81,41 @@ public class ServiceExecutionService {
     public List<ServiceExecution> findTop10ByPetIdOrderByDateDesc(Long id) {
 
         return repo.findTop10ByPetIdOrderByDateDesc(id);
+
+    }
+
+    public void addPayment(ServiceExecution s, PaymentMethod method, BigDecimal amount, String obs) {
+
+        PaymentStatus status = s.getServiceStatus() != ServiceStatus.COMPLETED ? PaymentStatus.TEMPORARY
+                : PaymentStatus.FINAL;
+
+        if (amount.compareTo(s.calculateTotal()) > 0) {
+
+            amount = s.calculateTotal();
+
+        }
+
+        Payment p = new Payment(LocalDate.now(), method, amount, status, obs);
+
+        s.addPayment(p);
+        repo.save(s);
+
+    }
+
+    public void removePayment(ServiceExecution s, Payment p) {
+
+        if (s.getServiceStatus() != ServiceStatus.COMPLETED) {
+
+            s.removePayment(p);
+            p.removeLinkToServiceExecution();
+
+        }
+
+        if (s.getServiceStatus() == ServiceStatus.COMPLETED) {
+
+            p.updateStatus(PaymentStatus.CANCELLED);
+
+        }
 
     }
 
