@@ -13,5 +13,6 @@ public record ServiceExecutionDto(
         String tutorName,
         String petName,
         List<Long> selectedPetCareIds,
+        String obs,
         BigDecimal total) {
 }

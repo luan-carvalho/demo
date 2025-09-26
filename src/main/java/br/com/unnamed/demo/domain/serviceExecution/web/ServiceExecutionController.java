@@ -234,16 +234,18 @@ public class ServiceExecutionController {
     @PostMapping("/save")
     public String save(Model model, ServiceExecutionDto s, RedirectAttributes attributes) {
 
+        ServiceExecution toBeUpdated = service.findById(s.id());
+
         if (!s.selectedPetCareIds().isEmpty()) {
 
-            ServiceExecution toBeUpdated = service.findById(s.id());
             toBeUpdated.updateExecutedServices(s.selectedPetCareIds().stream()
                     .map(id -> new ServiceExecutionItem(petCareService.findById(id))).collect(Collectors.toList()));
 
-            service.save(toBeUpdated);
-            attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
-
         }
+
+        toBeUpdated.updateObservation(s.obs());
+        service.save(toBeUpdated);
+        attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
 
         return "redirect:/serviceExecution/" + s.id();
 

@@ -7,28 +7,6 @@
 
     <div th:replace="~{layout/sidebar :: sidebar}"></div>
 
-    <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
-        <!-- Success message -->
-        <div th:if="${successMessage}" class="toast align-items-center text-bg-success border-0 fade" role="alert"
-            aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <span th:text="${successMessage}">Success!</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Error message -->
-        <div th:if="${errorMessage}" class="toast align-items-center text-bg-danger border-0 fade" role="alert"
-            aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <span th:text="${errorMessage}">Error!</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="content">
         <header class="d-lg-none mb-4">
             <nav class="navbar bg-light rounded-3">
@@ -41,7 +19,32 @@
                 </div>
             </nav>
         </header>
-        <main th:replace="~{${view} :: content}"></main>
+        <main>
+
+            <div id="toast-container" class="position-absolute top-0 start-50 translate-middle-x p-3"
+                style="z-index: 1100">
+                <div th:if="${successMessage}" class="toast align-items-center text-bg-success border-0 fade"
+                    role="alert" style="width: auto; max-width: 100%;" aria-live="assertive" aria-atomic="true"
+                    data-bs-delay="2000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <span th:text="${successMessage}">Success!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error message -->
+                <div th:if="${errorMessage}" class="toast align-items-center text-bg-danger border-0 fade" role="alert"
+                    style="width: auto; max-width: 100%;" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <span th:text="${errorMessage}">Error!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:replace="~{${view} :: content}"></div>
+        </main>
     </div>
 
     <script>

@@ -117,6 +117,8 @@ public class ServiceExecutionService {
 
         }
 
+        repo.save(s);
+
     }
 
 }

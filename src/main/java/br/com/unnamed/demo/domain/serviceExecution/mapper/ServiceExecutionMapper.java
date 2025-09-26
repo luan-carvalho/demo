@@ -16,6 +16,7 @@ public class ServiceExecutionMapper {
                 s.getTutor().getInfo().getName(),
                 s.getPet().getName(),
                 s.getExecutedServices().stream().map(ex -> ex.getPetCare().getId()).toList(),
+                s.getObs(),
                 s.calculateTotal());
 
     }

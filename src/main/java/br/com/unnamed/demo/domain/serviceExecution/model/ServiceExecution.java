@@ -59,6 +59,8 @@ public class ServiceExecution {
     @NotNull
     private ServiceStatus serviceStatus;
 
+    private String obs;
+
     @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments;
 
@@ -119,6 +121,12 @@ public class ServiceExecution {
 
         this.payments.add(payment);
         payment.linkToServiceExecution(this);
+
+    }
+
+    public void updateObservation(String content) {
+
+        this.obs = content;
 
     }
 

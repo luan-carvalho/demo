@@ -31,7 +31,7 @@ public record ServiceExecutionCheckoutDto(Long id,
 
     }
 
-    public boolean isCanceled() {
+    public boolean isCancelled() {
 
         return status == ServiceStatus.CANCELLED;
 
