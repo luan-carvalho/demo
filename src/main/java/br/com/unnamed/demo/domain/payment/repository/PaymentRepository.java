@@ -22,6 +22,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
                     )
                     AND (COALESCE(:date, p.date) = p.date)
                     AND (:paymentMethod IS NULL OR p.paymentMethod = :paymentMethod)
+                    AND p.status = 'FINAL'
                     ORDER BY p.date DESC
             """)
     List<Payment> searchWithOptionalFilters(String name, PaymentMethod paymentMethod, LocalDate date);

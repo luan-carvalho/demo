@@ -23,6 +23,8 @@ public class SecurityConfiguration {
 
                 http.authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
+                                .requestMatchers("/user/updatePassword").authenticated()
+                                .requestMatchers("/payment/**", "/petcare/**", "/report/**", "/user/**").hasRole("ADMIN")
                                 .requestMatchers("/**").authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/login")

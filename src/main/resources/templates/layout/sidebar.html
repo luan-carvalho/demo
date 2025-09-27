@@ -52,7 +52,7 @@
 
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
 
             <a th:href="@{/serviceExecution/list}"
                 th:class="${activePage == 'serviceExecution-list' ? 'nav-link active' : 'nav-link text-white'}"
