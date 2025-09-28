@@ -3,7 +3,7 @@
 # Geral
 
 [ ] Validação em todos os forms (não depender daquele negócio de required do html)
-[ o ] Popup para mensagem de erro/sucesso em todas as telas
+[ Em andamento ] Popup para mensagem de erro/sucesso em todas as telas
 [ ] Tela de erro para erros genéricos
 [ ] Exceções personalizadas para gerar erros personalizados
 [ ] Adicionar "back logic" em páginas mais críticas
@@ -11,9 +11,9 @@
 
 # Cadastro de tutor
 
-[ ] Melhorar o layout
-[ ] Melhorar o layout da tela de pet
-[ ] Grupo de tutor/pet (para poder ver quem é do plano infinite, quem é permuta, etc) (será que precisa???)
+[ x ] Melhorar o layout
+[ x ] Melhorar o layout da tela de pet
+[ x ] Grupo de tutor/pet (para poder ver quem é do plano infinite, quem é permuta, etc) (será que precisa???)
 [ ] (FUTURO) link para o tutor ver o perfil do pet
 
 # Cadastro de serviços
@@ -56,7 +56,7 @@
 
 # Relatórios
 
-[ ] Relatório de caixa (recebimentos, forma de pagamento, período)
+[ ] Relatório de recebimentos (recebimentos, forma de pagamento, período)
 [ ] Relatório de pets atendidos
 
 # Pacotes (só Deus sabe como vou fazer isso)
