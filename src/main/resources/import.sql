@@ -18,6 +18,9 @@ INSERT INTO pet_care (description, group_id, price, status) VALUES ('Adicional -
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Corte de unha', 3, 15.00, 'ACTIVE');
 INSERT INTO pet_care (description, group_id, price, status) VALUES ('Escovação de dentes', 3, 15.00, 'ACTIVE');
 
+INSERT INTO tutor_group (description) VALUES ('Plano Infinite');
+INSERT INTO tutor_group (description) VALUES ('Permuta');
+
 INSERT INTO role (description, label) VALUES ('ROLE_ADMIN', 'Administrador');
 INSERT INTO role (description, label) VALUES ('ROLE_ATTENDANT', 'Atendente');
 INSERT INTO role (description, label) VALUES ('ROLE_RECEPCIONIST', 'Recepcionista');

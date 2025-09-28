@@ -25,13 +25,13 @@
                 </a>
 
                 <!-- Inactivate / Reactivate -->
-                <a th:if="${pet.id != null and pet.isActive()}"
+                <a sec:authorize="hasRole('ADMIN')" th:if="${pet.id != null and pet.isActive()}"
                    th:href="@{/tutor/{tutorId}/pet/{petId}/inactivate(tutorId=${tutorId}, petId=${pet.id})}"
                    class="btn btn-outline-danger btn-sm d-flex align-items-center px-3">
                     <i class="bi bi-x-circle me-2"></i> Inativar
                 </a>
 
-                <a th:if="${pet.id != null and pet.isInactive()}"
+                <a sec:authorize="hasRole('ADMIN')" th:if="${pet.id != null and pet.isInactive()}"
                    th:href="@{/tutor/{tutorId}/pet/{petId}/activate(tutorId=${tutorId}, petId=${pet.id})}"
                    class="btn btn-outline-success btn-sm d-flex align-items-center px-3">
                     <i class="bi bi-check-circle me-2"></i> Reativar

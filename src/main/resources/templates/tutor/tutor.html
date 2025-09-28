@@ -13,7 +13,7 @@
 
                 <div class="d-flex flex-wrap gap-2">
                     <button type="submit" form="tutorForm"
-                        class="btn btn-primary btn-sm d-flex align-items-center px-3">
+                        class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
                         <i class="bi bi-save me-2"></i>
                         <span th:text="${tutor.id != null} ? 'Salvar' : 'Cadastrar'"></span>
                     </button>
@@ -22,13 +22,13 @@
                         <i class="bi bi-arrow-left me-2"></i> Voltar
                     </a>
 
-                    <a th:if="${tutor.id != null and tutor.isActive()}"
+                    <a th:if="${tutor.id != null and tutor.isActive()}" sec:authorize="hasRole('ADMIN')"
                         th:href="@{/tutor/{id}/inactivate (id=${tutor.id})}"
                         class="btn btn-outline-danger btn-sm d-flex align-items-center px-3">
                         <i class="bi bi-person-x me-2"></i> Inativar
                     </a>
 
-                    <a th:if="${tutor.id != null and tutor.isInactive()}"
+                    <a sec:authorize="hasRole('ADMIN')" th:if="${tutor.id != null and tutor.isInactive()}"
                         th:href="@{/tutor/{id}/activate (id=${tutor.id})}"
                         class="btn btn-outline-success btn-sm d-flex align-items-center px-3">
                         <i class="bi bi-person-check me-2"></i> Reativar
@@ -41,11 +41,9 @@
         <form id="tutorForm" th:action="@{/tutor(context=${context}, serviceId=${serviceId})}" method="post"
             th:object="${tutor}">
             <input type="hidden" th:field="*{id}" />
-            <input type="hidden" th:if="${tutor.id}" th:field="*{status}" />
 
             <div class="row g-4">
 
-                <!-- Dados do Tutor -->
                 <div class="col-lg-6">
                     <div class="card shadow-sm mb-4">
                         <div class="card-header">
@@ -62,6 +60,22 @@
                                     <label for="phone" class="form-label">Telefone</label>
                                     <input type="tel" class="form-control" id="phone" th:field="*{info.phone}"
                                         placeholder="(99) 99999-9999" required />
+                                </div>
+
+                                <div class="col-md-8">
+                                    <label for="tutorGroup" class="form-label">Grupo do Tutor</label>
+                                    <div class="input-group">
+                                        <select class="form-select" id="tutorGroup" th:field="*{group}">
+                                            <option value="">Selecione um grupo...</option>
+                                            <option th:each="group : ${groups}" th:value="${group.id}"
+                                                th:text="${group.description}">
+                                            </option>
+                                        </select>
+                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                            data-bs-target="#newGroupModal">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +114,35 @@
             </div>
         </form>
 
-        <!-- Script mask -->
+        <!-- New Group Modal -->
+        <div class="modal fade" id="newGroupModal" tabindex="-1" aria-labelledby="newGroupModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newGroupModalLabel">
+                            <i class="bi bi-plus-circle me-2"></i>Novo Grupo
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="newGroupForm" th:action="@{/tutor/{id}/createAndSetGroup(id=${tutor.id})}" method="post">
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="groupDescription" class="form-label">Descrição do Grupo</label>
+                                <input type="text" class="form-control" id="groupDescription" name="description"
+                                    placeholder="Ex: VIP, Comunitário, Especial..." required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Criar Grupo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script>
             const phoneElement = document.getElementById('phone');
             IMask(phoneElement, {
@@ -110,6 +152,7 @@
                     return dynamicMasked.compiledMasks.find(m => number.length <= m.mask.replace(/\D/g, '').length);
                 }
             });
+
         </script>
 
     </main>

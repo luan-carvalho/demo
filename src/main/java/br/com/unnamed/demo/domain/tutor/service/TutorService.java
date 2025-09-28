@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
+import br.com.unnamed.demo.domain.tutor.model.TutorGroup;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import br.com.unnamed.demo.domain.tutor.repository.PetRepository;
+import br.com.unnamed.demo.domain.tutor.repository.TutorGroupRepository;
 import br.com.unnamed.demo.domain.tutor.repository.TutorRepository;
 
 @Service
@@ -17,10 +19,12 @@ public class TutorService {
 
     private final TutorRepository tutorRepo;
     private final PetRepository petRepo;
+    private final TutorGroupRepository groupRepo;
 
-    public TutorService(TutorRepository tutorRepo, PetRepository petRepo) {
+    public TutorService(TutorRepository tutorRepo, PetRepository petRepo, TutorGroupRepository groupRepo) {
         this.tutorRepo = tutorRepo;
         this.petRepo = petRepo;
+        this.groupRepo = groupRepo;
     }
 
     public List<Tutor> findAllActive() {
@@ -95,6 +99,21 @@ public class TutorService {
     public Page<Tutor> searchWithOptionalFilters(String name, Pageable pageable, Status status) {
 
         return tutorRepo.searchWithOptionalFilters(name, status, pageable);
+
+    }
+
+    public List<TutorGroup> findAllGroups() {
+
+        return groupRepo.findAll();
+
+    }
+
+    public void createAndSetGroup(String description, Long tutorId) {
+
+        Tutor tutor = findById(tutorId);
+        TutorGroup createdGroup = groupRepo.save(new TutorGroup(null, description));
+        tutor.updateTutorGroup(createdGroup);
+        tutorRepo.save(tutor);
 
     }
 

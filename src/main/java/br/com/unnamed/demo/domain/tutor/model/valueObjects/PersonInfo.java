@@ -11,13 +11,12 @@ public class PersonInfo {
     @Embedded
     private Phone phone;
 
-
     public PersonInfo() {
     }
 
-    public PersonInfo(String name, Phone phone) {
+    public PersonInfo(String name, String phone) {
         this.name = name;
-        this.phone = phone;
+        this.phone = new Phone(phone);
     }
 
     public String getName() {

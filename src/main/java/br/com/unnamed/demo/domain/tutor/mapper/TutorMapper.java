@@ -5,16 +5,14 @@ import java.util.List;
 import br.com.unnamed.demo.domain.tutor.dtos.PersonInfoDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorGridDto;
-import br.com.unnamed.demo.domain.tutor.factory.TutorFactory;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
+import br.com.unnamed.demo.domain.tutor.model.valueObjects.PersonInfo;
 
 public class TutorMapper {
 
     public static Tutor toEntity(TutorFormDto dto) {
 
-        return TutorFactory.create(
-                dto.info().name(),
-                dto.info().phone());
+        return new Tutor(null, new PersonInfo(dto.info().name(), dto.info().phone()), dto.status(), dto.group());
 
     }
 
@@ -24,6 +22,7 @@ public class TutorMapper {
                 tutor.getId(),
                 new PersonInfoDto(tutor.getName(),
                         tutor.getPhone().getValue()),
+                tutor.getGroup(),
                 tutor.getAllPets(),
                 tutor.getStatus());
 

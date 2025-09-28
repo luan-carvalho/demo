@@ -72,6 +72,7 @@ public class TutorController {
 
         TutorFormDto tutorDto = TutorMapper.toForm(tutorService.findById(id));
         model.addAttribute("tutor", tutorDto);
+        model.addAttribute("groups", tutorService.findAllGroups());
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
         model.addAttribute("pageScript", "/js/script.js");
@@ -103,7 +104,7 @@ public class TutorController {
     @PostMapping
     public String saveTutor(@Valid TutorFormDto tutorDto,
             @RequestParam(required = false) String context,
-            @RequestParam(required = false) Long serviceId) {
+            @RequestParam(required = false) Long serviceId, RedirectAttributes attributes) {
 
         if (tutorDto.id() != null) {
 
@@ -113,8 +114,11 @@ public class TutorController {
                     new Phone(tutorDto.info().phone()),
                     tutorDto.info().name());
 
+            existingTutor.updateTutorGroup(tutorDto.group());
+
             tutorService.save(existingTutor);
-            return "redirect:/tutor";
+            attributes.addFlashAttribute("successMessage", "Alterações salvas");
+            return "redirect:/tutor/" + tutorDto.id();
 
         }
 
@@ -123,6 +127,16 @@ public class TutorController {
         return "redirect:/tutor/" + savedtutor.getId() + "/pet/new"
                 + (context != null ? "?context=" + context + (serviceId != null ? "&serviceId=" + serviceId : "") : "");
 
+    }
+
+    @PostMapping("/{tutorId}/createAndSetGroup")
+    public String createAndSetGroup(@PathVariable Long tutorId, @RequestParam String description,
+            RedirectAttributes attributes) {
+
+        tutorService.createAndSetGroup(description, tutorId);
+
+        attributes.addFlashAttribute("successMessage", "Alterações salvas");
+        return "redirect:/tutor/" + tutorId;
     }
 
     @GetMapping("/{id}/inactivate")

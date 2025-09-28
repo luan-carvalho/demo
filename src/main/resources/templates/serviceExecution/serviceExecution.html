@@ -49,11 +49,44 @@
                     </a>
 
                     <!-- Destructive action -->
-                    <button th:if="${serviceExecution.status.label != 'Cancelado'}" type="button"
+                    <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
+                        th:if="${serviceExecution.status.label != 'Cancelado'}" type="button"
                         class="btn btn-outline-danger btn-sm d-flex align-items-center px-2" data-bs-toggle="modal"
                         data-bs-target="#cancelConfirmModal">
                         <i class="bi bi-trash"></i>
                     </button>
+
+                    <div class="modal fade" id="cancelConfirmModal" tabindex="-1"
+                        aria-labelledby="cancelConfirmModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="cancelConfirmModalLabel">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmar Cancelamento
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Tem certeza que deseja <strong>cancelar este atendimento</strong>?
+                                    Essa ação não poderá ser desfeita.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Voltar
+                                    </button>
+                                    <form th:action="@{/serviceExecution/{id}/cancel(id=${serviceExecution.id})}"
+                                        method="post">
+                                        <button type="submit"
+                                            th:href="@{/serviceExecution/{id}/cancel(id=${serviceExecution.id})}"
+                                            class="btn btn-danger">
+                                            Confirmar Cancelamento
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Navigation -->
                     <a th:href="@{/serviceExecution}" class="btn btn-secondary btn-sm d-flex align-items-center px-2">
@@ -108,11 +141,11 @@
                                     <div class="card h-100 border shadow-sm">
                                         <div class="card-header bg-light border-bottom py-1"> <!-- Reduced padding -->
                                             <p class="fw-semibold mb-0 small" th:text="${group.description}"></p>
-                                            <!-- Smaller text -->
+
                                         </div>
-                                        <div class="card-body py-1"> <!-- Reduced padding -->
+                                        <div class="card-body py-1">
                                             <div class="form-check mb-1" th:each="petcare : ${group.petcares}">
-                                                <!-- Reduced margin -->
+
                                                 <input class="form-check-input service-checkbox" type="checkbox"
                                                     th:field="*{selectedPetCareIds}" th:value="${petcare.id}"
                                                     th:id="'petcare-' + ${petcare.id}"
@@ -130,12 +163,12 @@
                         </div>
                     </div>
 
-                    <div class="card shadow-sm mt-3"> <!-- Reduced margin -->
-                        <div class="card-header py-2"> <!-- Reduced padding -->
+                    <div class="card shadow-sm mt-3">
+                        <div class="card-header py-2">
                             <h6 class="card-title mb-0"><i class="bi bi-chat-text me-2"></i>Observações</h6>
 
                         </div>
-                        <div class="card-body py-2"> <!-- Reduced padding -->
+                        <div class="card-body py-2">
                             <div class="form-group">
                                 <textarea class="form-control form-control-sm" id="observations" th:field="*{obs}"
                                     rows="3" placeholder="Adicione observações relevantes sobre o atendimento..."
@@ -149,22 +182,20 @@
                 <aside class="col-lg-4">
 
                     <div class="card shadow-sm">
-                        <div class="card-header bg-light py-2"> <!-- Reduced padding -->
+                        <div class="card-header bg-light py-2">
                             <h6 class="card-title mb-0"><i class="bi bi-cash-coin me-2"></i>Valor Total</h6>
-                            <!-- Smaller heading -->
                         </div>
-                        <div class="card-body text-center py-2"> <!-- Reduced padding -->
+                        <div class="card-body text-center py-2">
                             <h4 th:text="'R$ ' + ${#numbers.formatDecimal(serviceExecution.total, 1, 'POINT', 2, 'COMMA')}"
-                                <!-- Smaller heading -->
                                 class="fw-bold text-dark mb-0"></h4>
                         </div>
                     </div>
 
-                    <div class="card shadow-sm mt-3"> <!-- Reduced margin -->
+                    <div class="card shadow-sm mt-3">
                         <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                            <!-- Reduced padding -->
+
                             <h6 class="card-title mb-0"><i class="bi bi-cash-stack me-2"></i>Pagamentos</h6>
-                            <!-- Smaller heading -->
+
                             <a th:if="${not #lists.contains({'Finalizado','Baixado','Cancelado'}, serviceExecution.status.label) and not serviceExecution.selectedPetCareIds.isEmpty()}"
                                 type="button" class="btn btn-sm btn-outline-primary"
                                 th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}">
@@ -174,8 +205,8 @@
                         <div class="card-body p-0">
                             <div class="list-group list-group-flush" th:if="${!payments.isEmpty()}">
                                 <div class="list-group-item d-flex justify-content-between align-items-center py-1"
-                                    th:each="payment : ${payments}"> <!-- Reduced padding -->
-                                    <span class="small"> <!-- Smaller text -->
+                                    th:each="payment : ${payments}">
+                                    <span class="small">
                                         <i class="bi bi-credit-card-2-front text-muted me-1"></i>
                                         <span th:text="${payment.type}"></span>
                                     </span>
@@ -187,7 +218,7 @@
                             </div>
 
                             <p class="text-center text-muted py-2 mb-0 small" th:if="${payments.isEmpty()}">
-                                <!-- Smaller text -->
+
                                 Nenhum pagamento adicionado.
                             </p>
                         </div>

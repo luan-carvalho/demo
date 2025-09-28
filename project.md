@@ -57,6 +57,6 @@
 # Relatórios
 
 [ ] Relatório de caixa (recebimentos, forma de pagamento, período)
-[ ] Relatório de serviços realizados
+[ ] Relatório de pets atendidos
 
 # Pacotes (só Deus sabe como vou fazer isso)

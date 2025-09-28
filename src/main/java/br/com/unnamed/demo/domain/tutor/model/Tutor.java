@@ -12,13 +12,17 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Tutor {
 
     @Id
@@ -32,6 +36,10 @@ public class Tutor {
     @JoinColumn(name = "tutor_id")
     private List<Pet> pets;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "group_id")
+    private TutorGroup group;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -42,10 +50,10 @@ public class Tutor {
 
     }
 
-    public Tutor(Long id, PersonInfo info, List<Pet> pets, Status status) {
+    public Tutor(Long id, PersonInfo info, Status status, TutorGroup group) {
         this.id = id;
         this.info = info;
-        this.pets = pets;
+        this.group = group;
         this.status = status;
     }
 
@@ -138,7 +146,13 @@ public class Tutor {
 
     public void updateTutorInfo(Phone phone, String name) {
 
-        this.info = new PersonInfo(name, phone);
+        this.info = new PersonInfo(name, phone.getValue());
+
+    }
+
+    public void updateTutorGroup(TutorGroup group) {
+
+        this.group = group;
 
     }
 
@@ -146,18 +160,6 @@ public class Tutor {
 
         getOwnedPet(pet.getId()).updateInfo(pet.getName());
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public PersonInfo getInfo() {
-        return info;
-    }
-
-    public Status getStatus() {
-        return status;
     }
 
 }

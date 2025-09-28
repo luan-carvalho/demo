@@ -52,13 +52,6 @@
 
         </li>
 
-        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-
-            <a th:href="@{/serviceExecution/list}"
-                th:class="${activePage == 'serviceExecution-list' ? 'nav-link active' : 'nav-link text-white'}"
-                class="py-1"><i class="bi bi-card-list me-2"></i>Atendimentos</a>
-        </li>
-
         <li class="nav-item">
             <a th:href="@{/tutor}" th:class="${activePage == 'clients' ? 'nav-link active' : 'nav-link text-white'}">
                 <i class="bi bi-people bi-fw me-2"></i>Clientes
@@ -67,6 +60,13 @@
 
         <th:block sec:authorize="hasRole('ADMIN')">
             <hr>
+
+            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+
+                <a th:href="@{/serviceExecution/list}"
+                    th:class="${activePage == 'serviceExecution-list' ? 'nav-link active' : 'nav-link text-white'}"
+                    class="py-1"><i class="bi bi-gear me-2"></i></i>Atendimentos</a>
+            </li>
 
             <li class="nav-item">
                 <a th:href="@{/petCare}"
@@ -100,10 +100,10 @@
                     <ul class="nav flex-column ps-4 mt-2">
                         <li><a href="#"
                                 th:class="${activePage == 'relatorio-servicos' ? 'nav-link active' : 'nav-link text-white'}"
-                                class="py-1">Serviços Realizados</a></li>
+                                class="py-1">Recebimentos</a></li>
                         <li><a href="#"
                                 th:class="${activePage == 'fluxo-caixa' ? 'nav-link active' : 'nav-link text-white'}"
-                                class="py-1">Fechamento de caixa</a></li>
+                                class="py-1">Pets atendidos</a></li>
                     </ul>
                 </div>
             </li>

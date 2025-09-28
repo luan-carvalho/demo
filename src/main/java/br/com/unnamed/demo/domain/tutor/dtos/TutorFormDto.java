@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.tutor.model.Pet;
+import br.com.unnamed.demo.domain.tutor.model.TutorGroup;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import jakarta.validation.Valid;
 
 public record TutorFormDto(
                 Long id,
                 @Valid PersonInfoDto info,
+                TutorGroup group,
                 List<Pet> pets,
                 Status status) {
 
@@ -22,6 +24,7 @@ public record TutorFormDto(
                 return new TutorFormDto(
                                 null,
                                 info,
+                                null,
                                 new ArrayList<>(),
                                 null);
 

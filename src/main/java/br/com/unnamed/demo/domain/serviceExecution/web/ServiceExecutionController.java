@@ -331,16 +331,17 @@ public class ServiceExecutionController {
         service.addPayment(s, method, amount, obs);
         attributes.addFlashAttribute("successMessage", "Pagamento adicionado");
         return "redirect:/serviceExecution/" + serviceId + "/checkout";
-
+        
     }
-
+    
     @PostMapping("/{serviceId}/checkout/finish")
-    public String finishServiceExecution(@PathVariable Long serviceId, Model model) {
-
+    public String finishServiceExecution(@PathVariable Long serviceId, Model model, RedirectAttributes attributes) {
+        
         ServiceExecution s = service.findById(serviceId);
         s.markAsPaid();
         service.save(s);
-
+        
+        attributes.addFlashAttribute("successMessage", "Atendimento concluído");
         return "redirect:/serviceExecution";
 
     }

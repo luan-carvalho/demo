@@ -61,28 +61,6 @@
             </div>
         </div>
 
-
-
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        <script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-
-                let currentDate = document.getElementById('dateISO').textContent
-
-                flatpickr("#date-picker-container", {
-                    locale: "pt",
-                    dateFormat: "Y-m-d",
-                    defaultDate: currentDate,
-                    maxDate: "today",
-                    onChange: function (selectedDates, dateStr, instance) {
-                        window.location.href = `/serviceExecution?date=${dateStr}`;
-                    }
-                });
-
-            });
-        </script>
     </div>
 
 </body>
