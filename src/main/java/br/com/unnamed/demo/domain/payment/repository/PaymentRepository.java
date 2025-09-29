@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import br.com.unnamed.demo.domain.payment.dto.PaymentReportDto;
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
 
@@ -26,5 +27,20 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
                     ORDER BY p.date DESC
             """)
     List<Payment> searchWithOptionalFilters(String name, PaymentMethod paymentMethod, LocalDate date);
+
+    @Query("""
+            SELECT new br.com.unnamed.demo.domain.payment.dto.PaymentReportDto(
+            p.amount,
+            p.date,
+            p.serviceExecution.id)
+            FROM Payment p
+            WHERE p.paymentMethod = :method
+            AND p.date >= :beginInclusive
+            AND p.date < :endExclusive
+            ORDER BY p.date
+            )
+            """)
+    public List<PaymentReportDto> findByDateAndMethod(LocalDate beginInclusive, LocalDate endExclusive,
+            PaymentMethod method);
 
 }

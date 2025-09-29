@@ -337,9 +337,7 @@ public class ServiceExecutionController {
     @PostMapping("/{serviceId}/checkout/finish")
     public String finishServiceExecution(@PathVariable Long serviceId, Model model, RedirectAttributes attributes) {
         
-        ServiceExecution s = service.findById(serviceId);
-        s.markAsPaid();
-        service.save(s);
+       service.finish(serviceId);
         
         attributes.addFlashAttribute("successMessage", "Atendimento concluído");
         return "redirect:/serviceExecution";

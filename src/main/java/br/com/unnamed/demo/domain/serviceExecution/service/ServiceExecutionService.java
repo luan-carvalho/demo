@@ -86,16 +86,13 @@ public class ServiceExecutionService {
 
     public void addPayment(ServiceExecution s, PaymentMethod method, BigDecimal amount, String obs) {
 
-        PaymentStatus status = s.getServiceStatus() != ServiceStatus.COMPLETED ? PaymentStatus.TEMPORARY
-                : PaymentStatus.FINAL;
-
         if (amount.compareTo(s.calculateTotal()) > 0) {
 
             amount = s.calculateTotal();
 
         }
 
-        Payment p = new Payment(LocalDate.now(), method, amount, status, obs);
+        Payment p = new Payment(LocalDate.now(), method, amount, PaymentStatus.TEMPORARY, obs);
 
         s.addPayment(p);
         repo.save(s);
@@ -118,6 +115,14 @@ public class ServiceExecutionService {
         }
 
         repo.save(s);
+
+    }
+
+    public void finish(Long serviceId) {
+
+        ServiceExecution service = findById(serviceId);
+        service.markAsPaid();
+        repo.save(service);
 
     }
 

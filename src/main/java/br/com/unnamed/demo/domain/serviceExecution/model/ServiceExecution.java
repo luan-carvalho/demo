@@ -154,7 +154,9 @@ public class ServiceExecution {
         this.paymentStatus = ServicePaymentStatus.PAID;
         this.serviceStatus = ServiceStatus.COMPLETED;
 
-        this.payments.stream().filter(p -> p.getStatus() == PaymentStatus.TEMPORARY)
+        this.payments
+                .stream()
+                .filter(p -> p.getStatus() == PaymentStatus.TEMPORARY)
                 .forEach(p -> p.updateStatus(PaymentStatus.FINAL));
 
     }

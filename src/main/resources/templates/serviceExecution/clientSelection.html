@@ -5,11 +5,18 @@
     <div th:fragment="content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0">Selecionar Cliente</h1>
-            <a th:href="@{/tutor/new(context=${context},serviceId=${serviceExecutionId})}"
-                class="btn btn-primary d-flex align-items-center">
-                <i class="bi bi-person-plus-fill me-2"></i>
-                Novo Tutor
-            </a>
+            <div class="d-flex">
+
+                <a th:href="@{/tutor/new(context=${context},serviceId=${serviceExecutionId})}"
+                    class="btn btn-primary d-flex align-items-center me-2">
+                    <i class="bi bi-person-plus-fill me-2"></i>
+                    Novo Tutor
+                </a>
+                <a th:href="@{/serviceExecution/{id}(id=${serviceExecutionId})}"
+                    class="btn btn-outline-secondary btn d-flex align-items-center">
+                    <i class="bi bi-arrow-left me-2"></i> Voltar
+                </a>
+            </div>
         </div>
 
         <!-- Formulário de busca -->
@@ -64,8 +71,8 @@
                                                 </form>
                                             </th:block>
 
-                                            <a href="#" class="badge bg-light text-muted rounded-pill" style="text-decoration: none;"
-                                                data-bs-toggle="modal"
+                                            <a href="#" class="badge bg-light text-muted rounded-pill"
+                                                style="text-decoration: none;" data-bs-toggle="modal"
                                                 th:attr="data-bs-target='#modalNewPet-' + ${tutor.id}">
                                                 + Adicionar pet
                                             </a>
