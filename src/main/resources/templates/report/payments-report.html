@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="content">
+
+        <div class="container mb-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted mb-2"><i class="bi bi-cash-coin me-2"></i>Total Recebido</h6>
+                            <h3 class="fw-bold text-dark mb-0"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(report.total, 1, 'POINT', 2, 'COMMA')}">
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted mb-2"><i class="bi bi-wallet2 me-2"></i>Quantidade de pagamentos</h6>
+                            <h3 class="fw-bold text-success mb-0"
+                                th:text="${report.paymentsCount}">
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted mb-2"><i class="bi bi-credit-card-2-back me-2"></i>Valor Restante</h6>
+                            <h3 class="fw-bold text-danger mb-0"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(serviceExecution.balance, 1, 'POINT', 2, 'COMMA')}">
+                            </h3>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+        <!-- <div class="container mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Adicionar Pagamento</h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/serviceExecution/{id}/addPayment(id=${serviceExecution.id})}" method="post"
+                        class="row g-3 align-items-end">
+
+
+                        <div class="col-lg-4">
+                            <label for="type" class="form-label">Forma de Pagamento</label>
+                            <select id="type" name="typeId" class="form-select"
+                                th:disabled="${serviceExecution.isFullyPaid()}" required>
+                                <option value="">-- Selecione --</option>
+                                <option th:each="pt : ${all_payment_types}" th:value="${pt.id}"
+                                    th:text="${pt.description}"></option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <label for="amount" class="form-label">Valor</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" step="0.01" min="0" class="form-control" id="amount" name="amount"
+                                    placeholder="0,00" required th:disabled="${serviceExecution.isFullyPaid()}" />
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-3">
+                            <label for="obs" class="form-label">Observação</label>
+                            <input type="text" class="form-control" id="obs" name="obs"
+                                th:disabled="${serviceExecution.isFullyPaid()}" />
+                        </div>
+
+
+                        <div class="col-lg-2 text-end">
+                            <button type="submit" class="btn btn-primary w-100"
+                                th:disabled="${serviceExecution.isFullyPaid()}">
+                                <i class="bi bi-arrow-down-circle me-1"></i> Adicionar
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- <div class="container">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Pagamentos Registrados</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Forma de pagamento</th>
+                                <th>Valor</th>
+                                <th>Observação</th>
+                                <th class="text-center" style="width: 120px;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="payment : ${serviceExecution.payments}">
+                                <td th:text="${payment.method.description}"></td>
+                                <td th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}">
+                                </td>
+                                <td th:text="${payment.observation}"></td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <!-- Edit button -->
+                                        <button type="button" class="btn btn-outline-secondary" title="Editar"
+                                            th:if="${not serviceExecution.isCompleted() and not serviceExecution.isCancelled()}" data-bs-toggle="modal"
+                                            th:data-bs-target="'#editPaymentModal-' + ${payment.id}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+
+                                        <!-- Delete button -->
+                                        <button type="button" class="btn btn-outline-danger" title="Excluir"
+                                            th:if="${not serviceExecution.isCompleted() and not serviceExecution.isCancelled()}" data-bs-toggle="modal"
+                                            th:data-bs-target="'#deletePaymentModal-' + ${payment.id}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" th:id="'deletePaymentModal-' + ${payment.id}" tabindex="-1"
+                                        aria-labelledby="deletePaymentModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content border-0 shadow">
+                                                <div class="modal-header bg-danger text-white">
+                                                    <h5 class="modal-title" id="deletePaymentModalLabel">
+                                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                        Confirmar remoção
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja <strong>remover este pagamento</strong>?
+                                                    Essa ação não poderá ser desfeita.
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">
+                                                        Voltar
+                                                    </button>
+                                                    <form
+                                                        th:action="@{/serviceExecution/{serviceExecutionId}/checkout/payment/{id}/delete(serviceExecutionId=${serviceExecution.id}, id=${payment.id})}"
+                                                        method="post">
+                                                        <button type="submit" class="btn btn-danger">
+                                                            Confirmar remoção
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" th:id="'editPaymentModal-' + ${payment.id}" tabindex="-1"
+                                        aria-labelledby="editPaymentModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                                            <div class="modal-content border-0 shadow">
+                                                <div class="modal-header bg-secondary text-white">
+                                                    <h5 class="modal-title" id="editPaymentModalLabel">
+                                                        <i class="bi bi-pencil-square me-2"></i>Editar Pagamento
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form
+                                                    th:action="@{/serviceExecution/{serviceExecutionId}/checkout/payment/{id}/update(serviceExecutionId=${serviceExecution.id}, id=${payment.id})}"
+                                                    method="post">
+                                                    <div class="modal-body">
+                                                        <div class="mb-2">
+                                                            <label for="methodId" class="form-label">Forma de
+                                                                Pagamento</label>
+                                                            <select id="methodId" name="methodId" class="form-select"
+                                                                required>
+                                                                <option value="">-- Selecione --</option>
+                                                                <option th:each="pt : ${all_payment_types}"
+                                                                    th:value="${pt.id}" th:text="${pt.description}"
+                                                                    th:selected="${pt.id != null and pt.id == payment.method.id}">
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <label class="form-label small mb-1">Valor</label>
+                                                            <input type="number" step="0.01"
+                                                                class="form-control form-control-sm" name="amount"
+                                                                th:value="${payment.amount}" required />
+                                                        </div>
+                                                        <div class="mb-0">
+                                                            <label class="form-label small mb-1">Observação</label>
+                                                            <textarea class="form-control form-control-sm" name="obs"
+                                                                rows="2" th:text="${payment.observation}"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer py-2">
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                            data-bs-dismiss="modal">
+                                                            Cancelar
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary btn-sm">
+                                                            Salvar
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                            <tr th:if="${serviceExecution.payments.isEmpty()}">
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    Nenhum pagamento registrado.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</body>
+
+</html>

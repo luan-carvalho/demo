@@ -34,13 +34,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             p.date,
             p.serviceExecution.id)
             FROM Payment p
-            WHERE p.paymentMethod = :method
-            AND p.date >= :beginInclusive
+            WHERE p.date >= :beginInclusive
             AND p.date < :endExclusive
+            AND p.status = 'FINAL'
             ORDER BY p.date
-            )
             """)
-    public List<PaymentReportDto> findByDateAndMethod(LocalDate beginInclusive, LocalDate endExclusive,
-            PaymentMethod method);
+    public List<PaymentReportDto> findBetweenPeriodConvertingToDto(LocalDate beginInclusive, LocalDate endExclusive);
 
 }

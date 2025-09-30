@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import br.com.unnamed.demo.domain.report.model.PaymentsReport;
 import br.com.unnamed.demo.domain.report.service.PaymentReportService;
 import br.com.unnamed.demo.domain.report.strategy.CurrentMonthPaymentsReport;
 import br.com.unnamed.demo.domain.report.strategy.LastMonthPaymentsReport;
@@ -24,17 +25,19 @@ public class ReportController {
     @GetMapping("/payments")
     public String showPaymentsReport(Model model, @RequestParam(required = false) String period) {
 
-        PaymentReportPeriod reportPeriod = switch (period) {
-            case "current" -> new CurrentMonthPaymentsReport();
-            case "last" -> new LastMonthPaymentsReport();
-            default -> new CurrentMonthPaymentsReport();
+        PaymentReportPeriod reportPeriod = new CurrentMonthPaymentsReport();
 
-        };
+        if (period != null && period.equals("last")) {
 
-        
+            reportPeriod = new LastMonthPaymentsReport();
 
+        }
+
+        PaymentsReport report = paymentReportService.create(reportPeriod);
+
+        model.addAttribute("report", report);
         model.addAttribute("view", "report/payments-report");
-        model.addAttribute("activePage", "reports");
+        model.addAttribute("activePage", "payments-report");
         model.addAttribute("pageTitle", "Relatório | Recebimentos");
         return "layout/base-layout";
 

@@ -1,13 +1,18 @@
 package br.com.unnamed.demo.domain.report.service;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
+import org.springframework.stereotype.Service;
+
+import br.com.unnamed.demo.domain.payment.dto.PaymentReportDto;
 import br.com.unnamed.demo.domain.payment.repository.PaymentMethodRepository;
 import br.com.unnamed.demo.domain.payment.repository.PaymentRepository;
 import br.com.unnamed.demo.domain.report.model.PaymentsReport;
+import br.com.unnamed.demo.domain.report.model.valueObject.PaymentMethodReport;
 import br.com.unnamed.demo.domain.report.strategy.PaymentReportPeriod;
 
+@Service
 public class PaymentReportService {
 
     private final PaymentRepository paymentRepository;
@@ -22,14 +27,13 @@ public class PaymentReportService {
 
         LocalDate beginInclusive = period.getBeginInclusiveDate();
         LocalDate endExclusive = period.getEndExclusiveDate();
+        List<PaymentReportDto> payments = paymentRepository.findBetweenPeriodConvertingToDto(beginInclusive,
+                endExclusive);
+        List<PaymentMethodReport> paymentMethodReport = paymentMethodRepository
+                .generatePaymentMethodSummary(beginInclusive, endExclusive);
+        String periodString = period.getPeriodString();
 
-        PaymentsReport report = new PaymentsReport();
-
-        for (PaymentMethod method : paymentMethodRepository.findAll()) {
-
-            report.addMethodWithPayments(method,
-                    paymentRepository.findByDateAndMethod(beginInclusive, endExclusive, method));
-        }
+        PaymentsReport report = new PaymentsReport(periodString, payments, paymentMethodReport);
 
         return report;
 

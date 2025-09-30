@@ -1,6 +1,8 @@
 package br.com.unnamed.demo.domain.report.strategy;
 
 import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class LastMonthPaymentsReport implements PaymentReportPeriod {
 
@@ -19,6 +21,14 @@ public class LastMonthPaymentsReport implements PaymentReportPeriod {
     public LocalDate getEndExclusiveDate() {
 
         return getBeginInclusiveDate().plusMonths(1);
+
+    }
+
+    @Override
+    public String getPeriodString() {
+
+        return getBeginInclusiveDate().getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + "/"
+                + getBeginInclusiveDate().getYear();
 
     }
 

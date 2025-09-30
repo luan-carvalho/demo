@@ -8,4 +8,6 @@ public interface PaymentReportPeriod {
 
     public LocalDate getEndExclusiveDate();
 
+    public String getPeriodString();
+
 }

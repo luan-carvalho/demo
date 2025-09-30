@@ -20,4 +20,9 @@ public class CurrentMonthPaymentsReport implements PaymentReportPeriod {
 
     }
 
+    @Override
+    public String getPeriodString() {
+        return getBeginInclusiveDate() + " - " + getEndExclusiveDate();
+    }
+
 }

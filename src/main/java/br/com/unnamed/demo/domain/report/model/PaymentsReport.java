@@ -4,26 +4,32 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.dto.PaymentReportDto;
-import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
-import br.com.unnamed.demo.domain.report.model.valueObject.PaymentMethodGroup;
+import br.com.unnamed.demo.domain.report.model.valueObject.PaymentMethodReport;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class PaymentsReport {
 
-    private List<PaymentMethodGroup> payments;
+    private String periodString;
+    private List<PaymentReportDto> payments;
+    private List<PaymentMethodReport> paymentMethods;
+    private BigDecimal total;
+    private int paymentsCount;
 
-    public PaymentsReport addMethodWithPayments(PaymentMethod method, List<PaymentReportDto> paymentsGrouped) {
+    public PaymentsReport(String periodString, List<PaymentReportDto> payments,
+            List<PaymentMethodReport> paymentMethods) {
 
-        payments.add(new PaymentMethodGroup(method, paymentsGrouped));
-        return this;
-
-    }
-
-    public BigDecimal calculateTotal() {
-
-        return payments.stream().map(PaymentMethodGroup::calculateTotal).reduce(BigDecimal.ZERO,
-                BigDecimal::add);
+        this.periodString = periodString;
+        this.payments = payments;
+        this.paymentMethods = paymentMethods;
+        this.total = payments
+                .stream()
+                .map(PaymentReportDto::amount)
+                .reduce(BigDecimal.ZERO,
+                        BigDecimal::add);
+        this.paymentsCount = payments.size();
 
     }
 

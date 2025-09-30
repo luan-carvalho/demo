@@ -56,7 +56,7 @@
 
 # Relatórios
 
-[ ] Relatório de recebimentos (recebimentos, forma de pagamento, período)
+[ working ] Relatório de recebimentos (recebimentos, forma de pagamento, período)
 [ ] Relatório de pets atendidos
 
 # Pacotes (só Deus sabe como vou fazer isso)
