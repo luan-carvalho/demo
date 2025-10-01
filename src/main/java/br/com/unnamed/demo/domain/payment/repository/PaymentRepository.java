@@ -18,8 +18,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
                 WHERE
                     (
                         :name IS NULL
-                        OR LOWER(p.serviceExecution.tutor.info.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
-                        OR LOWER(p.serviceExecution.pet.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
+                        OR LOWER(p.tutorName) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
+                        OR LOWER(p.petName) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
                     )
                     AND (COALESCE(:date, p.date) = p.date)
                     AND (:paymentMethod IS NULL OR p.paymentMethod = :paymentMethod)
@@ -31,8 +31,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("""
             SELECT new br.com.unnamed.demo.domain.payment.dto.PaymentReportDto(
             p.amount,
+            p.serviceExecution.tutor.info.name,
+            p.serviceExecution.pet.name,
             p.date,
-            p.serviceExecution.id)
+            p.serviceExecution.id,
+            p.paymentMethod.description)
             FROM Payment p
             WHERE p.date >= :beginInclusive
             AND p.date < :endExclusive

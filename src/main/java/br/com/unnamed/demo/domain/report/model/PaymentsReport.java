@@ -16,6 +16,7 @@ public class PaymentsReport {
     private List<PaymentReportDto> payments;
     private List<PaymentMethodReport> paymentMethods;
     private BigDecimal total;
+    private BigDecimal averageTicket;
     private int paymentsCount;
 
     public PaymentsReport(String periodString, List<PaymentReportDto> payments,
@@ -29,8 +30,9 @@ public class PaymentsReport {
                 .map(PaymentReportDto::amount)
                 .reduce(BigDecimal.ZERO,
                         BigDecimal::add);
+        this.paymentMethods.forEach(pm -> pm.setPercentage(total));
         this.paymentsCount = payments.size();
+        this.averageTicket = paymentsCount == 0 ? BigDecimal.ZERO : total.divide(BigDecimal.valueOf(paymentsCount));
 
     }
-
 }

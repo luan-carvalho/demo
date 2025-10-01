@@ -38,6 +38,9 @@ public class Payment {
     @JoinColumn(name = "service_execution_id", nullable = false)
     private ServiceExecution serviceExecution;
 
+    private String tutorName;
+    private String petName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_type_id")
     @NotNull
@@ -53,7 +56,7 @@ public class Payment {
     private String observation;
 
     public Payment(LocalDate date, PaymentMethod paymentMethod,
-            BigDecimal amount, PaymentStatus status, String observation) {
+            BigDecimal amount, PaymentStatus status, String observation, String petName, String tutorName) {
 
         if (amount.compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("Não é possível criar um pagamento com valor negativo");

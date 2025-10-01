@@ -1,6 +1,7 @@
 package br.com.unnamed.demo.domain.report.strategy;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class CurrentMonthPaymentsReport implements PaymentReportPeriod {
 
@@ -22,7 +23,8 @@ public class CurrentMonthPaymentsReport implements PaymentReportPeriod {
 
     @Override
     public String getPeriodString() {
-        return getBeginInclusiveDate() + " - " + getEndExclusiveDate();
+        return getBeginInclusiveDate().format(DateTimeFormatter.ofPattern("dd/MM/yy")) + " - "
+                + getEndExclusiveDate().format(DateTimeFormatter.ofPattern("dd/MM/yy"));
     }
 
 }

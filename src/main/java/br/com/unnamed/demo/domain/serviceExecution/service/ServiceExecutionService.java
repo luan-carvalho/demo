@@ -92,7 +92,8 @@ public class ServiceExecutionService {
 
         }
 
-        Payment p = new Payment(LocalDate.now(), method, amount, PaymentStatus.TEMPORARY, obs);
+        Payment p = new Payment(LocalDate.now(), method, amount, PaymentStatus.TEMPORARY, obs, s.getPet().getName(),
+                s.getTutor().getName());
 
         s.addPayment(p);
         repo.save(s);
