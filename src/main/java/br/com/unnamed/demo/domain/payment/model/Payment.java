@@ -42,7 +42,7 @@ public class Payment {
     private String petName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_type_id")
+    @JoinColumn(name = "payment_method_id")
     @NotNull
     private PaymentMethod paymentMethod;
 

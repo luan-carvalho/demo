@@ -2,6 +2,7 @@ package br.com.unnamed.demo.domain.report.strategy;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class CurrentMonthPaymentsReport implements PaymentReportPeriod {
 
@@ -25,6 +26,13 @@ public class CurrentMonthPaymentsReport implements PaymentReportPeriod {
     public String getPeriodString() {
         return getBeginInclusiveDate().format(DateTimeFormatter.ofPattern("dd/MM/yy")) + " - "
                 + getEndExclusiveDate().format(DateTimeFormatter.ofPattern("dd/MM/yy"));
+    }
+
+    @Override
+    public long getNumberOfDays() {
+
+        return ChronoUnit.DAYS.between(getBeginInclusiveDate(), getEndExclusiveDate());
+
     }
 
 }

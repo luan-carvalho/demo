@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        @page {
+            margin: 2cm;
+            size: A4;
+
+            @bottom-center {
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 10px;
+                color: #666;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .header .period {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .summary-cards {
+            display: table;
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+        }
+
+        .summary-card {
+            display: table-cell;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            background-color: #f8f9fa;
+        }
+
+        .summary-card h3 {
+            font-size: 14px;
+            margin: 5px 0;
+            color: #2c3e50;
+        }
+
+        .summary-card .label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .section {
+            margin: 20px 0;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2c3e50;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .two-columns {
+            display: table;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .column {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+            padding: 0 10px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 10px;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 6px;
+        }
+
+        .data-table .number {
+            text-align: right;
+        }
+
+        .method-item,
+        .weekday-item {
+            display: table;
+            width: 100%;
+            margin: 5px 0;
+            border-bottom: 1px solid #eee;
+            padding: 5px 0;
+        }
+
+        .method-name,
+        .weekday-name {
+            display: table-cell;
+            width: 60%;
+        }
+
+        .method-value,
+        .weekday-value {
+            display: table-cell;
+            width: 40%;
+            text-align: right;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Relatório de Pagamentos</h1>
+        <div class="period" th:if="${report.periodString}">
+            Período: <span th:text="${report.periodString}"></span>
+        </div>
+        <div class="period">
+            Gerado em: <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+        <div class="summary-card">
+            <div class="label">Total Recebido</div>
+            <h3 th:text="'R$ ' + ${#numbers.formatDecimal(report.total, 1, 'POINT', 2, 'COMMA')}"></h3>
+        </div>
+        <div class="summary-card">
+            <div class="label">Quantidade</div>
+            <h3 th:text="${report.paymentsCount}"></h3>
+        </div>
+        <div class="summary-card">
+            <div class="label">Ticket Médio</div>
+            <h3 th:text="'R$ ' + ${#numbers.formatDecimal(report.averageTicket, 1, 'POINT', 2, 'COMMA')}"></h3>
+        </div>
+        <div class="summary-card">
+            <div class="label">Média Diária</div>
+            <h3 th:text="'R$ ' + ${#numbers.formatDecimal(report.averageDailyRevenue, 1, 'POINT', 2, 'COMMA')}"></h3>
+        </div>
+    </div>
+
+    <!-- Two Column Section -->
+    <div class="two-columns">
+        <!-- Payment Methods -->
+        <div class="column">
+            <div class="section">
+                <div class="section-title">Formas de Pagamento</div>
+                <div th:each="pm : ${report.paymentMethods}" class="method-item">
+                    <div class="method-name">
+                        <strong th:text="${pm.method.description}"></strong><br />
+                        <small th:text="${pm.count} + ' transações'"></small>
+                    </div>
+                    <div class="method-value">
+                        <strong
+                            th:text="'R$ ' + ${#numbers.formatDecimal(pm.total, 1, 'POINT', 2, 'COMMA')}"></strong><br />
+                        <small th:text="${pm.percentage} + '%'"></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekday Averages -->
+        <div class="column">
+            <div class="section">
+                <div class="section-title">Média por Dia da Semana</div>
+                <div th:each="wdr : ${report.weekDayReport}" class="weekday-item">
+                    <div class="weekday-name" th:text="${wdr.dayString}"></div>
+                    <div class="weekday-value"
+                        th:text="'R$ ' + ${#numbers.formatDecimal(wdr.average, 1, 'POINT', 2, 'COMMA')}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Payments Table -->
+    <div class="section">
+        <div class="section-title">Pagamentos Detalhados</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Cliente</th>
+                    <th>Pet</th>
+                    <th>Atendimento</th>
+                    <th>Forma de Pagamento</th>
+                    <th class="number">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="payment : ${report.payments}">
+                    <td th:text="${#temporals.format(payment.date, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${payment.tutorName}"></td>
+                    <td th:text="${payment.petName}"></td>
+                    <td th:text="'#' + ${payment.serviceExecutionId}"></td>
+                    <td th:text="${payment.methodDescription}"></td>
+                    <td class="number"
+                        th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(report.payments)}">
+                    <td colspan="6" style="text-align: center;">Nenhum pagamento encontrado</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

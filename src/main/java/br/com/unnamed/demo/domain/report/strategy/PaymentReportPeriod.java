@@ -10,4 +10,6 @@ public interface PaymentReportPeriod {
 
     public String getPeriodString();
 
+    public long getNumberOfDays();
+
 }
