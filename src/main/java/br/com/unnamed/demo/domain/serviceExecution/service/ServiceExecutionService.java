@@ -12,10 +12,14 @@ import org.springframework.stereotype.Service;
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
+import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRepository;
+import br.com.unnamed.demo.domain.serviceExecution.util.InstallmentsCalculator;
+import br.com.unnamed.demo.domain.tutor.model.Pet;
+import br.com.unnamed.demo.domain.tutor.model.Tutor;
 
 @Service
 public class ServiceExecutionService {
@@ -48,6 +52,13 @@ public class ServiceExecutionService {
     public List<ServiceExecution> findByStatusAndDate(ServiceStatus status, LocalDate date) {
 
         return repo.findByStatusAndDate(status, date);
+
+    }
+
+    public void updateTutorAndPet(ServiceExecution serviceExecution, Tutor tutor, Pet pet) {
+
+        serviceExecution.updateTutorAndPet(tutor, pet);
+        repo.save(serviceExecution);
 
     }
 
@@ -84,7 +95,11 @@ public class ServiceExecutionService {
 
     }
 
-    public void addPayment(ServiceExecution s, PaymentMethod method, BigDecimal amount, String obs) {
+    public void addPayment(ServiceExecution s, PaymentMethod method, Integer installments, BigDecimal amount,
+            String obs) {
+
+        if (installments == null)
+            installments = 1;
 
         if (amount.compareTo(s.calculateTotal()) > 0) {
 
@@ -92,10 +107,26 @@ public class ServiceExecutionService {
 
         }
 
-        Payment p = new Payment(LocalDate.now(), method, amount, PaymentStatus.TEMPORARY, obs, s.getPet().getName(),
-                s.getTutor().getName());
+        List<BigDecimal> amountsDistributed = InstallmentsCalculator.calculateInstallmentsDistributed(amount,
+                installments);
 
-        s.addPayment(p);
+        for (Integer i = 0; i < amountsDistributed.size(); i++) {
+
+            String finalObs = (obs != null && obs.isEmpty() ? "" : obs + " - ") + "#" + s.getId() + "/" + (i + 1);
+
+            Payment p = new Payment(
+                    LocalDate.now(),
+                    method,
+                    amountsDistributed.get(i),
+                    PaymentStatus.TEMPORARY,
+                    finalObs,
+                    s.getPet().getName(),
+                    s.getTutor().getName());
+
+            s.addPayment(p);
+
+        }
+
         repo.save(s);
 
     }
@@ -124,6 +155,19 @@ public class ServiceExecutionService {
         ServiceExecution service = findById(serviceId);
         service.markAsPaid();
         repo.save(service);
+
+    }
+
+    public ServiceExecution create(Tutor tutor, Pet pet) {
+
+        return repo.save(
+                new ServiceExecutionBuilder()
+                        .tutor(tutor)
+                        .pet(pet)
+                        .date(LocalDate.now())
+                        .status(ServiceStatus.PENDING)
+                        .paymentStatus(ServicePaymentStatus.NOT_PAID)
+                        .build());
 
     }
 

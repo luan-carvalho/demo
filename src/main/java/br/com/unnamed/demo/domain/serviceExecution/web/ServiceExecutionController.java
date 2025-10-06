@@ -1,6 +1,5 @@
 package br.com.unnamed.demo.domain.serviceExecution.web;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
@@ -18,13 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.unnamed.demo.domain.payment.mapper.PaymentMapper;
-import br.com.unnamed.demo.domain.payment.model.Payment;
-import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
-import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
-import br.com.unnamed.demo.domain.payment.service.PaymentService;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
-import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
-import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionCheckoutDto;
 import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionDto;
 import br.com.unnamed.demo.domain.serviceExecution.mapper.ServiceExecutionMapper;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
@@ -44,14 +37,12 @@ public class ServiceExecutionController {
     private final ServiceExecutionService service;
     private final PetCareService petCareService;
     private final TutorService tutorService;
-    private final PaymentService paymentService;
 
     public ServiceExecutionController(ServiceExecutionService service, PetCareService petCareService,
-            TutorService tutorService, PaymentService paymentService) {
+            TutorService tutorService) {
         this.service = service;
         this.petCareService = petCareService;
         this.tutorService = tutorService;
-        this.paymentService = paymentService;
     }
 
     @GetMapping
@@ -127,32 +118,22 @@ public class ServiceExecutionController {
     public String createNewServiceExecution(Model model, Long tutorId, @RequestParam(required = false) Long petId,
             @RequestParam(required = false) String petName, RedirectAttributes attributes) {
 
-        Tutor t = tutorService.findById(tutorId);
-        Pet p = null;
+        Tutor tutor = tutorService.findById(tutorId);
+        Pet pet = null;
 
         if (petId == null && petName != null && !petName.isBlank()) {
 
-            p = new Pet(null, petName, Status.ACTIVE);
-            t.addPet(p);
-            p = tutorService.save(p);
-            t = tutorService.save(t);
+            pet = tutorService.createPetAndSaveToTutor(tutor, petName);
 
         }
 
         if (petId != null) {
 
-            p = t.getOwnedPet(petId);
+            pet = tutor.getOwnedPet(petId);
 
         }
 
-        ServiceExecution created = service.save(
-                new ServiceExecutionBuilder()
-                        .tutor(t)
-                        .pet(p)
-                        .date(LocalDate.now())
-                        .status(ServiceStatus.PENDING)
-                        .paymentStatus(ServicePaymentStatus.NOT_PAID)
-                        .build());
+        ServiceExecution created = service.create(tutor, pet);
 
         attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
         return "redirect:/serviceExecution/" + created.getId();
@@ -205,27 +186,22 @@ public class ServiceExecutionController {
             @RequestParam(required = false) String petName) {
 
         ServiceExecution toBeUpdated = service.findById(serviceExecutionId);
-        Tutor t = tutorService.findById(tutorId);
-        Pet p = null;
+        Tutor tutor = tutorService.findById(tutorId);
+        Pet pet = null;
 
         if (petId == null && petName != null && !petName.isBlank()) {
 
-            p = new Pet(null, petName, Status.ACTIVE);
-            t.addPet(p);
-            p = tutorService.save(p);
-            t = tutorService.save(t);
+            pet = tutorService.createPetAndSaveToTutor(tutor, petName);
 
         }
 
         if (petId != null) {
 
-            p = t.getOwnedPet(petId);
+            pet = tutor.getOwnedPet(petId);
 
         }
 
-        toBeUpdated.updateTutorAndPet(t, p);
-
-        service.save(toBeUpdated);
+        service.updateTutorAndPet(toBeUpdated, tutor, pet);
 
         return "redirect:/serviceExecution/" + serviceExecutionId;
 
@@ -302,90 +278,6 @@ public class ServiceExecutionController {
         }
 
         return "redirect:/serviceExecution";
-
-    }
-
-    @GetMapping("/{serviceId}/checkout")
-    public String checkout(@PathVariable Long serviceId, Model model) {
-
-        ServiceExecutionCheckoutDto s = ServiceExecutionMapper.toCheckoutDto(service.findById(serviceId));
-
-        model.addAttribute("serviceExecution", s);
-        model.addAttribute("all_payment_types", paymentService.getAllPaymentMethods());
-
-        model.addAttribute("activePage", "serviceExecution");
-        model.addAttribute("view", "serviceExecution/serviceExecutionCheckout");
-        model.addAttribute("pageTitle", "Pagamento | Atendimento #" + serviceId);
-
-        return "layout/base-layout";
-
-    }
-
-    @PostMapping("/{serviceId}/addPayment")
-    public String addPaymentToServiceExecution(@PathVariable Long serviceId, Long typeId, BigDecimal amount,
-            @RequestParam(required = false) String obs, RedirectAttributes attributes) {
-
-        ServiceExecution s = service.findById(serviceId);
-        PaymentMethod method = paymentService.findPaymentMethodById(typeId);
-
-        service.addPayment(s, method, amount, obs);
-        attributes.addFlashAttribute("successMessage", "Pagamento adicionado");
-        return "redirect:/serviceExecution/" + serviceId + "/checkout";
-        
-    }
-    
-    @PostMapping("/{serviceId}/checkout/finish")
-    public String finishServiceExecution(@PathVariable Long serviceId, Model model, RedirectAttributes attributes) {
-        
-       service.finish(serviceId);
-        
-        attributes.addFlashAttribute("successMessage", "Atendimento concluído");
-        return "redirect:/serviceExecution";
-
-    }
-
-    @PostMapping("/{serviceId}/checkout/payment/{id}/delete")
-    public String removePayment(@PathVariable Long serviceId, @PathVariable Long id, RedirectAttributes attributes) {
-
-        ServiceExecution s = service.findById(serviceId);
-        Payment p = paymentService.findById(id);
-
-        service.removePayment(s, p);
-        attributes.addFlashAttribute("errorMessage", "Pagamento removido");
-        return "redirect:/serviceExecution/" + serviceId + "/checkout";
-
-    }
-
-    @PostMapping("/{serviceId}/checkout/payment/{id}/update")
-    public String updatePayment(@PathVariable Long serviceId,
-            @PathVariable Long id,
-            @RequestParam(required = false) BigDecimal amount,
-            @RequestParam(required = false) Long methodId,
-            @RequestParam(required = false) String obs, RedirectAttributes attributes) {
-
-        ServiceExecution s = service.findById(serviceId);
-        Payment p = paymentService.findById(id);
-
-        if (p.getStatus() == PaymentStatus.TEMPORARY) {
-
-            if (amount != null && amount.compareTo(BigDecimal.ZERO) > 0) {
-                p.updateAmount(amount);
-            }
-
-            if (methodId != null) {
-                PaymentMethod method = paymentService.findPaymentMethodById(methodId);
-                p.updatePaymentMethod(method);
-            }
-
-            p.updateObservation(obs);
-
-            paymentService.save(p);
-            service.save(s);
-
-        }
-
-        attributes.addFlashAttribute("successMessage", "Pagamento atualizado");
-        return "redirect:/serviceExecution/" + serviceId + "/checkout";
 
     }
 

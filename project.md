@@ -34,7 +34,7 @@
 [ x ] Implementar checkout
     [ x ] Permitir adicionar pagamentos antecipadamente
     [ x ] Não permitir finalizar sem pagamento
-    [ ] Pensar em um lógica para adicionar parcelamento
+    [ x ] Pensar em um lógica para adicionar parcelamento
 [ ] Implementar desconto (% e R$)
 [ x ] Melhorar a UI (mto botão um em cima do outro)
 [ ] (FUTURO) Na tela de recepcionista, ter uma função para informar a chegada de um novo pet
@@ -51,8 +51,8 @@
 [ x ] Cadastrar/editar usuários (ao cadastrar, deixar automático a senha 1234)
 [ x ] Permitir ao usuário mudar a senha
 [ x ] Roles (recepcionista, atendente e admin)
-    [ ] Recepcionista não tem acesso aos serviços totais, somente o dashboard
-    [ ] Recepcionista não consegue atualizar o status de um atendimento e nem adicionar serviços, apenas abrir e finalizar
+    [ x ] Recepcionista não tem acesso aos serviços totais, somente o dashboard
+    [ x ] Recepcionista não consegue atualizar o status de um atendimento e nem adicionar serviços, apenas abrir e finalizar
 
 # Relatórios
 

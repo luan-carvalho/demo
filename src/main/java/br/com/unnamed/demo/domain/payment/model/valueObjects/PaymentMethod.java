@@ -1,9 +1,6 @@
 package br.com.unnamed.demo.domain.payment.model.valueObjects;
 
-import br.com.unnamed.demo.domain.payment.model.enums.PaymentMethodType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,8 +17,5 @@ public class PaymentMethod {
     private Long id;
 
     private String description;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentMethodType type;
 
 }

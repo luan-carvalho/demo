@@ -117,4 +117,14 @@ public class TutorService {
 
     }
 
+    public Pet createPetAndSaveToTutor(Tutor tutor, String petName) {
+
+        Pet pet = new Pet(null, petName, Status.ACTIVE);
+        tutor.addPet(pet);
+        pet = petRepo.save(pet);
+        tutor = tutorRepo.save(tutor);
+        return pet;
+
+    }
+
 }

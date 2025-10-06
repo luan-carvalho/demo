@@ -5,7 +5,8 @@
     <div th:fragment="content">
 
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <a th:href="@{/serviceExecution/{id}(id=${serviceExecution.id})}" class="btn btn-outline-secondary btn d-flex align-items-center">
+            <a th:href="@{/serviceExecution/{id}(id=${serviceExecution.id})}"
+                class="btn btn-outline-secondary btn d-flex align-items-center">
                 <i class="bi bi-arrow-left me-2"></i> Voltar
             </a>
 
@@ -24,7 +25,7 @@
                     <div class="card shadow-sm h-100">
                         <div class="card-body text-center">
                             <h6 class="text-muted mb-2"><i class="bi bi-cash-coin me-2"></i>Valor Total</h6>
-                            <h3 class="fw-bold text-dark mb-0"
+                            <h3 class="fw-bold text-dark mb-0" id="total_amount"
                                 th:text="'R$ ' + ${#numbers.formatDecimal(serviceExecution.total, 1, 'POINT', 2, 'COMMA')}">
                             </h3>
                         </div>
@@ -62,11 +63,10 @@
                     <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Adicionar Pagamento</h5>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/serviceExecution/{id}/addPayment(id=${serviceExecution.id})}" method="post"
+                    <form th:action="@{/serviceExecution/{id}/checkout/addPayment(id=${serviceExecution.id})}" method="post"
                         class="row g-3 align-items-end">
 
-                        <!-- Payment Type -->
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <label for="type" class="form-label">Forma de Pagamento</label>
                             <select id="type" name="typeId" class="form-select"
                                 th:disabled="${serviceExecution.isFullyPaid()}" required>
@@ -76,26 +76,31 @@
                             </select>
                         </div>
 
-                        <!-- Amount -->
-                        <div class="col-lg-3">
+                        <div class="col-lg-2">
                             <label for="amount" class="form-label">Valor</label>
                             <div class="input-group">
                                 <span class="input-group-text">R$</span>
                                 <input type="number" step="0.01" min="0" class="form-control" id="amount" name="amount"
-                                    placeholder="0,00" required th:disabled="${serviceExecution.isFullyPaid()}" />
+                                    placeholder="0" required th:disabled="${serviceExecution.isFullyPaid()}" />
                             </div>
                         </div>
 
-                        <!-- Observation -->
+                        <div class="col-lg-2">
+                            <label for="amount" class="form-label">Parcelas</label>
+                            <div class="input-group">
+                                <input type="number" min="0" class="form-control" id="installments" name="installments"
+                                    placeholder="Qtde" th:disabled="${serviceExecution.isFullyPaid()}" />
+                            </div>
+                        </div>
+
                         <div class="col-lg-3">
                             <label for="obs" class="form-label">Observação</label>
                             <input type="text" class="form-control" id="obs" name="obs"
                                 th:disabled="${serviceExecution.isFullyPaid()}" />
                         </div>
 
-                        <!-- Submit -->
                         <div class="col-lg-2 text-end">
-                            <button type="submit" class="btn btn-primary w-100"
+                            <button type="submit" class="btn btn-primary"
                                 th:disabled="${serviceExecution.isFullyPaid()}">
                                 <i class="bi bi-arrow-down-circle me-1"></i> Adicionar
                             </button>
@@ -132,14 +137,16 @@
                                     <div class="btn-group btn-group-sm" role="group">
                                         <!-- Edit button -->
                                         <button type="button" class="btn btn-outline-secondary" title="Editar"
-                                            th:if="${not serviceExecution.isCompleted() and not serviceExecution.isCancelled()}" data-bs-toggle="modal"
+                                            th:if="${not serviceExecution.isCompleted() and not serviceExecution.isCancelled()}"
+                                            data-bs-toggle="modal"
                                             th:data-bs-target="'#editPaymentModal-' + ${payment.id}">
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
                                         <!-- Delete button -->
                                         <button type="button" class="btn btn-outline-danger" title="Excluir"
-                                            th:if="${not serviceExecution.isCompleted() and not serviceExecution.isCancelled()}" data-bs-toggle="modal"
+                                            th:if="${not serviceExecution.isCompleted() and not serviceExecution.isCancelled()}"
+                                            data-bs-toggle="modal"
                                             th:data-bs-target="'#deletePaymentModal-' + ${payment.id}">
                                             <i class="bi bi-trash"></i>
                                         </button>
@@ -246,6 +253,40 @@
                 </div>
             </div>
         </div>
+
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('DOM loaded - script running');
+
+                const amountInput = document.getElementById('amount');
+                const totalAmount = /*[[${serviceExecution.total}]]*/ 0;
+
+                console.log('Amount input found:', amountInput);
+                console.log('Total amount:', totalAmount);
+
+                if (!amountInput) {
+                    console.error('Amount input field not found!');
+                    return;
+                }
+
+                amountInput.addEventListener('dblclick', function (e) {
+                    console.log('Double-click detected');
+                    this.value = parseFloat(totalAmount).toFixed(2);
+                    this.select();
+                });
+
+                amountInput.addEventListener('keydown', function (e) {
+                    console.log('Key pressed:', e.key);
+                    if (e.key === '*') {
+                        console.log('Asterisk key detected');
+                        e.preventDefault();
+                        this.value = parseFloat(totalAmount).toFixed(2);
+                        this.select();
+                    }
+                });
+            });
+        </script>
+
     </div>
 </body>
 

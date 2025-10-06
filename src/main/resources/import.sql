@@ -24,11 +24,11 @@ INSERT INTO users (name, password, status, role_id) VALUES ('Luan Carvalho de So
 INSERT INTO users (name, password, status, role_id) VALUES ('Franciel', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'ACTIVE', 2);
 INSERT INTO users (name, password, status, role_id) VALUES ('Eduarda', '$2a$10$muqKX94KrOwFcmVYXIIsi..Hlr/RgXqkjy2eUsUZ/fV7ljKnzIwvW', 'ACTIVE', 3);
 
-INSERT INTO payment_method (description, type) VALUES ('Dinheiro', 'A_VISTA');
-INSERT INTO payment_method (description, type) VALUES ('PIX', 'A_VISTA');
-INSERT INTO payment_method (description, type) VALUES ('Cartão de débito', 'A_VISTA');
-INSERT INTO payment_method (description, type) VALUES ('Cartão de crédito', 'A_PRAZO');
-INSERT INTO payment_method (description, type) VALUES ('Permuta', 'A_PRAZO');
+INSERT INTO payment_method (description) VALUES ('Dinheiro');
+INSERT INTO payment_method (description) VALUES ('PIX');
+INSERT INTO payment_method (description) VALUES ('Cartão');
+INSERT INTO payment_method (description) VALUES ('Cartão de crédito');
+INSERT INTO payment_method (description) VALUES ('Permuta');
 
 INSERT INTO tutor(name, phone, status) VALUES ('Luan Carvalho de Souza', '63992932615', 'ACTIVE');
 INSERT INTO pet(name, tutor_id, status) VALUES ('Dox', 1, 'ACTIVE');

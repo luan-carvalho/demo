@@ -1,6 +1,7 @@
 package br.com.unnamed.demo.domain.report.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.dto.PaymentReportDto;
@@ -41,9 +42,9 @@ public class PaymentsReport {
                         BigDecimal::add);
         this.paymentMethods.forEach(pm -> pm.setPercentage(total));
         this.paymentsCount = payments.size();
-        this.averageTicket = paymentsCount == 0 ? BigDecimal.ZERO : total.divide(BigDecimal.valueOf(paymentsCount));
+        this.averageTicket = paymentsCount == 0 ? BigDecimal.ZERO : total.divide(BigDecimal.valueOf(paymentsCount), RoundingMode.UP);
         this.averageDailyRevenue = paymentsCount == 0 ? BigDecimal.ZERO
-                : total.divide(BigDecimal.valueOf(numberOfDays));
+                : total.divide(BigDecimal.valueOf(numberOfDays), RoundingMode.UP);
 
     }
 }
