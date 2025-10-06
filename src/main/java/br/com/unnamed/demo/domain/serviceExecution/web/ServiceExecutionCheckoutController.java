@@ -49,14 +49,17 @@ public class ServiceExecutionCheckoutController {
     }
 
     @PostMapping("/addPayment")
-    public String addPaymentToServiceExecution(@PathVariable Long serviceId, Long typeId, BigDecimal amount,
-            @RequestParam(required = false) String obs, @RequestParam(required = false) Integer installments,
+    public String addPaymentToServiceExecution(
+            @PathVariable Long serviceId,
+            Long typeId,
+            BigDecimal amount,
+            @RequestParam(required = false) Integer installments,
             RedirectAttributes attributes) {
 
         ServiceExecution s = service.findById(serviceId);
         PaymentMethod method = paymentService.findPaymentMethodById(typeId);
 
-        service.addPayment(s, method, installments, amount, obs);
+        service.addPayment(s, method, installments, amount);
         attributes.addFlashAttribute("successMessage", "Pagamento adicionado");
         return "redirect:/serviceExecution/" + serviceId + "/checkout";
 
@@ -89,7 +92,7 @@ public class ServiceExecutionCheckoutController {
             @PathVariable Long id,
             @RequestParam(required = false) BigDecimal amount,
             @RequestParam(required = false) Long methodId,
-            @RequestParam(required = false) String obs, RedirectAttributes attributes) {
+            RedirectAttributes attributes) {
 
         ServiceExecution s = service.findById(serviceId);
         Payment p = paymentService.findById(id);
@@ -104,8 +107,6 @@ public class ServiceExecutionCheckoutController {
                 PaymentMethod method = paymentService.findPaymentMethodById(methodId);
                 p.updatePaymentMethod(method);
             }
-
-            p.updateObservation(obs);
 
             paymentService.save(p);
             service.save(s);

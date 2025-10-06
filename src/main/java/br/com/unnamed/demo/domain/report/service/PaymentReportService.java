@@ -10,7 +10,6 @@ import br.com.unnamed.demo.domain.payment.repository.PaymentMethodRepository;
 import br.com.unnamed.demo.domain.payment.repository.PaymentRepository;
 import br.com.unnamed.demo.domain.report.model.PaymentsReport;
 import br.com.unnamed.demo.domain.report.model.valueObject.PaymentMethodReport;
-import br.com.unnamed.demo.domain.report.model.valueObject.WeekDayReport;
 import br.com.unnamed.demo.domain.report.strategy.PaymentReportPeriod;
 
 @Service
@@ -33,13 +32,11 @@ public class PaymentReportService {
                 endExclusive);
         List<PaymentMethodReport> paymentMethodReport = paymentMethodRepository
                 .generatePaymentMethodSummary(beginInclusive, endExclusive);
-        List<WeekDayReport> weekDayReport = paymentRepository.dailyIncomeSummary(beginInclusive, endExclusive);
         String periodString = period.getPeriodString();
 
         PaymentsReport report = new PaymentsReport(periodString,
                 numberOfDays,
                 payments,
-                weekDayReport,
                 paymentMethodReport);
 
         return report;

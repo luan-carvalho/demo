@@ -18,7 +18,7 @@
         </div>
 
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-4">
                 <div class="card shadow-sm">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Informações do Usuário</h5>
@@ -35,16 +35,16 @@
                                 <p class="form-control-plaintext border rounded bg-light px-2" th:text="${user.id}" name="id"></p>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-3 col-lg-8">
                                 <label for="name" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="name" th:field="*{name}" />
                             </div>
 
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-3 col-lg-8">
                                 <label for="roleId" class="form-label">Perfil de acesso</label>
                                 <select class="form-select" id="roleId" name="roleId">
                                     <option th:if="${user.roleId == null}" value=""
-                                        th:text="'--- Selecione um perfil ---'"></option>
+                                        th:text="'-- Selecione um perfil --'"></option>
                                     <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.label}"
                                         th:selected="${user.roleId != null and role.id == user.roleId}">
                                     </option>

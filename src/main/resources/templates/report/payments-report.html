@@ -1,163 +1,115 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
 <body>
     <div th:fragment="content">
+
         <div class="container mb-4">
-            <!-- Header Section -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h3 mb-2 text-dark fw-bold">
-                        <i class="bi bi-graph-up-arrow text-primary me-3"></i>Relatório de Pagamentos
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                <!-- Report Title -->
+                <div class="me-3">
+                    <h1 class="h3 mb-1 text-dark fw-bold">
+                        <i class="bi bi-graph-up-arrow text-primary me-2"></i>Relatório de Pagamentos
                     </h1>
                     <p class="text-muted mb-0" th:if="${report.periodString}">
                         <i class="bi bi-calendar-range me-1"></i>Período:
                         <span class="fw-medium text-dark" th:text="${report.periodString}"></span>
                     </p>
                 </div>
-                <a th:href="@{/report/payments/export/pdf}" class="btn btn-danger">
-                    <i class="bi bi-file-pdf me-2"></i>Exportar PDF
+
+                <form class="d-flex align-items-center me-3" th:action="@{/report/payments}" method="get">
+                    <div class="input-group input-group">
+                        <label class="input-group-text" for="periodSelect">
+                            <i class="bi bi-calendar2-range"></i>
+                        </label>
+                        <select class="form-select form-select me-2" name="period" onchange="this.form.submit()">
+                            <option th:value="thisMonth" th:selected="${period == 'thisMonth'}">Este mês</option>
+                            <option th:value="lastMonth" th:selected="${period == 'lastMonth'}">Mês passado</option>
+                        </select>
+                    </div>
+                </form>
+
+                <a th:href="@{/report/payments/export/pdf(period=${period})}" class="btn btn-danger btn ms-3 mt-2">
+                    <i class="bi bi-file-pdf me-1"></i>Exportar PDF
                 </a>
             </div>
+        </div>
 
-            <!-- Metrics Cards -->
+
+        <div class="container mb-4">
+
             <div class="row g-4">
-                <!-- Total Received -->
-                <div class="col-md-3">
-                    <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100 border-start border-4 border-success">
                         <div class="card-body text-center p-4">
-                            <div class="text-primary mb-3">
-                                <i class="bi bi-cash-coin fs-1"></i>
-                            </div>
+                            <div class="text-success mb-3"><i class="bi bi-cash-coin fs-1"></i></div>
                             <h6 class="text-muted mb-2">Total Recebido</h6>
                             <h3 class="fw-bold text-dark mb-2"
-                                th:text="'R$ ' + ${#numbers.formatDecimal(report.total, 1, 'POINT', 2, 'COMMA')}">
-                            </h3>
+                                th:text="'R$ ' + ${#numbers.formatDecimal(report.total, 1, 'POINT', 2, 'COMMA')}"></h3>
                             <small class="text-muted">Valor total no período</small>
                         </div>
                     </div>
                 </div>
 
-                <!-- Payments Count -->
-                <div class="col-md-3">
-                    <div class="card border-0 shadow-sm h-100 border-start border-4 border-success">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary">
                         <div class="card-body text-center p-4">
-                            <div class="text-success mb-3">
-                                <i class="bi bi-wallet2 fs-1"></i>
-                            </div>
-                            <h6 class="text-muted mb-2">Quantidade</h6>
-                            <h3 class="fw-bold text-success mb-2" th:text="${report.paymentsCount}"></h3>
-                            <small class="text-muted">Total de transações</small>
+                            <div class="text-primary mb-3"><i class="bi bi-wallet2 fs-1"></i></div>
+                            <h6 class="text-muted mb-2">Quantidade de Pagamentos</h6>
+                            <h3 class="fw-bold text-dark mb-2" th:text="${report.paymentsCount}"></h3>
+                            <small class="text-muted">Número total de transações</small>
                         </div>
                     </div>
                 </div>
 
-                <!-- Average Ticket -->
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100 border-start border-4 border-info">
                         <div class="card-body text-center p-4">
-                            <div class="text-info mb-3">
-                                <i class="bi bi-receipt fs-1"></i>
-                            </div>
-                            <h6 class="text-muted mb-2">Ticket Médio</h6>
-                            <h3 class="fw-bold text-info mb-2"
-                                th:text="'R$ ' + ${#numbers.formatDecimal(report.averageTicket, 1, 'POINT', 2, 'COMMA')}">
+                            <div class="text-info mb-3"><i class="bi bi-receipt fs-1"></i></div>
+                            <h6 class="text-muted mb-2">Valor Médio Recebido</h6>
+                            <h3 class="fw-bold text-dark mb-2"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(report.averageAmountReceived, 1, 'POINT', 2, 'COMMA')}">
                             </h3>
-                            <small class="text-muted">Média por venda</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Daily Average -->
-                <div class="col-md-3">
-                    <div class="card border-0 shadow-sm h-100 border-start border-4 border-warning">
-                        <div class="card-body text-center p-4">
-                            <div class="text-warning mb-3">
-                                <i class="bi bi-calendar fs-1"></i>
-                            </div>
-                            <h6 class="text-muted mb-2">Média Diária</h6>
-                            <h3 class="fw-bold text-warning mb-2"
-                                th:text="'R$ ' + ${#numbers.formatDecimal(report.averageDailyRevenue, 1, 'POINT', 2, 'COMMA')}">
-                            </h3>
-                            <small class="text-muted">Média por dia útil</small>
+                            <small class="text-muted">Média por pagamento</small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Payment Methods + Chart -->
         <div class="container">
             <div class="row g-4">
-                <!-- Top Row: Two Side-by-Side Cards -->
-                <div class="col-12">
-                    <div class="row g-4">
-                        <!-- Payment Methods Card -->
-                        <div class="col-lg-6">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-header bg-light border-0 py-3 d-flex align-items-center">
-                                    <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
-                                        <i class="bi bi-credit-card text-primary fs-5"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="card-title mb-0 text-dark">Formas de Pagamento</h5>
-                                        <small class="text-muted">Distribuição por método</small>
-                                    </div>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="list-group list-group-flush">
-                                        <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-0"
-                                            th:each="pm : ${report.paymentMethods}">
-                                            <div class="d-flex align-items-center flex-grow-1">
-                                                <div class="flex-grow-1">
-                                                    <h6 class="mb-1 fw text-dark" th:text="${pm.method.description}">
-                                                    </h6>
-                                                    <small class="text-muted">
-                                                        <i class="bi bi-receipt me-1"></i>
-                                                        <span th:text="${pm.count} + ' transações'"></span>
-                                                    </small>
-                                                </div>
-                                            </div>
-                                            <div class="text-end ms-3">
-                                                <h6 class="mb-1 fw text-dark"
-                                                    th:text="'R$ ' + ${#numbers.formatDecimal(pm.total, 1, 'POINT', 2, 'COMMA')}">
-                                                </h6>
-                                                <span class="badge bg-primary bg-opacity-10 text-primary fs-7"
-                                                    th:text="${pm.percentage} + '%'"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <!-- Payment Methods Table -->
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light border-0 py-3 d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                                <i class="bi bi-credit-card text-primary fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-0 text-dark">Formas de Pagamento</h5>
+                                <small class="text-muted">Distribuição dos recebimentos</small>
                             </div>
                         </div>
-
-                        <!-- Weekday Revenue Card -->
-                        <div class="col-lg-6">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-header bg-light border-0 py-3 d-flex align-items-center">
-                                    <div class="bg-success bg-opacity-10 rounded p-2 me-3">
-                                        <i class="bi bi-calendar-week text-success fs-5"></i>
-                                    </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-0"
+                                    th:each="pm : ${report.paymentMethods}">
                                     <div>
-                                        <h5 class="card-title mb-0 text-dark">Média por Dia da Semana</h5>
-                                        <small class="text-muted">Desempenho por dia</small>
+                                        <h6 class="mb-1 text-dark" th:text="${pm.method.description}"></h6>
+                                        <small class="text-muted" th:text="${pm.count} + ' transações'"></small>
                                     </div>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="list-group list-group-flush">
-                                        <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-0"
-                                            th:each="wdr : ${report.weekDayReport}">
-                                            <div class="d-flex align-items-center flex-grow-1">
-                                                <div class="flex-grow-1">
-                                                    <h6 class="mb-0 fw text-dark" th:text="${wdr.dayString}">
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                            <div class="text-end ms-3">
-                                                <h6 class="mb-0 fw text-success"
-                                                    th:text="'R$ ' + ${#numbers.formatDecimal(wdr.average, 1, 'POINT', 2, 'COMMA')}">
-                                                </h6>
-                                            </div>
-                                        </div>
+                                    <div class="text-end">
+                                        <h6 class="mb-1 fw text-dark"
+                                            th:text="'R$ ' + ${#numbers.formatDecimal(pm.total, 1, 'POINT', 2, 'COMMA')}">
+                                        </h6>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary fs-7"
+                                            th:text="${pm.percentage} + '%'"></span>
                                     </div>
                                 </div>
                             </div>
@@ -165,9 +117,61 @@
                     </div>
                 </div>
 
-
+                <!-- Pie Chart -->
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-light border-0 py-3 d-flex align-items-center">
+                            <div class="bg-info bg-opacity-10 rounded p-2 me-3">
+                                <i class="bi bi-pie-chart text-info fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-0 text-dark">Distribuição Visual</h5>
+                                <small class="text-muted">Percentual por forma de pagamento</small>
+                            </div>
+                        </div>
+                        <div class="card-body d-flex justify-content-center align-items-center" style="height: 320px;">
+                            <canvas id="paymentPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            document.addEventListener("DOMContentLoaded", function () {
+                const labels = /*[[${paymentLabels}]]*/[];
+                const dataValues = /*[[${paymentTotals}]]*/[];
+
+                const ctx = document.getElementById('paymentPieChart');
+                if (ctx && labels.length > 0) {
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: dataValues,
+                                backgroundColor: [
+                                    '#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0', '#6f42c1'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                legend: { position: 'bottom' }
+                            }
+                        }
+                    });
+                }
+            });
+            /*]]>*/
+        </script>
+    </div>
+
+
+
 </body>
 
 </html>

@@ -25,7 +25,7 @@ public class CurrentMonthPaymentsReport implements PaymentReportPeriod {
     @Override
     public String getPeriodString() {
         return getBeginInclusiveDate().format(DateTimeFormatter.ofPattern("dd/MM/yy")) + " - "
-                + getEndExclusiveDate().format(DateTimeFormatter.ofPattern("dd/MM/yy"));
+                + getEndExclusiveDate().minusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yy"));
     }
 
     @Override

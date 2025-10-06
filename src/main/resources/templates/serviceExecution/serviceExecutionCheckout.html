@@ -63,8 +63,8 @@
                     <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Adicionar Pagamento</h5>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/serviceExecution/{id}/checkout/addPayment(id=${serviceExecution.id})}" method="post"
-                        class="row g-3 align-items-end">
+                    <form th:action="@{/serviceExecution/{id}/checkout/addPayment(id=${serviceExecution.id})}"
+                        method="post" class="row g-3 align-items-end">
 
                         <div class="col-lg-3">
                             <label for="type" class="form-label">Forma de Pagamento</label>
@@ -93,13 +93,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-3">
-                            <label for="obs" class="form-label">Observação</label>
-                            <input type="text" class="form-control" id="obs" name="obs"
-                                th:disabled="${serviceExecution.isFullyPaid()}" />
-                        </div>
-
-                        <div class="col-lg-2 text-end">
+                        <div class="col-lg-2">
                             <button type="submit" class="btn btn-primary"
                                 th:disabled="${serviceExecution.isFullyPaid()}">
                                 <i class="bi bi-arrow-down-circle me-1"></i> Adicionar
@@ -111,7 +105,6 @@
             </div>
         </div>
 
-        <!-- Payments table -->
         <div class="container">
             <div class="card shadow-sm">
                 <div class="card-header bg-light">
@@ -123,7 +116,6 @@
                             <tr>
                                 <th>Forma de pagamento</th>
                                 <th>Valor</th>
-                                <th>Observação</th>
                                 <th class="text-center" style="width: 120px;">Ações</th>
                             </tr>
                         </thead>
@@ -132,7 +124,6 @@
                                 <td th:text="${payment.method.description}"></td>
                                 <td th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}">
                                 </td>
-                                <td th:text="${payment.observation}"></td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
                                         <!-- Edit button -->
@@ -202,7 +193,7 @@
                                                     th:action="@{/serviceExecution/{serviceExecutionId}/checkout/payment/{id}/update(serviceExecutionId=${serviceExecution.id}, id=${payment.id})}"
                                                     method="post">
                                                     <div class="modal-body">
-                                                        <div class="mb-2">
+                                                        <div class="mb-2 py-2">
                                                             <label for="methodId" class="form-label">Forma de
                                                                 Pagamento</label>
                                                             <select id="methodId" name="methodId" class="form-select"
@@ -214,24 +205,19 @@
                                                                 </option>
                                                             </select>
                                                         </div>
-                                                        <div class="mb-2">
+                                                        <div class="mb-2 py-2">
                                                             <label class="form-label small mb-1">Valor</label>
                                                             <input type="number" step="0.01"
-                                                                class="form-control form-control-sm" name="amount"
+                                                                class="form-control form-control" name="amount"
                                                                 th:value="${payment.amount}" required />
-                                                        </div>
-                                                        <div class="mb-0">
-                                                            <label class="form-label small mb-1">Observação</label>
-                                                            <textarea class="form-control form-control-sm" name="obs"
-                                                                rows="2" th:text="${payment.observation}"></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer py-2">
-                                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                        <button type="button" class="btn btn-outline-secondary btn"
                                                             data-bs-dismiss="modal">
                                                             Cancelar
                                                         </button>
-                                                        <button type="submit" class="btn btn-primary btn-sm">
+                                                        <button type="submit" class="btn btn-primary btn">
                                                             Salvar
                                                         </button>
                                                     </div>
@@ -259,7 +245,7 @@
                 console.log('DOM loaded - script running');
 
                 const amountInput = document.getElementById('amount');
-                const totalAmount = /*[[${serviceExecution.total}]]*/ 0;
+                const totalAmount = /*[[${serviceExecution.balance}]]*/ 0;
 
                 console.log('Amount input found:', amountInput);
                 console.log('Total amount:', totalAmount);

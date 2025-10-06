@@ -4,6 +4,6 @@ import java.math.BigDecimal;
 
 import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
 
-public record PaymentCheckoutListDto(Long id, PaymentMethod method, BigDecimal amount, String observation) {
+public record PaymentCheckoutListDto(Long id, PaymentMethod method, BigDecimal amount) {
 
 }

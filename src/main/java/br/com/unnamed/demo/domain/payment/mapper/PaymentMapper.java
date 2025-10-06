@@ -14,8 +14,7 @@ public class PaymentMapper {
                 p.getServiceExecution(),
                 p.getAmount(),
                 p.getDate(),
-                p.getPaymentMethod(),
-                p.getObservation());
+                p.getPaymentMethod());
 
     }
 
@@ -24,8 +23,7 @@ public class PaymentMapper {
         return new PaymentCheckoutListDto(
                 p.getId(),
                 p.getPaymentMethod(),
-                p.getAmount(),
-                p.getObservation());
+                p.getAmount());
 
     }
 

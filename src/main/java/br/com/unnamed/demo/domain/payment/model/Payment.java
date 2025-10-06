@@ -53,10 +53,8 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    private String observation;
-
     public Payment(LocalDate date, PaymentMethod paymentMethod,
-            BigDecimal amount, PaymentStatus status, String observation, String petName, String tutorName) {
+            BigDecimal amount, PaymentStatus status, String petName, String tutorName) {
 
         if (amount.compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("Não é possível criar um pagamento com valor negativo");
@@ -65,7 +63,6 @@ public class Payment {
         this.paymentMethod = paymentMethod;
         this.amount = amount;
         this.status = status;
-        this.observation = observation;
     }
 
     public void linkToServiceExecution(ServiceExecution s) {
@@ -95,12 +92,6 @@ public class Payment {
     public void updatePaymentMethod(PaymentMethod paymentMethod) {
 
         this.paymentMethod = paymentMethod;
-
-    }
-
-    public void updateObservation(String observation) {
-
-        this.observation = observation;
 
     }
 

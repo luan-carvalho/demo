@@ -95,8 +95,7 @@ public class ServiceExecutionService {
 
     }
 
-    public void addPayment(ServiceExecution s, PaymentMethod method, Integer installments, BigDecimal amount,
-            String obs) {
+    public void addPayment(ServiceExecution s, PaymentMethod method, Integer installments, BigDecimal amount) {
 
         if (installments == null)
             installments = 1;
@@ -112,14 +111,11 @@ public class ServiceExecutionService {
 
         for (Integer i = 0; i < amountsDistributed.size(); i++) {
 
-            String finalObs = (obs != null && obs.isEmpty() ? "" : obs + " - ") + "#" + s.getId() + "/" + (i + 1);
-
             Payment p = new Payment(
                     LocalDate.now(),
                     method,
                     amountsDistributed.get(i),
                     PaymentStatus.TEMPORARY,
-                    finalObs,
                     s.getPet().getName(),
                     s.getTutor().getName());
 

@@ -26,7 +26,7 @@ INSERT INTO users (name, password, status, role_id) VALUES ('Eduarda', '$2a$10$m
 
 INSERT INTO payment_method (description) VALUES ('Dinheiro');
 INSERT INTO payment_method (description) VALUES ('PIX');
-INSERT INTO payment_method (description) VALUES ('Cartão');
+INSERT INTO payment_method (description) VALUES ('Cartão de débito');
 INSERT INTO payment_method (description) VALUES ('Cartão de crédito');
 INSERT INTO payment_method (description) VALUES ('Permuta');
 

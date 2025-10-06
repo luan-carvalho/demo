@@ -7,7 +7,6 @@
         @page {
             margin: 2cm;
             size: A4;
-
             @bottom-center {
                 content: "Página " counter(page) " de " counter(pages);
                 font-size: 10px;
@@ -81,17 +80,23 @@
             margin-bottom: 10px;
         }
 
-        .two-columns {
+        .method-item {
             display: table;
             width: 100%;
-            margin: 15px 0;
+            margin: 5px 0;
+            border-bottom: 1px solid #eee;
+            padding: 5px 0;
         }
 
-        .column {
+        .method-name {
             display: table-cell;
-            width: 50%;
-            vertical-align: top;
-            padding: 0 10px;
+            width: 60%;
+        }
+
+        .method-value {
+            display: table-cell;
+            width: 40%;
+            text-align: right;
         }
 
         .data-table {
@@ -118,33 +123,6 @@
             text-align: right;
         }
 
-        .method-item,
-        .weekday-item {
-            display: table;
-            width: 100%;
-            margin: 5px 0;
-            border-bottom: 1px solid #eee;
-            padding: 5px 0;
-        }
-
-        .method-name,
-        .weekday-name {
-            display: table-cell;
-            width: 60%;
-        }
-
-        .method-value,
-        .weekday-value {
-            display: table-cell;
-            width: 40%;
-            text-align: right;
-        }
-
-        .total-row {
-            font-weight: bold;
-            background-color: #f8f9fa;
-        }
-
         .footer {
             margin-top: 30px;
             text-align: center;
@@ -159,7 +137,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>Relatório de Pagamentos</h1>
+        <h1>Relatório Financeiro - Pagamentos</h1>
         <div class="period" th:if="${report.periodString}">
             Período: <span th:text="${report.periodString}"></span>
         </div>
@@ -180,48 +158,25 @@
         </div>
         <div class="summary-card">
             <div class="label">Ticket Médio</div>
-            <h3 th:text="'R$ ' + ${#numbers.formatDecimal(report.averageTicket, 1, 'POINT', 2, 'COMMA')}"></h3>
+            <h3 th:text="'R$ ' + ${#numbers.formatDecimal(report.averageAmountReceived, 1, 'POINT', 2, 'COMMA')}"></h3>
         </div>
-        <div class="summary-card">
-            <div class="label">Média Diária</div>
-            <h3 th:text="'R$ ' + ${#numbers.formatDecimal(report.averageDailyRevenue, 1, 'POINT', 2, 'COMMA')}"></h3>
-        </div>
+
     </div>
 
-    <!-- Two Column Section -->
-    <div class="two-columns">
-        <!-- Payment Methods -->
-        <div class="column">
-            <div class="section">
-                <div class="section-title">Formas de Pagamento</div>
-                <div th:each="pm : ${report.paymentMethods}" class="method-item">
-                    <div class="method-name">
-                        <strong th:text="${pm.method.description}"></strong><br />
-                        <small th:text="${pm.count} + ' transações'"></small>
-                    </div>
-                    <div class="method-value">
-                        <strong
-                            th:text="'R$ ' + ${#numbers.formatDecimal(pm.total, 1, 'POINT', 2, 'COMMA')}"></strong><br />
-                        <small th:text="${pm.percentage} + '%'"></small>
-                    </div>
-                </div>
+    <div class="section">
+        <div class="section-title">Formas de Pagamento</div>
+        <div th:each="pm : ${report.paymentMethods}" class="method-item">
+            <div class="method-name">
+                <strong th:text="${pm.method.description}"></strong><br />
+                <small th:text="${pm.count} + ' transações'"></small>
             </div>
-        </div>
-
-        <!-- Weekday Averages -->
-        <div class="column">
-            <div class="section">
-                <div class="section-title">Média por Dia da Semana</div>
-                <div th:each="wdr : ${report.weekDayReport}" class="weekday-item">
-                    <div class="weekday-name" th:text="${wdr.dayString}"></div>
-                    <div class="weekday-value"
-                        th:text="'R$ ' + ${#numbers.formatDecimal(wdr.average, 1, 'POINT', 2, 'COMMA')}"></div>
-                </div>
+            <div class="method-value">
+                <strong th:text="'R$ ' + ${#numbers.formatDecimal(pm.total, 1, 'POINT', 2, 'COMMA')}"></strong><br />
+                <small th:text="${pm.percentage} + '%'"></small>
             </div>
         </div>
     </div>
 
-    <!-- Detailed Payments Table -->
     <div class="section">
         <div class="section-title">Pagamentos Detalhados</div>
         <table class="data-table">
@@ -242,8 +197,7 @@
                     <td th:text="${payment.petName}"></td>
                     <td th:text="'#' + ${payment.serviceExecutionId}"></td>
                     <td th:text="${payment.methodDescription}"></td>
-                    <td class="number"
-                        th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td class="number" th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}"></td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(report.payments)}">
                     <td colspan="6" style="text-align: center;">Nenhum pagamento encontrado</td>
@@ -252,5 +206,4 @@
         </table>
     </div>
 </body>
-
 </html>
