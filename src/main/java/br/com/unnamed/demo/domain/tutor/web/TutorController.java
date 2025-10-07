@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +24,8 @@ import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
 import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
 import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
-import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
-import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
 import jakarta.validation.Valid;
 
@@ -52,7 +49,7 @@ public class TutorController {
 
         status = status == null ? Status.ACTIVE : status;
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("info.name").ascending());
+        Pageable pageable = PageRequest.of(page, size);
         Page<Tutor> tutorPage = tutorService.searchWithOptionalFilters(name, pageable, status);
 
         model.addAttribute("tutorPage", tutorPage);
@@ -76,7 +73,7 @@ public class TutorController {
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
         model.addAttribute("pageScript", "/js/script.js");
-        model.addAttribute("pageTitle", "Cliente | " + tutorDto.info().name().split(" ")[0]);
+        model.addAttribute("pageTitle", "Cliente | Edição");
         return "layout/base-layout";
 
     }
@@ -92,6 +89,7 @@ public class TutorController {
         if (context != null && serviceId != null)
             model.addAttribute("serviceId", serviceId);
 
+        model.addAttribute("groups", tutorService.findAllGroups());
         model.addAttribute("tutor", TutorFormDto.empty());
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
@@ -110,9 +108,7 @@ public class TutorController {
 
             Tutor existingTutor = tutorService.findById(tutorDto.id());
 
-            existingTutor.updateTutorInfo(
-                    new Phone(tutorDto.info().phone()),
-                    tutorDto.info().name());
+            existingTutor.updateTutorInfo(tutorDto.phone(), tutorDto.name());
 
             existingTutor.updateTutorGroup(tutorDto.group());
 
@@ -122,7 +118,7 @@ public class TutorController {
 
         }
 
-        Tutor savedtutor = tutorService.save(TutorMapper.toEntity(tutorDto));
+        Tutor savedtutor = tutorService.save(tutorDto);
 
         return "redirect:/tutor/" + savedtutor.getId() + "/pet/new"
                 + (context != null ? "?context=" + context + (serviceId != null ? "&serviceId=" + serviceId : "") : "");
@@ -199,31 +195,18 @@ public class TutorController {
             @RequestParam(required = false) String context,
             @RequestParam(required = false) Long serviceId, RedirectAttributes attributes) {
 
-        Tutor tutor = tutorService.findById(tutorId);
-        Pet pet = PetMapper.toEntity(petDto);
+        if (petDto.id() != null)
 
-        if (petDto.id() != null) {
+            tutorService.updatePetName(tutorId, petDto.id(), petDto.name());
 
-            tutor.updatePetInfo(pet);
-
-        }
-
-        if (petDto.id() == null) {
-
-            tutor.addPet(pet);
-            pet = tutorService.save(pet);
-
-        }
-
-        tutor = tutorService.save(tutor);
+        if (petDto.id() == null)
+            tutorService.createPetAndSaveToTutor(tutorId, petDto.name());
 
         if (context != null) {
 
             if (context.equals("update") && serviceId != null) {
 
-                ServiceExecution toBeUpdated = service.findById(serviceId);
-                toBeUpdated.updateTutorAndPet(tutor, pet);
-                service.save(toBeUpdated);
+                service.updateTutorAndPet(serviceId, tutorId, petDto.id());
 
                 attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
                 return "redirect:/serviceExecution/" + toBeUpdated.getId();

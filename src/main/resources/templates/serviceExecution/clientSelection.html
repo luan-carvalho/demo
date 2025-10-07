@@ -53,7 +53,7 @@
                         <tbody>
                             <th:block th:each="tutor : ${tutorsPage.content}">
                                 <tr>
-                                    <td th:text="${tutor.info.name}" class="fw-normal fs-6 py-3">Tutor Name</td>
+                                    <td th:text="${tutor.name}" class="fw-normal fs-6 py-3">Tutor Name</td>
                                     <td class="py-3">
                                         <div class="d-flex flex-wrap gap-3 align-items-center">
                                             <th:block th:each="pet : ${tutor.getActivePets()}">

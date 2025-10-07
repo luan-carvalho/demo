@@ -9,7 +9,7 @@ public record PetFormDto(
 
     public static PetFormDto empty() {
 
-        return new PetFormDto(null, null,  Status.ACTIVE);
+        return new PetFormDto(null, null, Status.ACTIVE);
 
     }
 

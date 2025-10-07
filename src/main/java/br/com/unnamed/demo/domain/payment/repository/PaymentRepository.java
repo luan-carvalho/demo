@@ -31,7 +31,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("""
             SELECT new br.com.unnamed.demo.domain.payment.dto.PaymentReportDto(
             p.amount,
-            p.serviceExecution.tutor.info.name,
+            p.serviceExecution.tutor.name,
             p.serviceExecution.pet.name,
             p.date,
             p.serviceExecution.id,

@@ -57,7 +57,7 @@
                                 <td>
                                     <a th:href="@{/tutor/{id}(id=${tutor.id})}" class="fw text-decoration-none"
                                         th:classappend="${tutor.isInactive()} ? 'text-decoration-line-through' : 'text-dark'">
-                                        <span th:text="${tutor.info.name}"></span>
+                                        <span th:text="${tutor.name}"></span>
                                     </a>
                                 </td>
 

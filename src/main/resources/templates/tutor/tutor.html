@@ -53,12 +53,12 @@
                             <div class="row g-3">
                                 <div class="col-md-8">
                                     <label for="name" class="form-label">Nome Completo</label>
-                                    <input type="text" class="form-control" id="name" th:field="*{info.name}"
+                                    <input type="text" class="form-control" id="name" th:field="*{name}"
                                         placeholder="Nome do tutor..." required />
                                 </div>
                                 <div class="col-md-4">
                                     <label for="phone" class="form-label">Telefone</label>
-                                    <input type="tel" class="form-control" id="phone" th:field="*{info.phone}"
+                                    <input type="tel" class="form-control" id="phone" th:field="*{phone}" maxlength="15"
                                         placeholder="(99) 99999-9999" required />
                                 </div>
 

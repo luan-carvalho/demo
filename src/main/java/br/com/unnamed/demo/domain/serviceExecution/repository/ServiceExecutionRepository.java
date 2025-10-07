@@ -37,7 +37,7 @@ public interface ServiceExecutionRepository extends JpaRepository<ServiceExecuti
             SELECT s
             FROM ServiceExecution s
             WHERE (CAST(:name AS STRING) IS NULL
-                   OR LOWER(s.tutor.info.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
+                   OR LOWER(s.tutor.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
                    OR LOWER(s.pet.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
                   )
               AND (COALESCE(:date, s.date) = s.date)

@@ -20,8 +20,9 @@ public interface TutorRepository extends JpaRepository<Tutor, Long> {
                         WHERE (:status IS NULL OR t.status = :status)
                         AND (
                                 :searchTerm IS NULL OR
-                                LOWER(t.info.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%'))
+                                LOWER(t.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%'))
                                 OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:searchTerm AS string), '%')))
+                        ORDER BY t.name
                         """)
         Page<Tutor> searchWithOptionalFilters(@Param("searchTerm") String searchTerm, @Param("status") Status status,
                         Pageable pageable);
@@ -30,7 +31,7 @@ public interface TutorRepository extends JpaRepository<Tutor, Long> {
                         SELECT t
                         FROM Tutor t
                         WHERE t.status = 'ACTIVE'
-                        ORDER BY t.info.name ASC
+                        ORDER BY t.name ASC
                                 """)
         List<Tutor> findAllActive();
 

@@ -2,13 +2,9 @@ package br.com.unnamed.demo.domain.tutor.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
-import br.com.unnamed.demo.domain.tutor.model.valueObjects.PersonInfo;
-import br.com.unnamed.demo.domain.tutor.model.valueObjects.Phone;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,8 +25,8 @@ public class Tutor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Embedded
-    private PersonInfo info;
+    private String name;
+    private String phone;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "tutor_id")
@@ -50,23 +46,11 @@ public class Tutor {
 
     }
 
-    public Tutor(Long id, PersonInfo info, Status status, TutorGroup group) {
-        this.id = id;
-        this.info = info;
-        this.group = group;
-        this.status = status;
-    }
-
-    public String getName() {
-
-        return info.getName();
-
-    }
-
-    public Phone getPhone() {
-
-        return info.getPhone();
-
+    public Tutor(String name, String phone) {
+        this.name = name;
+        this.phone = phone;
+        this.pets = new ArrayList<>();
+        this.status = Status.INACTIVE;
     }
 
     public Pet getOwnedPet(Long petId) {
@@ -85,12 +69,6 @@ public class Tutor {
     public List<Pet> getActivePets() {
 
         return pets.stream().filter(Pet::isActive).toList();
-
-    }
-
-    public List<Pet> getInactivePets() {
-
-        return pets.stream().filter(Predicate.not(Pet::isActive)).toList();
 
     }
 
@@ -144,9 +122,10 @@ public class Tutor {
 
     }
 
-    public void updateTutorInfo(Phone phone, String name) {
+    public void updateTutorInfo(String phone, String name) {
 
-        this.info = new PersonInfo(name, phone.getValue());
+        this.name = name;
+        this.phone = phone;
 
     }
 
@@ -156,9 +135,9 @@ public class Tutor {
 
     }
 
-    public void updatePetInfo(Pet pet) {
+    public void updatePetName(Long petId, String name) {
 
-        getOwnedPet(pet.getId()).updateInfo(pet.getName());
+        getOwnedPet(petId).updateName(name);
 
     }
 

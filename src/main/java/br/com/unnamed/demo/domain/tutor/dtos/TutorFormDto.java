@@ -6,24 +6,21 @@ import java.util.List;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.TutorGroup;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
-import jakarta.validation.Valid;
 
 public record TutorFormDto(
                 Long id,
-                @Valid PersonInfoDto info,
+                String name,
+                String phone,
                 TutorGroup group,
                 List<Pet> pets,
                 Status status) {
 
         public static TutorFormDto empty() {
 
-                PersonInfoDto info = new PersonInfoDto(
-                                null,
-                                null);
-
                 return new TutorFormDto(
                                 null,
-                                info,
+                                null,
+                                null,
                                 null,
                                 new ArrayList<>(),
                                 null);

@@ -20,14 +20,17 @@ import br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRe
 import br.com.unnamed.demo.domain.serviceExecution.util.InstallmentsCalculator;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
+import br.com.unnamed.demo.domain.tutor.service.TutorService;
 
 @Service
 public class ServiceExecutionService {
 
     private final ServiceExecutionRepository repo;
-    
-    public ServiceExecutionService(ServiceExecutionRepository repo) {
+    private final TutorService tutorService;
+
+    public ServiceExecutionService(ServiceExecutionRepository repo, TutorService tutorService) {
         this.repo = repo;
+        this.tutorService = tutorService;
     }
 
     public ServiceExecution findById(Long id) {
@@ -55,8 +58,9 @@ public class ServiceExecutionService {
 
     }
 
-    public void updateTutorAndPet(ServiceExecution serviceExecution, Tutor tutor, Pet pet) {
+    public void updateTutorAndPet(Long serviceExecutionId, Long tutorId, Long petId) {
 
+        ServiceExecution serviceExecution = findById(serviceExecutionId);
         serviceExecution.updateTutorAndPet(tutor, pet);
         repo.save(serviceExecution);
 

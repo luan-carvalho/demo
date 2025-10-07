@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.TutorGroup;
@@ -49,6 +50,12 @@ public class TutorService {
     public Tutor save(Tutor Tutor) {
 
         return tutorRepo.save(Tutor);
+
+    }
+
+    public Tutor save(TutorFormDto tutor) {
+
+        return tutorRepo.save(new Tutor(tutor.name(), tutor.phone()));
 
     }
 
@@ -113,17 +120,26 @@ public class TutorService {
         Tutor tutor = findById(tutorId);
         TutorGroup createdGroup = groupRepo.save(new TutorGroup(null, description));
         tutor.updateTutorGroup(createdGroup);
-        tutorRepo.save(tutor);
+        save(tutor);
 
     }
 
-    public Pet createPetAndSaveToTutor(Tutor tutor, String petName) {
+    public Pet createPetAndSaveToTutor(Long tutorId, String petName) {
 
+        Tutor tutor = findById(tutorId);
         Pet pet = new Pet(null, petName, Status.ACTIVE);
         tutor.addPet(pet);
         pet = petRepo.save(pet);
         tutor = tutorRepo.save(tutor);
         return pet;
+
+    }
+
+    public void updatePetName(Long tutorId, Long petId, String petName) {
+
+        Tutor tutor = findById(tutorId);
+        tutor.getOwnedPet(petId).updateName(petName);
+        save(tutor);
 
     }
 

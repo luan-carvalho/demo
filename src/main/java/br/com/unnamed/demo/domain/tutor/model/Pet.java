@@ -66,7 +66,7 @@ public class Pet {
 
     }
 
-    public void updateInfo(String name) {
+    public void updateName(String name) {
 
         this.name = name;
 

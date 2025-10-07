@@ -2,17 +2,15 @@ package br.com.unnamed.demo.domain.tutor.mapper;
 
 import java.util.List;
 
-import br.com.unnamed.demo.domain.tutor.dtos.PersonInfoDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
 import br.com.unnamed.demo.domain.tutor.dtos.TutorGridDto;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
-import br.com.unnamed.demo.domain.tutor.model.valueObjects.PersonInfo;
 
 public class TutorMapper {
 
     public static Tutor toEntity(TutorFormDto dto) {
 
-        return new Tutor(null, new PersonInfo(dto.info().name(), dto.info().phone()), dto.status(), dto.group());
+        return new Tutor(dto.name(), dto.phone());
 
     }
 
@@ -20,8 +18,8 @@ public class TutorMapper {
 
         return new TutorFormDto(
                 tutor.getId(),
-                new PersonInfoDto(tutor.getName(),
-                        tutor.getPhone().getValue()),
+                tutor.getName(),
+                tutor.getPhone(),
                 tutor.getGroup(),
                 tutor.getAllPets(),
                 tutor.getStatus());
@@ -33,7 +31,7 @@ public class TutorMapper {
         return new TutorGridDto(
                 tutor.getId(),
                 tutor.getName(),
-                tutor.getAllPets());
+                tutor.getActivePets());
 
     }
 

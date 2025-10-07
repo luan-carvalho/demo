@@ -13,7 +13,7 @@ public class ServiceExecutionMapper {
                 s.getId(),
                 s.getDate(),
                 s.getServiceStatus(),
-                s.getTutor().getInfo().getName(),
+                s.getTutor().getName(),
                 s.getPet().getName(),
                 s.getExecutedServices().stream().map(ex -> ex.getPetCare().getId()).toList(),
                 s.getPayments().stream().map(p -> PaymentMapper.toSimpleListDto(p)).toList(),
