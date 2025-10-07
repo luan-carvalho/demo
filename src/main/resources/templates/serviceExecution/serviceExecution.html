@@ -143,6 +143,7 @@
                                             <span th:text="${group.description}"></span>
                                             <small class="badge bg-success ms-2 group-selected-count"
                                                 th:attr="data-group-id=${group.id}"
+                                                th:if="${group.selectedCount > 0}"
                                                 th:text="${group.selectedCount}">0</small>
                                         </button>
                                     </h2>

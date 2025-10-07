@@ -22,7 +22,7 @@ public class PaymentMethodReport {
 
     public void setPercentage(BigDecimal allMethodsTotal) {
 
-        this.percentage = this.total.divide(allMethodsTotal, RoundingMode.UP).doubleValue() * 100.00;
+        this.percentage = this.total.divide(allMethodsTotal, RoundingMode.HALF_UP).doubleValue() * 100.00;
 
     }
 
