@@ -8,12 +8,12 @@
                 <!-- Title & Date -->
                 <div class="d-flex align-items-center gap-2">
                     <h1 class="h4 mb-0" th:text="'Atendimento #' + ${serviceExecution.id}"></h1>
-                    <small class="badge bg-primary fs-6" th:if="${serviceExecution.date != null}"
+                    <small class="badge bg-primary fs-7" th:if="${serviceExecution.date != null}"
                         th:text="${#temporals.format(serviceExecution.date, 'dd/MM/yy')}"></small>
                 </div>
 
                 <!-- Status Badge -->
-                <span th:text="${serviceExecution.status.label}" class="badge fw-bold fs-5"
+                <span th:text="${serviceExecution.status.label}" class="badge fw-bold fs-6"
                     th:classappend="${serviceExecution.status.label == 'Pendente' ? ' bg-secondary' :
                                     serviceExecution.status.label == 'Em execução' ? ' bg-primary' :
                                     serviceExecution.status.label == 'Finalizado' ? ' bg-success' :
@@ -24,7 +24,7 @@
                 <!-- Actions -->
                 <div class="d-flex flex-wrap gap-2 justify-content-end align-items-center">
                     <!-- Save -->
-                    <button type="submit" class="btn btn-primary btn-md d-flex align-items-center px-3 py-2"
+                    <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2"
                         form="serviceExecutionForm"
                         th:if="${not #lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}">
                         <i class="bi bi-save2 me-2"></i> Salvar
@@ -36,7 +36,7 @@
                         th:action="@{/serviceExecution/{id}/start(id=${serviceExecution.id}, src='editPage')}"
                         method="post" class="m-0">
                         <button type="submit"
-                            class="btn btn-outline-success btn-md d-flex align-items-center px-3 py-2">
+                            class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
                             <i class="bi bi-play-circle me-2"></i> Iniciar
                         </button>
                     </form>
@@ -45,28 +45,28 @@
                         th:action="@{/serviceExecution/{id}/markAsDone(id=${serviceExecution.id}, src='editPage')}"
                         method="post" class="m-0">
                         <button type="submit"
-                            class="btn btn-outline-success btn-md d-flex align-items-center px-3 py-2">
+                            class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
                             <i class="bi bi-check-lg me-2"></i> Finalizar
                         </button>
                     </form>
 
                     <a th:if="${serviceExecution.status.label == 'Finalizado'}"
                         th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}"
-                        class="btn btn-success btn-md d-flex align-items-center px-3 py-2">
+                        class="btn btn-success btn-sm d-flex align-items-center px-3 py-2">
                         <i class="bi bi-currency-dollar me-2"></i> Baixar
                     </a>
 
                     <!-- Cancel -->
                     <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
                         th:if="${serviceExecution.status.label != 'Cancelado'}" type="button"
-                        class="btn btn-outline-danger btn-md d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
+                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
                         data-bs-target="#cancelConfirmModal">
                         <i class="bi bi-trash me-1"></i> Cancelar
                     </button>
 
                     <!-- Back -->
                     <a th:href="@{/serviceExecution}"
-                        class="btn btn-secondary btn-md d-flex align-items-center px-3 py-2">
+                        class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
                         <i class="bi bi-arrow-left-circle me-2"></i> Voltar
                     </a>
                 </div>
@@ -116,7 +116,7 @@
                             <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Cliente</h5>
                             <a th:if="${not #lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}"
                                 th:href="@{/serviceExecution/clientSelection?context=update(serviceExecutionId = ${serviceExecution.id})}"
-                                class="btn btn-outline-secondary btn-md d-flex align-items-center px-3 py-2">
+                                class="btn btn-outline-secondary btn-sm d-flex align-items-center px-3 py-2">
                                 <i class="bi bi-pencil-square me-2"></i> Editar
                             </a>
                         </div>
@@ -131,26 +131,40 @@
                     <!-- Services Selected -->
                     <div class="card shadow-sm mb-3">
                         <div class="card-header py-3">
-                            <h5 class="card-title mb-0"><i class="bi bi-list-check me-2"></i>Serviços Selecionados</h5>
+                            <h5 class="card-title mb-0"><i class="bi bi-list-check me-2"></i>Serviços Disponíveis</h5>
                         </div>
                         <div class="card-body py-3">
-                            <div class="row g-3" th:each="group : ${all_pet_care_groups}">
-                                <div class="col-md-6 col-lg-6">
-                                    <div class="card border shadow-sm h-100">
-                                        <div class="card-header bg-light py-2">
-                                            <p class="fw-semibold mb-0 fs-6" th:text="${group.description}"></p>
-                                        </div>
-                                        <div class="card-body py-2">
-                                            <div class="form-check mb-2" th:each="petcare : ${group.petcares}">
-                                                <input class="form-check-input service-checkbox" type="checkbox"
-                                                    th:field="*{selectedPetCareIds}" th:value="${petcare.id}"
-                                                    th:id="'petcare-' + ${petcare.id}"
-                                                    th:attr="data-price=${petcare.price}, disabled=${#lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}">
-                                                <label
-                                                    class="form-check-label d-flex justify-content-between align-items-center fs-6"
-                                                    th:for="'petcare-' + ${petcare.id}">
-                                                    <span th:text="${petcare.description}"></span>
-                                                </label>
+                            <div class="accordion" id="servicesAccordion">
+                                <div class="accordion-item" th:each="group : ${all_pet_care_groups}">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed py-3" type="button"
+                                            data-bs-toggle="collapse" th:data-bs-target="'#collapse-' + ${group.id}"
+                                            aria-expanded="false">
+                                            <span th:text="${group.description}"></span>
+                                            <small class="badge bg-success ms-2 group-selected-count"
+                                                th:attr="data-group-id=${group.id}"
+                                                th:text="${group.selectedCount}">0</small>
+                                        </button>
+                                    </h2>
+                                    <div th:id="'collapse-' + ${group.id}" class="accordion-collapse collapse"
+                                        data-bs-parent="#servicesAccordion">
+                                        <div class="accordion-body py-2">
+                                            <div class="row g-2">
+                                                <div class="col-12" th:each="petcare : ${group.petcares}">
+                                                    <div class="form-check py-1">
+                                                        <input class="form-check-input service-checkbox" type="checkbox"
+                                                            th:field="*{selectedPetCareIds}" th:value="${petcare.id}"
+                                                            th:id="'petcare-' + ${petcare.id}"
+                                                            th:attr="data-price=${petcare.price}"
+                                                            th:disabled="${#lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}">
+                                                        <label class="form-check-label d-flex justify-content-between"
+                                                            th:for="'petcare-' + ${petcare.id}"
+                                                            th:classappend="${#lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)} ? 'text-muted' : ''">
+                                                            <span th:text="${petcare.description}"></span>
+
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -193,23 +207,30 @@
                         <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-cash-stack me-2"></i>Pagamentos</h5>
                             <a th:if="${not #lists.contains({'Finalizado','Baixado','Cancelado'}, serviceExecution.status.label) and not serviceExecution.selectedPetCareIds.isEmpty()}"
-                                class="btn btn-outline-primary btn-md px-3 py-2"
+                                class="btn btn-outline-primary btn-sm px-3 py-2"
                                 th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}">
                                 <i class="bi bi-credit-card me-2"></i> Adiantamento
                             </a>
                         </div>
                         <div class="card-body p-2">
-                            <div class="list-group list-group-flush" th:if="${!payments.isEmpty()}">
+                            <div class="list-group list-group-flush"
+                                th:if="${!serviceExecution.payments    .isEmpty()}">
                                 <div class="list-group-item d-flex justify-content-between align-items-center py-2"
-                                    th:each="payment : ${payments}">
+                                    th:each="payment : ${serviceExecution.payments}">
                                     <span class="fs-6">
                                         <span th:switch="${payment.type}">
                                             <i th:case="'Cartão de crédito'"
                                                 class="bi bi-credit-card-2-front text-muted me-2"></i>
                                             <i th:case="'Cartão de débito'"
                                                 class="bi bi-credit-card text-muted me-2"></i>
-                                            <span th:case="'PIX'"><i
-                                                    class="bi bi-patch-check text-muted me-2"></i></span>
+                                            <span th:case="'PIX'">
+                                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M11.917 11.71a2.046 2.046 0 0 1-1.454-.602l-2.1-2.1a.4.4 0 0 0-.551 0l-2.108 2.108a2.044 2.044 0 0 1-1.454.602h-.414l2.66 2.66c.83.83 2.177.83 3.007 0l2.667-2.668h-.253zM4.25 4.282c.55 0 1.066.214 1.454.602l2.108 2.108a.39.39 0 0 0 .552 0l2.1-2.1a2.044 2.044 0 0 1 1.453-.602h.253L9.503 1.623a2.127 2.127 0 0 0-3.007 0l-2.66 2.66h.414z" />
+                                                    <path
+                                                        d="m14.377 6.496-1.612-1.612a.307.307 0 0 1-.114.023h-.733c-.379 0-.75.154-1.017.422l-2.1 2.1a1.005 1.005 0 0 1-1.425 0L5.268 5.32a1.448 1.448 0 0 0-1.018-.422h-.9a.306.306 0 0 1-.109-.021L1.623 6.496c-.83.83-.83 2.177 0 3.008l1.618 1.618a.305.305 0 0 1 .108-.022h.901c.38 0 .75-.153 1.018-.421L7.375 8.57a1.034 1.034 0 0 1 1.426 0l2.1 2.1c.267.268.638.421 1.017.421h.733c.04 0 .079.01.114.024l1.612-1.612c.83-.83.83-2.178 0-3.008z" />
+                                                </svg>
+                                            </span>
                                             <i th:case="'Permuta'" class="bi bi-arrow-left-right text-muted me-2"></i>
                                             <i th:case="'Dinheiro'" class="bi bi-cash text-muted me-2"></i>
                                         </span>
@@ -221,7 +242,8 @@
                                     </span>
                                 </div>
                             </div>
-                            <p class="text-center text-muted py-3 fs-6" th:if="${payments.isEmpty()}">Nenhum pagamento
+                            <p class="text-center text-muted py-3 fs-6" th:if="${serviceExecution.payments.isEmpty()}">
+                                Nenhum pagamento
                                 adicionado.</p>
                         </div>
                     </div>

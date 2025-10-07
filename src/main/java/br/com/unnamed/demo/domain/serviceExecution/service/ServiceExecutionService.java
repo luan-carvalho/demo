@@ -24,8 +24,8 @@ import br.com.unnamed.demo.domain.tutor.model.Tutor;
 @Service
 public class ServiceExecutionService {
 
-    private ServiceExecutionRepository repo;
-
+    private final ServiceExecutionRepository repo;
+    
     public ServiceExecutionService(ServiceExecutionRepository repo) {
         this.repo = repo;
     }
@@ -166,5 +166,4 @@ public class ServiceExecutionService {
                         .build());
 
     }
-
 }

@@ -1,6 +1,8 @@
 package br.com.unnamed.demo.domain.serviceExecution.web;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -16,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.unnamed.demo.domain.payment.mapper.PaymentMapper;
+import br.com.unnamed.demo.domain.petCare.dtos.PetCareGroupChecklistDto;
+import br.com.unnamed.demo.domain.petCare.mapper.PetCareGroupMapper;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
 import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionDto;
 import br.com.unnamed.demo.domain.serviceExecution.mapper.ServiceExecutionMapper;
@@ -141,15 +144,21 @@ public class ServiceExecutionController {
     }
 
     @GetMapping("/{id}")
-    public String newServicePage(@PathVariable Long id, Model model) {
+    public String getServiceExecution(@PathVariable Long id, Model model) {
 
         ServiceExecution s = service.findById(id);
+        List<PetCareGroupChecklistDto> groups = new ArrayList<>();
+
+        for (var group : petCareService.findAllGroups()) {
+
+            groups.add(PetCareGroupMapper.toCheckListDto(group, s));
+
+        }
 
         model.addAttribute("all_tutors", tutorService.findAllActive());
-        model.addAttribute("all_pet_care_groups", petCareService.findAllGroups());
+        model.addAttribute("all_pet_care_groups", groups);
 
         model.addAttribute("serviceExecution", ServiceExecutionMapper.toDto(s));
-        model.addAttribute("payments", s.getPayments().stream().map(p -> PaymentMapper.toSimpleListDto(p)).toList());
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecution");
