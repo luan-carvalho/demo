@@ -1,129 +1,90 @@
-// package br.com.unnamed.demo.domain.serviceExecution.web;
+package br.com.unnamed.demo.domain.serviceExecution.web;
 
-// import java.math.BigDecimal;
+import java.math.BigDecimal;
 
-// import org.springframework.stereotype.Controller;
-// import org.springframework.ui.Model;
-// import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.PathVariable;
-// import org.springframework.web.bind.annotation.PostMapping;
-// import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-// import br.com.unnamed.demo.domain.payment.model.Payment;
-// import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
-// import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
-// import br.com.unnamed.demo.domain.payment.service.PaymentService;
-// import
-// br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionCheckoutDto;
-// import
-// br.com.unnamed.demo.domain.serviceExecution.mapper.ServiceExecutionMapper;
-// import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-// import
-// br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
+import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionCheckoutDto;
+import br.com.unnamed.demo.domain.serviceExecution.facade.ServiceExecutionCheckoutFacade;
 
-// @Controller
-// @RequestMapping("serviceExecution/{serviceId}/checkout")
-// public class ServiceExecutionCheckoutController {
+@Controller
+@RequestMapping("serviceExecution/{serviceId}/checkout")
+public class ServiceExecutionCheckoutController {
 
-// private final ServiceExecutionService service;
-// private final PaymentService paymentService;
+    private final ServiceExecutionCheckoutFacade facade;
 
-// public ServiceExecutionCheckoutController(ServiceExecutionService service,
-// PaymentService paymentService) {
-// this.service = service;
-// this.paymentService = paymentService;
-// }
+    public ServiceExecutionCheckoutController(ServiceExecutionCheckoutFacade facade) {
+        this.facade = facade;
+    }
 
-// @GetMapping
-// public String checkout(@PathVariable Long serviceId, Model model) {
+    @GetMapping
+    public String checkout(@PathVariable Long serviceId, Model model) {
 
-// ServiceExecutionCheckoutDto s =
-// ServiceExecutionMapper.toCheckoutDto(service.findById(serviceId));
+        model.addAttribute("serviceExecution",
+                new ServiceExecutionCheckoutDto(facade.findServiceExecutionById(serviceId)));
+        model.addAttribute("all_payment_types",
+                facade.getAllPaymentMethods());
+        model.addAttribute("activePage", "serviceExecution");
+        model.addAttribute("view", "serviceExecution/serviceExecutionCheckout");
+        model.addAttribute("pageTitle", "Pagamento | Atendimento #" + serviceId);
 
-// model.addAttribute("serviceExecution", s);
-// model.addAttribute("all_payment_types",
-// paymentService.getAllPaymentMethods());
+        return "layout/base-layout";
 
-// model.addAttribute("activePage", "serviceExecution");
-// model.addAttribute("view", "serviceExecution/serviceExecutionCheckout");
-// model.addAttribute("pageTitle", "Pagamento | Atendimento #" + serviceId);
+    }
 
-// return "layout/base-layout";
+    @PostMapping("/addPayment")
+    public String addPaymentToServiceExecution(
+            @PathVariable Long serviceId,
+            Long typeId,
+            BigDecimal amount,
+            @RequestParam(required = false) Integer installments,
+            RedirectAttributes attributes) {
 
-// }
+        facade.addPayment(serviceId, typeId, amount, installments);
+        attributes.addFlashAttribute("successMessage", "Pagamento adicionado");
+        return "redirect:/serviceExecution/" + serviceId + "/checkout";
 
-// @PostMapping("/addPayment")
-// public String addPaymentToServiceExecution(
-// @PathVariable Long serviceId,
-// Long typeId,
-// BigDecimal amount,
-// @RequestParam(required = false) Integer installments,
-// RedirectAttributes attributes) {
+    }
 
-// ServiceExecution s = service.findById(serviceId);
-// PaymentMethod method = paymentService.findPaymentMethodById(typeId);
+    @PostMapping("/finish")
+    public String finishServiceExecution(@PathVariable Long serviceId, Model model, RedirectAttributes attributes) {
 
-// service.addPayment(s, method, installments, amount);
-// attributes.addFlashAttribute("successMessage", "Pagamento adicionado");
-// return "redirect:/serviceExecution/" + serviceId + "/checkout";
+        facade.finishServiceExecution(serviceId);
 
-// }
+        attributes.addFlashAttribute("successMessage", "Atendimento concluído");
+        return "redirect:/serviceExecution";
 
-// @PostMapping("/finish")
-// public String finishServiceExecution(@PathVariable Long serviceId, Model
-// model, RedirectAttributes attributes) {
+    }
 
-// service.finish(serviceId);
+    @PostMapping("/payment/{paymentId}/delete")
+    public String removePayment(@PathVariable Long serviceId, @PathVariable Long paymentId,
+            RedirectAttributes attributes) {
 
-// attributes.addFlashAttribute("successMessage", "Atendimento concluído");
-// return "redirect:/serviceExecution";
+        facade.removePayment(serviceId, paymentId);
+        attributes.addFlashAttribute("errorMessage", "Pagamento removido");
+        return "redirect:/serviceExecution/" + serviceId + "/checkout";
 
-// }
+    }
 
-// @PostMapping("/payment/{id}/delete")
-// public String removePayment(@PathVariable Long serviceId, @PathVariable Long
-// id, RedirectAttributes attributes) {
+    @PostMapping("/payment/{paymentId}/update")
+    public String updatePayment(@PathVariable Long serviceId,
+            @PathVariable Long paymentId,
+            @RequestParam(required = false) BigDecimal amount,
+            @RequestParam(required = false) Long methodId,
+            RedirectAttributes attributes) {
 
-// ServiceExecution s = service.findById(serviceId);
-// Payment p = paymentService.findById(id);
+        facade.updatePaymentInfo(serviceId, paymentId, methodId, amount);
 
-// service.removePayment(s, p);
-// attributes.addFlashAttribute("errorMessage", "Pagamento removido");
-// return "redirect:/serviceExecution/" + serviceId + "/checkout";
+        attributes.addFlashAttribute("successMessage", "Pagamento atualizado");
+        return "redirect:/serviceExecution/" + serviceId + "/checkout";
 
-// }
+    }
 
-// @PostMapping("/payment/{id}/update")
-// public String updatePayment(@PathVariable Long serviceId,
-// @PathVariable Long id,
-// @RequestParam(required = false) BigDecimal amount,
-// @RequestParam(required = false) Long methodId,
-// RedirectAttributes attributes) {
-
-// ServiceExecution s = service.findById(serviceId);
-// Payment p = paymentService.findById(id);
-
-// if (p.getStatus() == PaymentStatus.TEMPORARY) {
-
-// if (amount != null && amount.compareTo(BigDecimal.ZERO) > 0) {
-// p.updateAmount(amount);
-// }
-
-// if (methodId != null) {
-// PaymentMethod method = paymentService.findPaymentMethodById(methodId);
-// p.updatePaymentMethod(method);
-// }
-
-// paymentService.save(p);
-// service.save(s);
-
-// }
-
-// attributes.addFlashAttribute("successMessage", "Pagamento atualizado");
-// return "redirect:/serviceExecution/" + serviceId + "/checkout";
-
-// }
-
-// }
+}

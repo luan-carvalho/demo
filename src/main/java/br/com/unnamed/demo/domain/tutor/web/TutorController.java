@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.unnamed.demo.domain.tutor.dto.CreatePetDto;
 import br.com.unnamed.demo.domain.tutor.dto.CreateTutorDto;
 import br.com.unnamed.demo.domain.tutor.dto.EditTutorDto;
-import br.com.unnamed.demo.domain.tutor.dto.PetEditDto;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
@@ -59,11 +57,11 @@ public class TutorController {
             @RequestParam(required = false) String context,
             @RequestParam(required = false) Long serviceId) {
 
-        // if (context != null)
-        // model.addAttribute("context", context);
+        if (context != null && context.equals("create"))
+            model.addAttribute("context", context);
 
-        // if (context != null && serviceId != null)
-        // model.addAttribute("serviceId", serviceId);
+        if (context != null && context.equals("update") && serviceId != null)
+            model.addAttribute("serviceId", serviceId);
 
         model.addAttribute("tutor", new CreateTutorDto());
         model.addAttribute("groups", tutorService.findAllGroups());
@@ -147,84 +145,4 @@ public class TutorController {
 
     }
 
-    @GetMapping("/{tutorId}/pet/{petId}")
-    public String findPet(@PathVariable Long tutorId, @PathVariable Long petId, Model model) {
-
-        PetEditDto pet = new PetEditDto(tutorService.findByTutorAndPetId(tutorId, petId));
-        // List<ServiceExecution> serviceHistory =
-        // service.findTop10ByPetIdOrderByDateDesc(petId);
-
-        model.addAttribute("tutorId", tutorId);
-        model.addAttribute("pet", pet);
-        // model.addAttribute("serviceHistory", serviceHistory);
-
-        model.addAttribute("mode", "update");
-        model.addAttribute("pageTitle", "Pet | " + pet.name());
-        model.addAttribute("activePage", "clients");
-        model.addAttribute("view", "pet/pet");
-        model.addAttribute("pageScript", "/js/pet.js");
-        return "layout/base-layout";
-
-    }
-
-    @PostMapping("/{tutorId}/pet/{petId}")
-    public String updatePet(@PathVariable Long tutorId,
-            @PathVariable Long petId,
-            @Valid PetEditDto petDto,
-            @RequestParam(required = false) String context,
-            @RequestParam(required = false) Long serviceId,
-            RedirectAttributes attributes) {
-
-        tutorService.updatePetName(tutorId, petDto.id(), petDto.name());
-
-        attributes.addFlashAttribute("successMessage", "Alterações salvas!");
-        return "redirect:/tutor/" + tutorId + "/pet/" + petId;
-
-    }
-
-    @GetMapping("/{tutorId}/pet/new")
-    public String findNewPetForm(@PathVariable Long tutorId, Model model,
-            @RequestParam(required = false) String context,
-            @RequestParam(required = false) Long serviceId) {
-
-        model.addAttribute("pet", new CreatePetDto());
-
-        model.addAttribute("activePage", "clients");
-        model.addAttribute("mode", "create");
-        model.addAttribute("view", "pet/pet");
-        model.addAttribute("pageTitle", "Pet | Novo");
-        model.addAttribute("pageScript", "/js/pet.js");
-        return "layout/base-layout";
-
-    }
-
-    @PostMapping("/{tutorId}/pet")
-    public String createPet(@PathVariable Long tutorId,
-            @Valid CreatePetDto petDto,
-            @RequestParam(required = false) String context,
-            @RequestParam(required = false) Long serviceId,
-            RedirectAttributes attributes) {
-
-        tutorService.createPetAndSaveToTutor(tutorId, petDto.name());
-
-        attributes.addFlashAttribute("successMessage", "Cadastro realizado!");
-        return "redirect:/tutor/" + tutorId;
-
-    }
-
-    @GetMapping("/{tutorId}/pet/{petId}/inactivate")
-    public String deactivatePet(@PathVariable Long tutorId, @PathVariable Long petId) {
-
-        tutorService.deactivatePet(tutorId, petId);
-        return "redirect:/tutor/" + tutorId;
-
-    }
-
-    @GetMapping("/{tutorId}/pet/{petId}/activate")
-    public String activatePet(@PathVariable Long tutorId, @PathVariable Long petId) {
-
-        tutorService.activatePet(tutorId, petId);
-        return "redirect:/tutor/" + tutorId;
-
-    }
 }

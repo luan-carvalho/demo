@@ -133,10 +133,14 @@ public class TutorService {
     public Pet createPetAndSaveToTutor(Long tutorId, String petName) {
 
         Tutor tutor = findById(tutorId);
-        Pet pet = new Pet(null, petName, Status.ACTIVE);
+        Pet pet = new Pet(petName);
         tutor.addPet(pet);
         tutor = tutorRepo.save(tutor);
-        return pet;
+        return tutor.getPets()
+                .stream()
+                .filter(p -> p.getName().equals(petName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("`Pet was not saved properly"));
 
     }
 

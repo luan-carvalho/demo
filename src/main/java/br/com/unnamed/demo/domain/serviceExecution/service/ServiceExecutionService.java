@@ -1,185 +1,150 @@
-// package br.com.unnamed.demo.domain.serviceExecution.service;
+package br.com.unnamed.demo.domain.serviceExecution.service;
 
-// import java.math.BigDecimal;
-// import java.time.LocalDate;
-// import java.util.List;
-// import java.util.NoSuchElementException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-// import org.springframework.data.domain.Page;
-// import org.springframework.data.domain.Pageable;
-// import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
-// import br.com.unnamed.demo.domain.payment.model.Payment;
-// import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
-// import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
-// import
-// br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
-// import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-// import
-// br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
-// import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
-// import
-// br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRepository;
-// import
-// br.com.unnamed.demo.domain.serviceExecution.util.InstallmentsCalculator;
-// import br.com.unnamed.demo.domain.tutor.model.Pet;
-// import br.com.unnamed.demo.domain.tutor.model.Tutor;
-// import br.com.unnamed.demo.domain.tutor.service.TutorService;
+import br.com.unnamed.demo.domain.payment.model.Payment;
+import br.com.unnamed.demo.domain.petCare.model.PetCare;
+import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
+import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
+import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionItem;
+import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
+import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
+import br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRepository;
+import br.com.unnamed.demo.domain.tutor.model.Pet;
+import br.com.unnamed.demo.domain.tutor.model.Tutor;
 
-// @Service
-// public class ServiceExecutionService {
+@Service
+public class ServiceExecutionService {
 
-// private final ServiceExecutionRepository repo;
-// private final TutorService tutorService;
+    private final ServiceExecutionRepository repo;
 
-// public ServiceExecutionService(ServiceExecutionRepository repo, TutorService
-// tutorService) {
-// this.repo = repo;
-// this.tutorService = tutorService;
-// }
+    public ServiceExecutionService(ServiceExecutionRepository repo) {
+        this.repo = repo;
+    }
 
-// public ServiceExecution findById(Long id) {
+    public ServiceExecution findById(Long id) {
 
-// return repo.findById(id).orElseThrow(() -> new
-// NoSuchElementException("Service execution not found"));
+        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Service execution not found"));
 
-// }
+    }
 
-// public ServiceExecution save(ServiceExecution serviceExecution) {
+    public Page<ServiceExecution> searchWithOptionalFilters(String name,
+            LocalDate date, ServiceStatus status,
+            ServicePaymentStatus paymentStatus, Pageable pageable) {
 
-// return repo.save(serviceExecution);
+        return repo.findWithOptionalFilters(name, date, status, paymentStatus,
+                pageable);
 
-// }
+    }
 
-// public Page<ServiceExecution> searchWithOptionalFilters(String name,
-// LocalDate date, ServiceStatus status,
-// ServicePaymentStatus paymentStatus, Pageable pageable) {
+    public List<ServiceExecution> findByStatusAndDate(ServiceStatus status) {
 
-// return repo.findWithOptionalFilters(name, date, status, paymentStatus,
-// pageable);
+        return repo.findByStatusAndDate(status, LocalDate.now());
 
-// }
+    }
 
-// public List<ServiceExecution> findByStatusAndDate(ServiceStatus status,
-// LocalDate date) {
+    public void updateTutorAndPet(Long serviceExecutionId, Tutor tutor, Pet pet) {
 
-// return repo.findByStatusAndDate(status, date);
+        ServiceExecution serviceExecution = findById(serviceExecutionId);
+        serviceExecution.updateTutorAndPet(tutor, pet);
+        repo.save(serviceExecution);
 
-// }
+    }
 
-// public void updateTutorAndPet(Long serviceExecutionId, Long tutorId, Long
-// petId) {
+    public void start(Long serviceExecutionId) {
 
-// ServiceExecution serviceExecution = findById(serviceExecutionId);
-// serviceExecution.updateTutorAndPet(tutor, pet);
-// repo.save(serviceExecution);
+        ServiceExecution s = findById(serviceExecutionId);
+        s.start();
+        repo.save(s);
 
-// }
+    }
 
-// public void start(ServiceExecution s) {
+    public void markAsDone(Long serviceExecutionId) {
 
-// s.start();
-// repo.save(s);
+        ServiceExecution s = findById(serviceExecutionId);
+        s.markAsDone();
+        repo.save(s);
 
-// }
+    }
 
-// public void finish(ServiceExecution s) {
+    public void cancel(Long serviceExecutionId) {
 
-// s.markAsDone();
-// repo.save(s);
+        ServiceExecution s = findById(serviceExecutionId);
+        s.cancel();
+        repo.save(s);
 
-// }
+    }
 
-// public void cancel(ServiceExecution s) {
+    public boolean existsNotPaid() {
 
-// s.cancel();
-// repo.save(s);
+        return !repo.existsWithPendingPayment().isEmpty();
 
-// }
+    }
 
-// public boolean existsNotPaid() {
+    public List<ServiceExecution> findTop10ByPetIdOrderByDateDesc(Long id) {
 
-// return !repo.existsWithPendingPayment().isEmpty();
+        return repo.findTop10ByPetIdOrderByDateDesc(id);
 
-// }
+    }
 
-// public List<ServiceExecution> findTop10ByPetIdOrderByDateDesc(Long id) {
+    public void addPayment(Long serviceExecutionId, Payment payment) {
 
-// return repo.findTop10ByPetIdOrderByDateDesc(id);
+        ServiceExecution serviceExecution = findById(serviceExecutionId);
+        serviceExecution.addPayment(payment);
+        repo.save(serviceExecution);
 
-// }
+    }
 
-// public void addPayment(ServiceExecution s, PaymentMethod method, Integer
-// installments, BigDecimal amount) {
+    public void addPayments(Long serviceExecutionId, List<Payment> payments) {
 
-// if (installments == null)
-// installments = 1;
+        ServiceExecution serviceExecution = findById(serviceExecutionId);
+        serviceExecution.addPayments(payments);
+        repo.save(serviceExecution);
 
-// if (amount.compareTo(s.calculateTotal()) > 0) {
+    }
 
-// amount = s.calculateTotal();
+    public void removePayment(Long serviceExecutionId, Payment payment) {
 
-// }
+        ServiceExecution serviceExecution = findById(serviceExecutionId);
+        serviceExecution.removePayment(payment);
+        repo.save(serviceExecution);
 
-// List<BigDecimal> amountsDistributed =
-// InstallmentsCalculator.calculateInstallmentsDistributed(amount,
-// installments);
+    }
 
-// for (Integer i = 0; i < amountsDistributed.size(); i++) {
+    public void finish(Long serviceId) {
 
-// Payment p = new Payment(
-// LocalDate.now(),
-// method,
-// amountsDistributed.get(i),
-// PaymentStatus.TEMPORARY,
-// s.getPet().getName(),
-// s.getTutor().getName());
+        ServiceExecution service = findById(serviceId);
+        service.markAsPaid();
+        repo.save(service);
 
-// s.addPayment(p);
+    }
 
-// }
+    public ServiceExecution create(Tutor tutor, Pet pet) {
 
-// repo.save(s);
+        return repo.save(
+                new ServiceExecutionBuilder()
+                        .tutor(tutor)
+                        .pet(pet)
+                        .date(LocalDate.now())
+                        .status(ServiceStatus.PENDING)
+                        .paymentStatus(ServicePaymentStatus.NOT_PAID)
+                        .build());
 
-// }
+    }
 
-// public void removePayment(ServiceExecution s, Payment p) {
+    public void updateInfo(Long serviceExecutionId, List<PetCare> petCares, String obs) {
 
-// if (s.getServiceStatus() != ServiceStatus.COMPLETED) {
+        ServiceExecution toBeUpdated = findById(serviceExecutionId);
+        toBeUpdated.updateExecutedServices(petCares.stream().map(p -> new ServiceExecutionItem(p)).toList());
+        toBeUpdated.updateObservation(obs);
+        repo.save(toBeUpdated);
 
-// s.removePayment(p);
-// p.removeLinkToServiceExecution();
+    }
 
-// }
-
-// if (s.getServiceStatus() == ServiceStatus.COMPLETED) {
-
-// p.updateStatus(PaymentStatus.CANCELLED);
-
-// }
-
-// repo.save(s);
-
-// }
-
-// public void finish(Long serviceId) {
-
-// ServiceExecution service = findById(serviceId);
-// service.markAsPaid();
-// repo.save(service);
-
-// }
-
-// public ServiceExecution create(Tutor tutor, Pet pet) {
-
-// return repo.save(
-// new ServiceExecutionBuilder()
-// .tutor(tutor)
-// .pet(pet)
-// .date(LocalDate.now())
-// .status(ServiceStatus.PENDING)
-// .paymentStatus(ServicePaymentStatus.NOT_PAID)
-// .build());
-
-// }
-// }
+}

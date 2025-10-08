@@ -22,24 +22,19 @@ public class InstallmentsCalculator {
             return installments;
         }
 
-        // Calculate base installment amount
         BigDecimal baseInstallment = totalAmount.divide(
                 BigDecimal.valueOf(numberOfInstallments),
                 2,
                 RoundingMode.FLOOR);
 
-        // Calculate remainder
         BigDecimal totalBaseAmount = baseInstallment.multiply(BigDecimal.valueOf(numberOfInstallments));
         BigDecimal remainder = totalAmount.subtract(totalBaseAmount);
 
-        // Calculate how many installments need an extra cent
         int remainderInCents = remainder.multiply(BigDecimal.valueOf(100)).intValue();
 
-        // Distribute the installments
         for (int i = 0; i < numberOfInstallments; i++) {
             BigDecimal installmentAmount = baseInstallment;
 
-            // Add one cent to the first 'remainderInCents' installments
             if (i < remainderInCents) {
                 installmentAmount = installmentAmount.add(new BigDecimal("0.01"));
             }

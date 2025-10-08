@@ -38,9 +38,6 @@ public class Payment {
     @JoinColumn(name = "service_execution_id", nullable = false)
     private ServiceExecution serviceExecution;
 
-    private String tutorName;
-    private String petName;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     @NotNull
@@ -53,33 +50,28 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    public Payment(LocalDate date, PaymentMethod paymentMethod,
-            BigDecimal amount, PaymentStatus status, String petName, String tutorName) {
+    public Payment(PaymentMethod paymentMethod,
+            BigDecimal amount) {
 
         if (amount.compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("Não é possível criar um pagamento com valor negativo");
 
-        this.date = date;
+        this.date = LocalDate.now();
         this.paymentMethod = paymentMethod;
         this.amount = amount;
-        this.status = status;
-    }
-
-    public void linkToServiceExecution(ServiceExecution s) {
-
-        this.serviceExecution = s;
+        this.status = PaymentStatus.TEMPORARY;
 
     }
 
-    public void removeLinkToServiceExecution() {
+    public void markAsFinal() {
 
-        this.serviceExecution = null;
+        this.status = PaymentStatus.FINAL;
 
     }
 
-    public void updateStatus(PaymentStatus status) {
+    public void markAsCancelled() {
 
-        this.status = status;
+        this.status = PaymentStatus.CANCELLED;
 
     }
 
@@ -92,6 +84,24 @@ public class Payment {
     public void updatePaymentMethod(PaymentMethod paymentMethod) {
 
         this.paymentMethod = paymentMethod;
+
+    }
+
+    public String getTutorName() {
+
+        return this.serviceExecution.getTutor().getName();
+
+    }
+
+    public String getPetName() {
+
+        return this.serviceExecution.getPet().getName();
+
+    }
+
+    public boolean belongsTo(Long serviceExecutionId) {
+
+        return this.serviceExecution.getId().equals(serviceExecutionId);
 
     }
 

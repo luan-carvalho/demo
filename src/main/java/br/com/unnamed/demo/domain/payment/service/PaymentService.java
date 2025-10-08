@@ -1,5 +1,6 @@
 package br.com.unnamed.demo.domain.payment.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -10,6 +11,7 @@ import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
 import br.com.unnamed.demo.domain.payment.repository.PaymentMethodRepository;
 import br.com.unnamed.demo.domain.payment.repository.PaymentRepository;
+import br.com.unnamed.demo.domain.serviceExecution.exception.PaymentDoesntBelongtoServiceExecutionException;
 
 @Service
 public class PaymentService {
@@ -47,9 +49,22 @@ public class PaymentService {
 
     }
 
-    public Payment save(Payment p) {
+    public void updatePaymentInfo(Long paymentId, Long methodId, BigDecimal amount) {
 
-        return payRepo.save(p);
+        PaymentMethod method = findPaymentMethodById(methodId);
+        Payment toBeUpdated = findById(paymentId);
+        toBeUpdated.updateAmount(amount);
+        toBeUpdated.updatePaymentMethod(method);
+        payRepo.save(toBeUpdated);
+
+    }
+
+    public void checkIfPaymentBelongsToServiceExecution(Long serviceExecutionId, Long paymentId) {
+
+        Payment toBeChecked = findById(paymentId);
+        if (!toBeChecked.belongsTo(serviceExecutionId))
+            throw new PaymentDoesntBelongtoServiceExecutionException(
+                    "This payment doesnt belong to the present service execution");
 
     }
 

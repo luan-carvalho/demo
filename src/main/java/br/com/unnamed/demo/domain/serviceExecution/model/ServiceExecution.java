@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
-import br.com.unnamed.demo.domain.payment.model.enums.PaymentStatus;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
@@ -102,7 +101,7 @@ public class ServiceExecution {
     public void cancel() {
 
         this.serviceStatus = ServiceStatus.CANCELLED;
-        this.payments.stream().forEach(p -> p.updateStatus(PaymentStatus.CANCELLED));
+        this.payments.stream().forEach(Payment::markAsCancelled);
 
     }
 
@@ -120,7 +119,12 @@ public class ServiceExecution {
                     "Não é possível adicionar este pagamento, pois o serviço já foi totalmente pago");
 
         this.payments.add(payment);
-        payment.linkToServiceExecution(this);
+
+    }
+
+    public void addPayments(List<Payment> payments) {
+
+        payments.forEach(p -> addPayment(p));
 
     }
 
@@ -156,8 +160,7 @@ public class ServiceExecution {
 
         this.payments
                 .stream()
-                .filter(p -> p.getStatus() == PaymentStatus.TEMPORARY)
-                .forEach(p -> p.updateStatus(PaymentStatus.FINAL));
+                .forEach(Payment::markAsFinal);
 
     }
 

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.dto.PaymentCheckoutListDto;
+import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 
 public record ServiceExecutionCheckoutDto(Long id,
@@ -13,27 +14,15 @@ public record ServiceExecutionCheckoutDto(Long id,
         BigDecimal balance,
         List<PaymentCheckoutListDto> payments) {
 
-    public boolean isFullyPaid() {
+    public ServiceExecutionCheckoutDto(ServiceExecution serviceExecution) {
 
-        return balance.compareTo(BigDecimal.ZERO) == 0;
-
-    }
-
-    public boolean isDone() {
-
-        return status == ServiceStatus.DONE;
-
-    }
-
-    public boolean isCompleted() {
-
-        return status == ServiceStatus.COMPLETED;
-
-    }
-
-    public boolean isCancelled() {
-
-        return status == ServiceStatus.CANCELLED;
+        this(
+                serviceExecution.getId(),
+                serviceExecution.getServiceStatus(),
+                serviceExecution.calculateTotal(),
+                serviceExecution.getAmountPaid(),
+                serviceExecution.getBalance(),
+                serviceExecution.getPayments().stream().map(p -> new PaymentCheckoutListDto(p)).toList());
 
     }
 

@@ -18,8 +18,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
                 WHERE
                     (
                         :name IS NULL
-                        OR LOWER(p.tutorName) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
-                        OR LOWER(p.petName) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
+                        OR LOWER(p.serviceExecution.tutor.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
+                        OR LOWER(p.serviceExecution.pet.name) LIKE LOWER(CONCAT('%', CAST(:name AS STRING), '%'))
                     )
                     AND (COALESCE(:date, p.date) = p.date)
                     AND (:paymentMethod IS NULL OR p.paymentMethod = :paymentMethod)

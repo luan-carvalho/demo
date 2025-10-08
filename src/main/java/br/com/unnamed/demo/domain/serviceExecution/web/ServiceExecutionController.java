@@ -1,293 +1,260 @@
-// package br.com.unnamed.demo.domain.serviceExecution.web;
-
-// import java.time.LocalDate;
-// import java.util.ArrayList;
-// import java.util.List;
-// import java.util.stream.Collectors;
-
-// import org.springframework.data.domain.Page;
-// import org.springframework.data.domain.PageRequest;
-// import org.springframework.data.domain.Pageable;
-// import org.springframework.format.annotation.DateTimeFormat;
-// import org.springframework.stereotype.Controller;
-// import org.springframework.ui.Model;
-// import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.PathVariable;
-// import org.springframework.web.bind.annotation.PostMapping;
-// import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+package br.com.unnamed.demo.domain.serviceExecution.web;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-// import br.com.unnamed.demo.domain.petCare.dtos.PetCareGroupChecklistDto;
-// import br.com.unnamed.demo.domain.petCare.mapper.PetCareGroupMapper;
-// import br.com.unnamed.demo.domain.petCare.service.PetCareService;
-// import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionDto;
-// import br.com.unnamed.demo.domain.serviceExecution.mapper.ServiceExecutionMapper;
-// import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-// import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionItem;
-// import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
-// import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
-// import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
-// import br.com.unnamed.demo.domain.tutor.model.Pet;
-// import br.com.unnamed.demo.domain.tutor.model.Tutor;
-// import br.com.unnamed.demo.domain.tutor.model.enums.Status;
-// import br.com.unnamed.demo.domain.tutor.service.TutorService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-// @Controller
-// @RequestMapping("serviceExecution")
-// public class ServiceExecutionController {
+import br.com.unnamed.demo.domain.petCare.dtos.PetCareGroupChecklistDto;
+import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionDto;
+import br.com.unnamed.demo.domain.serviceExecution.facade.ServiceExecutionFacade;
+import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
+import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
+import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
+import br.com.unnamed.demo.domain.tutor.model.Tutor;
+import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
-//     private final ServiceExecutionService service;
-//     private final PetCareService petCareService;
-//     private final TutorService tutorService;
+@Controller
+@RequestMapping("serviceExecution")
+public class ServiceExecutionController {
 
-//     public ServiceExecutionController(ServiceExecutionService service, PetCareService petCareService,
-//             TutorService tutorService) {
-//         this.service = service;
-//         this.petCareService = petCareService;
-//         this.tutorService = tutorService;
-//     }
+    private final ServiceExecutionFacade facade;
 
-//     @GetMapping
-//     public String redirectToBoard() {
+    public ServiceExecutionController(ServiceExecutionFacade facade) {
+        this.facade = facade;
+    }
 
-//         return "redirect:/serviceExecution/board";
+    @GetMapping
+    public String redirectToBoard() {
 
-//     }
+        return "redirect:/serviceExecution/board";
 
-//     @GetMapping("/board")
-//     public String showServiceExecutionBoard(Model model) {
+    }
 
-//         model.addAttribute("existsNotPaid", service.existsNotPaid());
+    @GetMapping("/board")
+    public String showServiceExecutionBoard(Model model) {
 
-//         model.addAttribute("pending_services", service.findByStatusAndDate(ServiceStatus.PENDING, LocalDate.now()));
-//         model.addAttribute("in_progress_services",
-//                 service.findByStatusAndDate(ServiceStatus.IN_PROGRESS, LocalDate.now()));
-//         model.addAttribute("completed_services", service.findByStatusAndDate(ServiceStatus.DONE, LocalDate.now()));
+        model.addAttribute("existsNotPaid", facade.existsNotPaid());
 
-//         model.addAttribute("pageTitle", "Quadro de execução");
-//         model.addAttribute("activePage", "serviceExecution-board");
-//         model.addAttribute("view", "serviceExecution/serviceExecutionBoard");
+        model.addAttribute("pending_services",
+                facade.findByStatusAndDate(ServiceStatus.PENDING));
+        model.addAttribute("in_progress_services",
+                facade.findByStatusAndDate(ServiceStatus.IN_PROGRESS));
+        model.addAttribute("completed_services",
+                facade.findByStatusAndDate(ServiceStatus.DONE));
 
-//         return "layout/base-layout";
+        model.addAttribute("pageTitle", "Quadro de execução");
+        model.addAttribute("activePage", "serviceExecution-board");
+        model.addAttribute("view", "serviceExecution/serviceExecutionBoard");
 
-//     }
+        return "layout/base-layout";
 
-//     @GetMapping("/list")
-//     public String showServiceExecutionList(Model model,
-//             @RequestParam(required = false) String name,
-//             @RequestParam(required = false) ServiceStatus status,
-//             @RequestParam(required = false) ServicePaymentStatus paymentStatus,
-//             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-//             @RequestParam(defaultValue = "0") int page,
-//             @RequestParam(defaultValue = "10") int size) {
+    }
 
-//         Pageable pageable = PageRequest.of(page, size);
+    @GetMapping("/list")
+    public String showServiceExecutionList(Model model,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) ServiceStatus status,
+            @RequestParam(required = false) ServicePaymentStatus paymentStatus,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-//         model.addAttribute("name", name);
-//         model.addAttribute("status", status);
-//         model.addAttribute("paymentStatus", paymentStatus);
-//         model.addAttribute("date", date);
+        Pageable pageable = PageRequest.of(page, size);
 
-//         model.addAttribute("statuses", ServiceStatus.values());
-//         model.addAttribute("paymentStatuses", ServicePaymentStatus.values());
-//         model.addAttribute("existsNotPaid", service.existsNotPaid());
+        model.addAttribute("name", name);
+        model.addAttribute("status", status);
+        model.addAttribute("paymentStatus", paymentStatus);
+        model.addAttribute("date", date);
 
-//         model.addAttribute("services", service.searchWithOptionalFilters(name, date, status, paymentStatus, pageable));
+        model.addAttribute("statuses", ServiceStatus.values());
+        model.addAttribute("paymentStatuses", ServicePaymentStatus.values());
+        model.addAttribute("existsNotPaid", facade.existsNotPaid());
 
-//         model.addAttribute("pageTitle", "Serviços realizados");
-//         model.addAttribute("activePage", "serviceExecution-list");
-//         model.addAttribute("view", "serviceExecution/serviceExecutionList");
+        model.addAttribute("services", facade.searchWithOptionalFilters(name, date,
+                status, paymentStatus, pageable));
 
-//         return "layout/base-layout";
+        model.addAttribute("pageTitle", "Serviços realizados");
+        model.addAttribute("activePage", "serviceExecution-list");
+        model.addAttribute("view", "serviceExecution/serviceExecutionList");
 
-//     }
+        return "layout/base-layout";
 
-//     @GetMapping("/list/pendingPayment")
-//     public String showServicesWithPendingPayment() {
+    }
 
-//         return "redirect:/serviceExecution/list?paymentStatus=" + ServicePaymentStatus.NOT_PAID;
+    @GetMapping("/list/pendingPayment")
+    public String showServicesWithPendingPayment() {
 
-//     }
+        return "redirect:/serviceExecution/list?paymentStatus=" +
+                ServicePaymentStatus.NOT_PAID;
 
-//     @GetMapping("/new")
-//     public String newServicePage(Model model) {
+    }
 
-//         return "redirect:/serviceExecution/clientSelection?context=create";
+    @GetMapping("/new")
+    public String newServicePage(Model model) {
 
-//     }
+        return "redirect:/serviceExecution/clientSelection?context=create";
 
-//     @PostMapping("/create")
-//     public String createNewServiceExecution(Model model, Long tutorId, @RequestParam(required = false) Long petId,
-//             @RequestParam(required = false) String petName, RedirectAttributes attributes) {
+    }
 
-//         Tutor tutor = tutorService.findById(tutorId);
-//         Pet pet = null;
+    @PostMapping
+    public String createNewServiceExecution(Model model, Long tutorId,
+            @RequestParam(required = false) Long petId,
+            @RequestParam(required = false) String petName, RedirectAttributes attributes) {
 
-//         if (petId == null && petName != null && !petName.isBlank()) {
+        if (petId == null && petName != null && !petName.isBlank()) {
 
-//             pet = tutorService.createPetAndSaveToTutor(tutor, petName);
+            ServiceExecution created = facade.createServiceExecutionWithNewPet(tutorId, petName);
+            attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
+            return "redirect:/serviceExecution/" + created.getId();
 
-//         }
+        }
 
-//         if (petId != null) {
+        ServiceExecution created = facade.createServiceExecution(tutorId, petId);
 
-//             pet = tutor.getOwnedPet(petId);
+        attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
+        return "redirect:/serviceExecution/" + created.getId();
 
-//         }
+    }
 
-//         ServiceExecution created = service.create(tutor, pet);
+    @GetMapping("/{id}")
+    public String getServiceExecution(@PathVariable Long id, Model model) {
 
-//         attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
-//         return "redirect:/serviceExecution/" + created.getId();
+        ServiceExecution s = facade.findServiceExecutionById(id);
+        List<PetCareGroupChecklistDto> groups = new ArrayList<>();
 
-//     }
+        for (var group : facade.findAllPetCareGroups()) {
 
-//     @GetMapping("/{id}")
-//     public String getServiceExecution(@PathVariable Long id, Model model) {
+            groups.add(new PetCareGroupChecklistDto(group, s));
 
-//         ServiceExecution s = service.findById(id);
-//         List<PetCareGroupChecklistDto> groups = new ArrayList<>();
+        }
 
-//         for (var group : petCareService.findAllGroups()) {
+        model.addAttribute("all_pet_care_groups", groups);
 
-//             groups.add(PetCareGroupMapper.toCheckListDto(group, s));
+        model.addAttribute("serviceExecution", new ServiceExecutionDto(s));
 
-//         }
+        model.addAttribute("activePage", "serviceExecution");
+        model.addAttribute("view", "serviceExecution/serviceExecution");
+        model.addAttribute("pageTitle", "Atendimento | #" + id);
+        return "layout/base-layout";
 
-//         model.addAttribute("all_tutors", tutorService.findAllActive());
-//         model.addAttribute("all_pet_care_groups", groups);
+    }
 
-//         model.addAttribute("serviceExecution", ServiceExecutionMapper.toDto(s));
+    @GetMapping("/clientSelection")
+    public String updateClient(Model model,
+            @RequestParam(required = false) String search,
+            @RequestParam String context,
+            @RequestParam(required = false) Long serviceExecutionId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-//         model.addAttribute("activePage", "serviceExecution");
-//         model.addAttribute("view", "serviceExecution/serviceExecution");
-//         model.addAttribute("pageTitle", "Atendimento | #" + id);
-//         return "layout/base-layout";
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Tutor> tutorPage = facade.searchClientshWithOptionalFilters(search,
+                pageable, Status.ACTIVE);
 
-//     }
+        model.addAttribute("tutorsPage", tutorPage);
+        model.addAttribute("search", search);
+        model.addAttribute("context", context);
+        model.addAttribute("serviceExecutionId", serviceExecutionId);
 
-//     @GetMapping("/clientSelection")
-//     public String updateClient(Model model,
-//             @RequestParam(required = false) String search,
-//             @RequestParam String context,
-//             @RequestParam(required = false) Long serviceExecutionId,
-//             @RequestParam(defaultValue = "0") int page,
-//             @RequestParam(defaultValue = "10") int size) {
+        model.addAttribute("activePage", "serviceExecution");
+        model.addAttribute("view", "serviceExecution/clientSelection");
+        model.addAttribute("pageTitle", "Atendimento | Cliente");
+        return "layout/base-layout";
 
-//         Pageable pageable = PageRequest.of(page, size);
-//         Page<Tutor> tutorPage = tutorService.searchWithOptionalFilters(search, pageable, Status.ACTIVE);
+    }
 
-//         model.addAttribute("tutorsPage", tutorPage);
-//         model.addAttribute("search", search);
-//         model.addAttribute("context", context);
-//         model.addAttribute("serviceExecutionId", serviceExecutionId);
+    @PostMapping("/updateClient")
+    public String updateClient(Long serviceExecutionId, Long tutorId,
+            @RequestParam(required = false) Long petId,
+            @RequestParam(required = false) String petName, RedirectAttributes attributes) {
 
-//         model.addAttribute("activePage", "serviceExecution");
-//         model.addAttribute("view", "serviceExecution/clientSelection");
-//         model.addAttribute("pageTitle", "Atendimento | Cliente");
-//         return "layout/base-layout";
+        if (petId == null && petName != null && !petName.isBlank()) {
 
-//     }
+            facade.updateClientWithNewPet(serviceExecutionId, tutorId, petName);
+            attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
+            return "redirect:/serviceExecution/" + serviceExecutionId;
 
-//     @PostMapping("/updateClient")
-//     public String updateClient(Long serviceExecutionId, Long tutorId, @RequestParam(required = false) Long petId,
-//             @RequestParam(required = false) String petName) {
+        }
 
-//         ServiceExecution toBeUpdated = service.findById(serviceExecutionId);
-//         Tutor tutor = tutorService.findById(tutorId);
-//         Pet pet = null;
+        facade.updateClient(serviceExecutionId, tutorId, petId);
 
-//         if (petId == null && petName != null && !petName.isBlank()) {
+        attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
+        return "redirect:/serviceExecution/" + serviceExecutionId;
 
-//             pet = tutorService.createPetAndSaveToTutor(tutor, petName);
+    }
 
-//         }
+    @PostMapping("/{serviceExecutionId}")
+    public String save(@PathVariable Long serviceExecutionId, Model model, ServiceExecutionDto s,
+            RedirectAttributes attributes) {
 
-//         if (petId != null) {
+        facade.updateServiceExecution(serviceExecutionId, s.selectedPetCareIds(), s.obs());
+        attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
+        return "redirect:/serviceExecution/" + serviceExecutionId;
 
-//             pet = tutor.getOwnedPet(petId);
+    }
 
-//         }
+    @PostMapping("/{serviceId}/cancel")
+    public String cancelService(@PathVariable Long serviceId,
+            @RequestParam(required = false) String src, RedirectAttributes attributes) {
 
-//         service.updateTutorAndPet(toBeUpdated, tutor, pet);
+        facade.cancelServiceExecution(serviceId);
+        attributes.addFlashAttribute("errorMessage", "Atendimento cancelado!");
 
-//         return "redirect:/serviceExecution/" + serviceExecutionId;
+        if (src != null && src.equals("editPage")) {
 
-//     }
+            return "redirect:/serviceExecution/" + serviceId;
 
-//     @PostMapping("/save")
-//     public String save(Model model, ServiceExecutionDto s, RedirectAttributes attributes) {
+        }
 
-//         ServiceExecution toBeUpdated = service.findById(s.id());
+        return "redirect:/serviceExecution";
 
-//         if (!s.selectedPetCareIds().isEmpty()) {
+    }
 
-//             toBeUpdated.updateExecutedServices(s.selectedPetCareIds().stream()
-//                     .map(id -> new ServiceExecutionItem(petCareService.findById(id))).collect(Collectors.toList()));
+    @PostMapping("/{serviceId}/start")
+    public String startServiceExecution(@PathVariable Long serviceId,
+            @RequestParam(required = false) String src, RedirectAttributes attributes) {
 
-//         }
+        facade.startServiceExecution(serviceId);
+        attributes.addFlashAttribute("successMessage", "Atendimento iniciado!");
 
-//         toBeUpdated.updateObservation(s.obs());
-//         service.save(toBeUpdated);
-//         attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
+        if (src != null && src.equals("editPage")) {
 
-//         return "redirect:/serviceExecution/" + s.id();
+            return "redirect:/serviceExecution/" + serviceId;
 
-//     }
+        }
 
-//     @PostMapping("/{serviceId}/cancel")
-//     public String cancelService(@PathVariable Long serviceId,
-//             @RequestParam(required = false) String src, RedirectAttributes attributes) {
+        return "redirect:/serviceExecution";
 
-//         ServiceExecution s = service.findById(serviceId);
-//         service.cancel(s);
-//         attributes.addFlashAttribute("errorMessage", "Atendimento cancelado!");
+    }
 
-//         if (src != null && src.equals("editPage")) {
+    @PostMapping("/{serviceId}/markAsDone")
+    public String markAsDone(@PathVariable Long serviceId,
+            @RequestParam(required = false) String src, RedirectAttributes attributes) {
 
-//             return "redirect:/serviceExecution/" + serviceId;
+        facade.markServiceExecutionAsDone(serviceId);
+        attributes.addFlashAttribute("successMessage", "Atendimento finalizado!");
 
-//         }
+        if (src != null && src.equals("editPage")) {
 
-//         return "redirect:/serviceExecution";
+            return "redirect:/serviceExecution/" + serviceId;
 
-//     }
+        }
 
-//     @PostMapping("/{serviceId}/start")
-//     public String startServiceExecution(@PathVariable Long serviceId,
-//             @RequestParam(required = false) String src, RedirectAttributes attributes) {
+        return "redirect:/serviceExecution";
 
-//         ServiceExecution s = service.findById(serviceId);
-//         service.start(s);
-//         attributes.addFlashAttribute("successMessage", "Atendimento iniciado!");
+    }
 
-//         if (src != null && src.equals("editPage")) {
-
-//             return "redirect:/serviceExecution/" + serviceId;
-
-//         }
-
-//         return "redirect:/serviceExecution";
-
-//     }
-
-//     @PostMapping("/{serviceId}/markAsDone")
-//     public String markAsDone(@PathVariable Long serviceId,
-//             @RequestParam(required = false) String src, RedirectAttributes attributes) {
-
-//         ServiceExecution s = service.findById(serviceId);
-//         service.finish(s);
-//         attributes.addFlashAttribute("successMessage", "Atendimento finalizado!");
-
-//         if (src != null && src.equals("editPage")) {
-
-//             return "redirect:/serviceExecution/" + serviceId;
-
-//         }
-
-//         return "redirect:/serviceExecution";
-
-//     }
-
-// }
+}

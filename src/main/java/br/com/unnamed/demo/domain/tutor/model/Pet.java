@@ -30,10 +30,9 @@ public class Pet {
 
     }
 
-    public Pet(Long id, String name, Status status) {
-        this.id = id;
+    public Pet(String name) {
         this.name = name;
-        this.status = status;
+        this.status = Status.ACTIVE;
     }
 
     public void deactivate() {
