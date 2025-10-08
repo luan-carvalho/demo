@@ -1,8 +1,6 @@
 package br.com.unnamed.demo.domain.serviceExecution.web;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.unnamed.demo.domain.petCare.dtos.PetCareGroupChecklistDto;
 import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionDto;
 import br.com.unnamed.demo.domain.serviceExecution.facade.ServiceExecutionFacade;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
@@ -133,15 +130,8 @@ public class ServiceExecutionController {
     public String getServiceExecution(@PathVariable Long id, Model model) {
 
         ServiceExecution s = facade.findServiceExecutionById(id);
-        List<PetCareGroupChecklistDto> groups = new ArrayList<>();
 
-        for (var group : facade.findAllPetCareGroups()) {
-
-            groups.add(new PetCareGroupChecklistDto(group, s));
-
-        }
-
-        model.addAttribute("all_pet_care_groups", groups);
+        model.addAttribute("all_pet_care_groups", facade.findAllPetCareGroups());
 
         model.addAttribute("serviceExecution", new ServiceExecutionDto(s));
 

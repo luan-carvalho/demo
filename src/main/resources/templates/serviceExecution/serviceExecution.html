@@ -101,16 +101,14 @@
         </div>
 
         <!-- Form -->
-        <form id="serviceExecutionForm" th:action="@{/serviceExecution/save}" method="post"
-            th:object="${serviceExecution}">
-            <input type="hidden" th:field="*{id}" />
+        <form id="serviceExecutionForm"
+            th:action="@{/serviceExecution/{serviceExecutionId}(serviceExecutionId=${serviceExecution.id})}"
+            method="post" th:object="${serviceExecution}">
 
             <div class="row g-4">
 
-                <!-- Left Section: Client & Services -->
                 <section class="col-lg-8">
 
-                    <!-- Client Card -->
                     <div class="card shadow-sm mb-3">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Cliente</h5>
@@ -128,53 +126,17 @@
                         </div>
                     </div>
 
-                    <!-- Services Selected -->
                     <div class="card shadow-sm mb-3">
                         <div class="card-header py-3">
-                            <h5 class="card-title mb-0"><i class="bi bi-list-check me-2"></i>Serviços Disponíveis</h5>
+                            <h5 class="card-title mb-0"><i class="bi bi-list me-2"></i>Serviços selecionados</h5>
                         </div>
                         <div class="card-body py-3">
-                            <div class="accordion" id="servicesAccordion">
-                                <div class="accordion-item" th:each="group : ${all_pet_care_groups}">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed py-3" type="button"
-                                            data-bs-toggle="collapse" th:data-bs-target="'#collapse-' + ${group.id}"
-                                            aria-expanded="false">
-                                            <span th:text="${group.description}"></span>
-                                            <small class="badge bg-success ms-2 group-selected-count"
-                                                th:attr="data-group-id=${group.id}"
-                                                th:if="${group.selectedCount > 0}"
-                                                th:text="${group.selectedCount}">0</small>
-                                        </button>
-                                    </h2>
-                                    <div th:id="'collapse-' + ${group.id}" class="accordion-collapse collapse"
-                                        data-bs-parent="#servicesAccordion">
-                                        <div class="accordion-body py-2">
-                                            <div class="row g-2">
-                                                <div class="col-12" th:each="petcare : ${group.petcares}">
-                                                    <div class="form-check py-1">
-                                                        <input class="form-check-input service-checkbox" type="checkbox"
-                                                            th:field="*{selectedPetCareIds}" th:value="${petcare.id}"
-                                                            th:id="'petcare-' + ${petcare.id}"
-                                                            th:attr="data-price=${petcare.price}"
-                                                            th:disabled="${#lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}">
-                                                        <label class="form-check-label d-flex justify-content-between"
-                                                            th:for="'petcare-' + ${petcare.id}"
-                                                            th:classappend="${#lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)} ? 'text-muted' : ''">
-                                                            <span th:text="${petcare.description}"></span>
-
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                           
                         </div>
                     </div>
 
-                    <!-- Observations -->
+
+
                     <div class="card shadow-sm mb-3">
                         <div class="card-header py-3">
                             <h5 class="card-title mb-0"><i class="bi bi-chat-text me-2"></i>Observações</h5>
@@ -188,10 +150,8 @@
 
                 </section>
 
-                <!-- Right Section: Totals & Payments -->
                 <aside class="col-lg-4">
 
-                    <!-- Total Value -->
                     <div class="card shadow-sm mb-3 text-center">
                         <div class="card-header bg-light py-3">
                             <h5 class="card-title mb-0"><i class="bi bi-cash-coin me-2"></i>Valor Total</h5>
@@ -203,7 +163,6 @@
                         </div>
                     </div>
 
-                    <!-- Payments -->
                     <div class="card shadow-sm">
                         <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-cash-stack me-2"></i>Pagamentos</h5>

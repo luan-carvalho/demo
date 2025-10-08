@@ -16,3 +16,21 @@ INSERT INTO payment_method (description) VALUES ('PIX');
 INSERT INTO payment_method (description) VALUES ('Cartão de débito');
 INSERT INTO payment_method (description) VALUES ('Cartão de crédito');
 INSERT INTO payment_method (description) VALUES ('Permuta');
+
+INSERT INTO pet_care (description, group_id, price, status) VALUES ('Banho - Pequeno Porte', 1, 45.00, 'ACTIVE');
+INSERT INTO pet_care (description, group_id, price, status) VALUES ('Banho - Médio Porte', 1, 55.00, 'ACTIVE');
+INSERT INTO pet_care (description, group_id, price, status) VALUES ('Banho - Grande Porte', 1, 65.00, 'ACTIVE');
+INSERT INTO pet_care (description, group_id, price, status) VALUES ('Adicional - sujeira', 1, 15.00, 'ACTIVE');
+INSERT INTO pet_care (description, group_id, price, status) VALUES ('Tosa higiênica', 2, 40.00, 'ACTIVE');
+INSERT INTO pet_care (description, group_id, price, status) VALUES ('Tosa bebê', 2, 40.00, 'ACTIVE');
+INSERT INTO pet_care (description, group_id, price, status) VALUES ('Adicional - pelo embaraçado', 2, 40.00, 'ACTIVE');
+INSERT INTO pet_care (description, group_id, price, status) VALUES ('Corte de unha', 3, 15.00, 'ACTIVE');
+INSERT INTO pet_care (description, group_id, price, status) VALUES ('Escovação de dentes', 3, 15.00, 'ACTIVE');
+
+INSERT INTO tutor(name, phone, status) VALUES ('Luan Carvalho de Souza', '63992932615', 'ACTIVE');
+INSERT INTO pet(name, tutor_id, status) VALUES ('Dox', 1, 'ACTIVE');
+
+INSERT INTO service_execution (tutor_id, pet_id, date, service_status, payment_status) VALUES (1, 1, CURRENT_DATE, 'DONE', 'NOT_PAID');
+INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (1, 1, 45.00);
+INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (1, 5, 40.00);
+INSERT INTO service_execution_item (service_execution_id, pet_care_id, unit_price) VALUES (1, 8, 15.00);

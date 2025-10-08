@@ -201,4 +201,16 @@ public class ServiceExecution {
 
     }
 
+    public boolean isFullyPaid() {
+
+        return getBalance().compareTo(BigDecimal.ZERO) == 0;
+
+    }
+
+    public boolean canBeFinished() {
+
+        return isFullyPaid() && serviceStatus == ServiceStatus.DONE;
+
+    }
+
 }

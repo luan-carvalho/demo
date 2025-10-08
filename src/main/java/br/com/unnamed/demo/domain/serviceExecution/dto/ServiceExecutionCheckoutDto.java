@@ -12,6 +12,8 @@ public record ServiceExecutionCheckoutDto(Long id,
         BigDecimal total,
         BigDecimal paid,
         BigDecimal balance,
+        boolean isFullyPaid,
+        boolean canBeFinished,
         List<PaymentCheckoutListDto> payments) {
 
     public ServiceExecutionCheckoutDto(ServiceExecution serviceExecution) {
@@ -22,6 +24,8 @@ public record ServiceExecutionCheckoutDto(Long id,
                 serviceExecution.calculateTotal(),
                 serviceExecution.getAmountPaid(),
                 serviceExecution.getBalance(),
+                serviceExecution.isFullyPaid(),
+                serviceExecution.canBeFinished(),
                 serviceExecution.getPayments().stream().map(p -> new PaymentCheckoutListDto(p)).toList());
 
     }
