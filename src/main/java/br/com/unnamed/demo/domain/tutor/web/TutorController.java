@@ -1,8 +1,5 @@
 package br.com.unnamed.demo.domain.tutor.web;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,15 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
-import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
-import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
-import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
-import br.com.unnamed.demo.domain.tutor.dtos.PetFormDto;
-import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
-import br.com.unnamed.demo.domain.tutor.mapper.PetMapper;
-import br.com.unnamed.demo.domain.tutor.mapper.TutorMapper;
+import br.com.unnamed.demo.domain.tutor.dto.CreatePetDto;
+import br.com.unnamed.demo.domain.tutor.dto.CreateTutorDto;
+import br.com.unnamed.demo.domain.tutor.dto.EditTutorDto;
+import br.com.unnamed.demo.domain.tutor.dto.PetEditDto;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 import br.com.unnamed.demo.domain.tutor.service.TutorService;
@@ -34,11 +26,9 @@ import jakarta.validation.Valid;
 public class TutorController {
 
     private final TutorService tutorService;
-    private final ServiceExecutionService service;
 
-    public TutorController(TutorService tutorService, ServiceExecutionService service) {
+    public TutorController(TutorService tutorService) {
         this.tutorService = tutorService;
-        this.service = service;
     }
 
     @GetMapping
@@ -64,34 +54,21 @@ public class TutorController {
 
     }
 
-    @GetMapping("/{id}")
-    public String findTutorById(@PathVariable Long id, Model model) {
-
-        TutorFormDto tutorDto = TutorMapper.toForm(tutorService.findById(id));
-        model.addAttribute("tutor", tutorDto);
-        model.addAttribute("groups", tutorService.findAllGroups());
-        model.addAttribute("activePage", "clients");
-        model.addAttribute("view", "tutor/tutor");
-        model.addAttribute("pageScript", "/js/script.js");
-        model.addAttribute("pageTitle", "Cliente | Edição");
-        return "layout/base-layout";
-
-    }
-
     @GetMapping("/new")
     public String showTutorRegistrationForm(Model model,
             @RequestParam(required = false) String context,
             @RequestParam(required = false) Long serviceId) {
 
-        if (context != null)
-            model.addAttribute("context", context);
+        // if (context != null)
+        // model.addAttribute("context", context);
 
-        if (context != null && serviceId != null)
-            model.addAttribute("serviceId", serviceId);
+        // if (context != null && serviceId != null)
+        // model.addAttribute("serviceId", serviceId);
 
+        model.addAttribute("tutor", new CreateTutorDto());
         model.addAttribute("groups", tutorService.findAllGroups());
-        model.addAttribute("tutor", TutorFormDto.empty());
         model.addAttribute("activePage", "clients");
+        model.addAttribute("mode", "create");
         model.addAttribute("view", "tutor/tutor");
         model.addAttribute("pageScript", "/js/script.js");
         model.addAttribute("pageTitle", "Cliente | Novo");
@@ -100,28 +77,47 @@ public class TutorController {
     }
 
     @PostMapping
-    public String saveTutor(@Valid TutorFormDto tutorDto,
+    public String createTutor(@Valid CreateTutorDto tutorDto,
             @RequestParam(required = false) String context,
-            @RequestParam(required = false) Long serviceId, RedirectAttributes attributes) {
+            @RequestParam(required = false) Long serviceId,
+            RedirectAttributes attributes) {
 
-        if (tutorDto.id() != null) {
-
-            Tutor existingTutor = tutorService.findById(tutorDto.id());
-
-            existingTutor.updateTutorInfo(tutorDto.phone(), tutorDto.name());
-
-            existingTutor.updateTutorGroup(tutorDto.group());
-
-            tutorService.save(existingTutor);
-            attributes.addFlashAttribute("successMessage", "Alterações salvas");
-            return "redirect:/tutor/" + tutorDto.id();
-
-        }
-
-        Tutor savedtutor = tutorService.save(tutorDto);
+        Tutor savedtutor = tutorService.createTutor(tutorDto.name(), tutorDto.phone(), tutorDto.groupId());
 
         return "redirect:/tutor/" + savedtutor.getId() + "/pet/new"
                 + (context != null ? "?context=" + context + (serviceId != null ? "&serviceId=" + serviceId : "") : "");
+
+    }
+
+    @GetMapping("/{id}")
+    public String findTutorById(@PathVariable Long id, Model model) {
+
+        EditTutorDto tutorDto = new EditTutorDto(tutorService.findById(id));
+        model.addAttribute("tutor", tutorDto);
+        model.addAttribute("groups", tutorService.findAllGroups());
+        model.addAttribute("mode", "update");
+        model.addAttribute("activePage", "clients");
+        model.addAttribute("view", "tutor/tutor");
+        model.addAttribute("pageScript", "/js/script.js");
+        model.addAttribute("pageTitle", "Cliente | Edição");
+        return "layout/base-layout";
+
+    }
+
+    @PostMapping("/{id}")
+    public String updateTutor(@Valid EditTutorDto tutorDto,
+            @RequestParam(required = false) String context,
+            @RequestParam(required = false) Long serviceId,
+            RedirectAttributes attributes) {
+
+        Tutor savedtutor = tutorService.updateTutorInfo(
+                tutorDto.id(),
+                tutorDto.name(),
+                tutorDto.phone(),
+                tutorDto.groupId());
+
+        attributes.addFlashAttribute("successMessage", "Alterações salvas");
+        return "redirect:/tutor/" + savedtutor.getId();
 
     }
 
@@ -154,13 +150,15 @@ public class TutorController {
     @GetMapping("/{tutorId}/pet/{petId}")
     public String findPet(@PathVariable Long tutorId, @PathVariable Long petId, Model model) {
 
-        PetFormDto pet = PetMapper.toFormDto(tutorService.findByTutorAndPetId(tutorId, petId));
-        List<ServiceExecution> serviceHistory = service.findTop10ByPetIdOrderByDateDesc(petId);
+        PetEditDto pet = new PetEditDto(tutorService.findByTutorAndPetId(tutorId, petId));
+        // List<ServiceExecution> serviceHistory =
+        // service.findTop10ByPetIdOrderByDateDesc(petId);
 
         model.addAttribute("tutorId", tutorId);
         model.addAttribute("pet", pet);
-        model.addAttribute("serviceHistory", serviceHistory);
+        // model.addAttribute("serviceHistory", serviceHistory);
 
+        model.addAttribute("mode", "update");
         model.addAttribute("pageTitle", "Pet | " + pet.name());
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "pet/pet");
@@ -169,20 +167,30 @@ public class TutorController {
 
     }
 
+    @PostMapping("/{tutorId}/pet/{petId}")
+    public String updatePet(@PathVariable Long tutorId,
+            @PathVariable Long petId,
+            @Valid PetEditDto petDto,
+            @RequestParam(required = false) String context,
+            @RequestParam(required = false) Long serviceId,
+            RedirectAttributes attributes) {
+
+        tutorService.updatePetName(tutorId, petDto.id(), petDto.name());
+
+        attributes.addFlashAttribute("successMessage", "Alterações salvas!");
+        return "redirect:/tutor/" + tutorId + "/pet/" + petId;
+
+    }
+
     @GetMapping("/{tutorId}/pet/new")
     public String findNewPetForm(@PathVariable Long tutorId, Model model,
             @RequestParam(required = false) String context,
             @RequestParam(required = false) Long serviceId) {
 
-        model.addAttribute("pet", PetFormDto.empty());
-
-        if (context != null)
-            model.addAttribute("context", context);
-
-        if (context != null && serviceId != null)
-            model.addAttribute("serviceId", serviceId);
+        model.addAttribute("pet", new CreatePetDto());
 
         model.addAttribute("activePage", "clients");
+        model.addAttribute("mode", "create");
         model.addAttribute("view", "pet/pet");
         model.addAttribute("pageTitle", "Pet | Novo");
         model.addAttribute("pageScript", "/js/pet.js");
@@ -190,47 +198,16 @@ public class TutorController {
 
     }
 
-    @PostMapping("/{tutorId}/pet/save")
-    public String savePet(@PathVariable Long tutorId, @Valid PetFormDto petDto,
+    @PostMapping("/{tutorId}/pet")
+    public String createPet(@PathVariable Long tutorId,
+            @Valid CreatePetDto petDto,
             @RequestParam(required = false) String context,
-            @RequestParam(required = false) Long serviceId, RedirectAttributes attributes) {
+            @RequestParam(required = false) Long serviceId,
+            RedirectAttributes attributes) {
 
-        if (petDto.id() != null)
+        tutorService.createPetAndSaveToTutor(tutorId, petDto.name());
 
-            tutorService.updatePetName(tutorId, petDto.id(), petDto.name());
-
-        if (petDto.id() == null)
-            tutorService.createPetAndSaveToTutor(tutorId, petDto.name());
-
-        if (context != null) {
-
-            if (context.equals("update") && serviceId != null) {
-
-                service.updateTutorAndPet(serviceId, tutorId, petDto.id());
-
-                attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
-                return "redirect:/serviceExecution/" + toBeUpdated.getId();
-
-            }
-
-            if (context.equals("create")) {
-
-                ServiceExecution created = this.service.save(
-                        new ServiceExecutionBuilder()
-                                .tutor(tutor)
-                                .pet(pet)
-                                .date(LocalDate.now())
-                                .status(ServiceStatus.PENDING)
-                                .paymentStatus(ServicePaymentStatus.NOT_PAID)
-                                .build());
-
-                attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
-                return "redirect:/serviceExecution/" + created.getId();
-
-            }
-
-        }
-
+        attributes.addFlashAttribute("successMessage", "Cadastro realizado!");
         return "redirect:/tutor/" + tutorId;
 
     }

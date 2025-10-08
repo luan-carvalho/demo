@@ -28,7 +28,7 @@ public class Tutor {
     private String name;
     private String phone;
 
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "tutor_id")
     private List<Pet> pets;
 
@@ -46,11 +46,12 @@ public class Tutor {
 
     }
 
-    public Tutor(String name, String phone) {
+    public Tutor(String name, String phone, TutorGroup group) {
         this.name = name;
         this.phone = phone;
+        this.group = group;
         this.pets = new ArrayList<>();
-        this.status = Status.INACTIVE;
+        this.status = Status.ACTIVE;
     }
 
     public Pet getOwnedPet(Long petId) {
@@ -87,7 +88,6 @@ public class Tutor {
     public void deactivate() {
 
         this.status = Status.INACTIVE;
-        this.pets.forEach(Pet::deactivate);
 
     }
 

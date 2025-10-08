@@ -8,27 +8,28 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <div>
-                    <h1 class="h4 mb-1" th:text="${tutor.id == null} ? 'Novo Tutor' : 'Editar Tutor'"></h1>
+                    <h1 class="h4 mb-1" th:text="${mode == 'update'} ? 'Editar Tutor' : 'Novo Tutor'"></h1>
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">
                     <button type="submit" form="tutorForm"
                         class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
                         <i class="bi bi-save me-2"></i>
-                        <span th:text="${tutor.id != null} ? 'Salvar' : 'Cadastrar'"></span>
+                        <span th:text="${mode == 'update'} ? 'Salvar' : 'Cadastrar'"></span>
                     </button>
 
                     <a th:href="@{/tutor}" class="btn btn-secondary btn-sm d-flex align-items-center px-3">
                         <i class="bi bi-arrow-left me-2"></i> Voltar
                     </a>
 
-                    <a th:if="${tutor.id != null and tutor.isActive()}" sec:authorize="hasRole('ADMIN')"
+                    <!-- Activate / Inactivate only for update mode -->
+                    <a th:if="${mode == 'update' and tutor.isActive}" sec:authorize="hasRole('ADMIN')"
                         th:href="@{/tutor/{id}/inactivate (id=${tutor.id})}"
                         class="btn btn-outline-danger btn-sm d-flex align-items-center px-3">
                         <i class="bi bi-person-x me-2"></i> Inativar
                     </a>
 
-                    <a sec:authorize="hasRole('ADMIN')" th:if="${tutor.id != null and tutor.isInactive()}"
+                    <a th:if="${mode == 'update' and !tutor.isActive}" sec:authorize="hasRole('ADMIN')"
                         th:href="@{/tutor/{id}/activate (id=${tutor.id})}"
                         class="btn btn-outline-success btn-sm d-flex align-items-center px-3">
                         <i class="bi bi-person-check me-2"></i> Reativar
@@ -38,9 +39,10 @@
         </div>
 
         <!-- Form -->
-        <form id="tutorForm" th:action="@{/tutor(context=${context}, serviceId=${serviceId})}" method="post"
+        <form id="tutorForm" th:action="${mode == 'update'} ? @{/tutor/{id}(id=${tutor.id})} : @{/tutor}" method="post"
             th:object="${tutor}">
-            <input type="hidden" th:field="*{id}" />
+
+            <input type="hidden" th:if="${mode == 'update'}" th:field="*{id}" />
 
             <div class="row g-4">
 
@@ -51,21 +53,25 @@
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
+                                <!-- Name -->
                                 <div class="col-md-8">
                                     <label for="name" class="form-label">Nome Completo</label>
                                     <input type="text" class="form-control" id="name" th:field="*{name}"
                                         placeholder="Nome do tutor..." required />
                                 </div>
+
+                                <!-- Phone -->
                                 <div class="col-md-4">
                                     <label for="phone" class="form-label">Telefone</label>
                                     <input type="tel" class="form-control" id="phone" th:field="*{phone}" maxlength="15"
                                         placeholder="(99) 99999-9999" required />
                                 </div>
 
+                                <!-- Tutor Group -->
                                 <div class="col-md-8">
                                     <label for="tutorGroup" class="form-label">Grupo do Tutor</label>
                                     <div class="input-group">
-                                        <select class="form-select" id="tutorGroup" th:field="*{group}">
+                                        <select class="form-select" id="tutorGroup" th:field="*{groupId}">
                                             <option value="">Selecione um grupo...</option>
                                             <option th:each="group : ${groups}" th:value="${group.id}"
                                                 th:text="${group.description}">
@@ -77,13 +83,14 @@
                                         </button>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Pets -->
-                <div class="col-lg-6" th:if="${tutor.id != null}">
+                <!-- Pets section only for update mode -->
+                <div class="col-lg-6" th:if="${mode == 'update'}">
                     <div class="card shadow-sm">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0"><i class="bi bi-heart-fill me-2"></i>Pets</h5>
@@ -92,14 +99,14 @@
                                 <i class="bi bi-plus-lg"></i> Novo Pet
                             </a>
                         </div>
-                        <div class="list-group list-group-flush">
+                        <div class="card-body list-group-flush">
                             <a th:each="pet : ${tutor.pets}"
                                 th:href="@{/tutor/{tutorId}/pet/{petId}(tutorId=${tutor.id}, petId=${pet.id})}"
-                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                                th:classappend="${pet.isInactive()} ? 'bg-light text-muted' : ''">
+                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center">
-                                    <span th:text="${pet.name}"></span>
-                                    <span th:if="${pet.isInactive()}" class="badge bg-danger ms-2">Inativo</span>
+                                    <span th:text="${pet.name}"
+                                        th:classappend="${!pet.isActive} ? 'text-muted' : ''"></span>
+                                    <span th:if="${!pet.isActive}" class="badge bg-danger ms-2">Inativo</span>
                                 </div>
                             </a>
 
@@ -115,8 +122,8 @@
         </form>
 
         <!-- New Group Modal -->
-        <div class="modal fade" id="newGroupModal" tabindex="-1" aria-labelledby="newGroupModalLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="newGroupModal" tabindex="-1" aria-labelledby="newGroupModalLabel" aria-hidden="true"
+            th:if="${mode == 'update'}">
             <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -152,7 +159,6 @@
                     return dynamicMasked.compiledMasks.find(m => number.length <= m.mask.replace(/\D/g, '').length);
                 }
             });
-
         </script>
 
     </main>

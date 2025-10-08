@@ -6,12 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.domain.tutor.dtos.TutorFormDto;
+import br.com.unnamed.demo.domain.tutor.exception.TutorGroupNotFoundException;
+import br.com.unnamed.demo.domain.tutor.exception.TutorNotFoundException;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.TutorGroup;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
-import br.com.unnamed.demo.domain.tutor.repository.PetRepository;
 import br.com.unnamed.demo.domain.tutor.repository.TutorGroupRepository;
 import br.com.unnamed.demo.domain.tutor.repository.TutorRepository;
 
@@ -19,12 +19,10 @@ import br.com.unnamed.demo.domain.tutor.repository.TutorRepository;
 public class TutorService {
 
     private final TutorRepository tutorRepo;
-    private final PetRepository petRepo;
     private final TutorGroupRepository groupRepo;
 
-    public TutorService(TutorRepository tutorRepo, PetRepository petRepo, TutorGroupRepository groupRepo) {
+    public TutorService(TutorRepository tutorRepo, TutorGroupRepository groupRepo) {
         this.tutorRepo = tutorRepo;
-        this.petRepo = petRepo;
         this.groupRepo = groupRepo;
     }
 
@@ -36,32 +34,40 @@ public class TutorService {
 
     public Tutor findById(Long id) {
 
-        return tutorRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Tutor not found"));
+        return tutorRepo.findById(id).orElseThrow(() -> new TutorNotFoundException("Tutor not found"));
 
     }
 
     public Pet findByTutorAndPetId(Long tutorId, Long petId) {
 
-        Tutor c = findById(tutorId);
-        return c.getOwnedPet(petId);
+        Tutor tutor = findById(tutorId);
+        return tutor.getOwnedPet(petId);
 
     }
 
-    public Tutor save(Tutor Tutor) {
+    public Tutor createTutor(String name, String phone, Long groupId) {
 
-        return tutorRepo.save(Tutor);
+        TutorGroup group = null;
+
+        if (groupId != null)
+            group = findGroupById(groupId);
+
+        return tutorRepo.save(new Tutor(name, phone, group));
 
     }
 
-    public Tutor save(TutorFormDto tutor) {
+    public Tutor updateTutorInfo(Long tutorId, String name, String phone, Long groupId) {
 
-        return tutorRepo.save(new Tutor(tutor.name(), tutor.phone()));
+        Tutor toBeUpdated = findById(tutorId);
+        TutorGroup group = null;
 
-    }
+        if (groupId != null)
+            group = findGroupById(groupId);
 
-    public Pet save(Pet pet) {
+        toBeUpdated.updateTutorInfo(phone, name);
+        toBeUpdated.updateTutorGroup(group);
 
-        return petRepo.save(pet);
+        return tutorRepo.save(toBeUpdated);
 
     }
 
@@ -73,33 +79,33 @@ public class TutorService {
 
     public void deactivate(Long id) {
 
-        Tutor c = findById(id);
-        c.deactivate();
-        save(c);
+        Tutor tutor = findById(id);
+        tutor.deactivate();
+        tutorRepo.save(tutor);
 
     }
 
     public void activate(Long id) {
 
-        Tutor c = findById(id);
-        c.activate();
-        save(c);
+        Tutor tutor = findById(id);
+        tutor.activate();
+        tutorRepo.save(tutor);
 
     }
 
     public void deactivatePet(Long tutorId, Long petId) {
 
-        Tutor c = findById(tutorId);
-        c.deactivatePet(petId);
-        save(c);
+        Tutor tutor = findById(tutorId);
+        tutor.deactivatePet(petId);
+        tutorRepo.save(tutor);
 
     }
 
     public void activatePet(Long tutorId, Long petId) {
 
-        Tutor c = findById(tutorId);
-        c.activatePet(petId);
-        save(c);
+        Tutor tutor = findById(tutorId);
+        tutor.activatePet(petId);
+        tutorRepo.save(tutor);
 
     }
 
@@ -120,7 +126,7 @@ public class TutorService {
         Tutor tutor = findById(tutorId);
         TutorGroup createdGroup = groupRepo.save(new TutorGroup(null, description));
         tutor.updateTutorGroup(createdGroup);
-        save(tutor);
+        tutorRepo.save(tutor);
 
     }
 
@@ -129,7 +135,6 @@ public class TutorService {
         Tutor tutor = findById(tutorId);
         Pet pet = new Pet(null, petName, Status.ACTIVE);
         tutor.addPet(pet);
-        pet = petRepo.save(pet);
         tutor = tutorRepo.save(tutor);
         return pet;
 
@@ -139,7 +144,14 @@ public class TutorService {
 
         Tutor tutor = findById(tutorId);
         tutor.getOwnedPet(petId).updateName(petName);
-        save(tutor);
+        tutorRepo.save(tutor);
+
+    }
+
+    public TutorGroup findGroupById(Long groupId) {
+
+        return groupRepo.findById(groupId)
+                .orElseThrow(() -> new TutorGroupNotFoundException("Group not found"));
 
     }
 
