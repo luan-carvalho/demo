@@ -60,8 +60,11 @@ public class TutorController {
         if (context != null && context.equals("create"))
             model.addAttribute("context", context);
 
-        if (context != null && context.equals("update") && serviceId != null)
+        if (context != null && context.equals("update") && serviceId != null) {
+
+            model.addAttribute("context", context);
             model.addAttribute("serviceId", serviceId);
+        }
 
         model.addAttribute("tutor", new CreateTutorDto());
         model.addAttribute("groups", tutorService.findAllGroups());

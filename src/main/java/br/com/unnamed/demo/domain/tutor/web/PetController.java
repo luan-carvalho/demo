@@ -37,6 +37,7 @@ public class PetController {
         List<ServiceExecution> serviceHistory = facade.findTop10ByPetIdOrderByDateDesc(petId);
 
         model.addAttribute("tutorId", tutorId);
+        model.addAttribute("tutorName", tutorService.findById(tutorId).getName());
         model.addAttribute("pet", pet);
         model.addAttribute("serviceHistory", serviceHistory);
 
@@ -74,9 +75,13 @@ public class PetController {
         if (context != null && context.equals("create"))
             model.addAttribute("context", context);
 
-        if (context != null && context.equals("update") && serviceId != null)
+        if (context != null && context.equals("update") && serviceId != null) {
             model.addAttribute("serviceId", serviceId);
+            model.addAttribute("context", context);
 
+        }
+
+        model.addAttribute("tutorName", tutorService.findById(tutorId).getName());
         model.addAttribute("activePage", "clients");
         model.addAttribute("mode", "create");
         model.addAttribute("view", "pet/pet");

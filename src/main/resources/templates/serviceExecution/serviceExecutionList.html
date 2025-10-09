@@ -2,21 +2,30 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <div th:fragment="content">
+    <div class="container" th:fragment="content">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">Atendimentos</h1>
-            <a th:href="@{/serviceExecution/new}" class="btn btn-primary shadow-sm">
-                <i class="bi bi-plus-lg me-1"></i> Novo
-            </a>
-        </div>
-
-        <div th:if="${existsNotPaid}" class="alert alert-warning shadow-sm" role="alert"
-            sec:authorize="hasRole('ADMIN')">
+        <div class="mb-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
+                    <p class="text-dark fw-semibold fs-6 mb-1">Atendimentos</p>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a th:href="@{/serviceExecution/new}"
+                        class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-plus-lg me-1"></i> Novo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${existsNotPaid}" class="alert alert-warning" role="alert" sec:authorize="hasRole('ADMIN')">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <strong>Atenção:</strong> Existem serviços não finalizados de dias anteriores.
+                    <div>
+                        <strong>Atenção:</strong> Existem serviços não finalizados de dias anteriores.
+                    </div>
                 </div>
                 <a class="btn btn-sm btn-outline-dark" href="/serviceExecution/list/pendingPayment" role="button">
                     Conferir
@@ -24,131 +33,134 @@
             </div>
         </div>
 
+        <!-- Search Section -->
+        <div class="mb-4 mt-3">
+            <form th:action="@{/serviceExecution/list}" method="get" class="row g-3 align-items-end">
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <form th:action="@{/serviceExecution/list}" method="get" class="row g-2 align-items-end">
-
-                    <div class="col-lg-4">
-                        <label for="name" class="form-label">Tutor / Pet</label>
-                        <input type="text" id="name" name="name" class="form-control" placeholder="Digite o nome..."
-                            th:value="${name}">
-                    </div>
-
-                    <div class="col-lg-2">
-                        <label for="date" class="form-label">Data</label>
-                        <input type="date" id="date" name="date" class="form-control" th:value="${date}">
-                    </div>
-
-                    <div class="col-lg-2">
-                        <label for="status" class="form-label">Status</label>
-                        <select id="status" name="status" class="form-select">
-                            <option value="">Todos</option>
-                            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"
-                                th:selected="${status == s}">
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="col-lg-2">
-                        <label for="paymentStatus" class="form-label">Pagamento</label>
-                        <select id="paymentStatus" name="paymentStatus" class="form-select">
-                            <option value="">Todos</option>
-                            <option th:each="s : ${paymentStatuses}" th:value="${s}" th:text="${s.label}"
-                                th:selected="${paymentStatus == s}">
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-lg-1 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
-                        <a th:href="@{/serviceExecution/list}" class="btn btn-secondary w-100"><i
-                                class="bi bi-x-lg"></i></a>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th scope="col">Data</th>
-                                <th scope="col">Pet</th>
-                                <th scope="col">Tutor</th>
-                                <th scope="col">Status</th>
-                                <th scope="col" class="text-end">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="service : ${services.content}" class="clickable-row"
-                                th:data-href="@{/serviceExecution/{id}(id=${service.id})}">
-
-                                <td th:text="${#temporals.format(service.date, 'dd/MM/yyyy')}"></td>
-
-                                <td th:text="${service.pet.name}"> </td>
-                                <td th:text="${service.tutor.name}"> </td>
-
-                                <td>
-                                    <span th:text="${service.serviceStatus.label}" class="badge fw-bold me-1"
-                                        th:classappend="${service.serviceStatus.label == 'Pendente' ? ' bg-secondary' :
-                 service.serviceStatus.label == 'Em execução' ? ' bg-warning text-dark' :
-                 service.serviceStatus.label == 'Finalizado' ? ' bg-success' :
-                 service.serviceStatus.label == 'Cancelado' ? ' bg-danger' :
-                 service.serviceStatus.label == 'Baixado' ? ' bg-primary' : ''}">
-                                    </span>
-                                </td>
-
-
-                                <td class="text-end"
-                                    th:text="'R$ ' + ${#numbers.formatDecimal(service.calculateTotal(), 1, 'POINT', 2, 'COMMA')}">
-                                </td>
-                            </tr>
-                            <tr th:if="${services.isEmpty()}" style="pointer-events: none;">
-                                <td colspan="5" class="text-center text-muted py-5">
-                                    Nenhum atendimento encontrado.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="col-lg-4">
+                    <label for="name" class="form-label fw-semibold">Tutor / Pet</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Digite o nome..."
+                        th:value="${name}">
                 </div>
 
-            </div>
+                <div class="col-lg-2">
+                    <label for="date" class="form-label fw-semibold">Data</label>
+                    <input type="date" id="date" name="date" class="form-control" th:value="${date}">
+                </div>
+
+                <div class="col-lg-2">
+                    <label for="status" class="form-label fw-semibold">Status</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="">Todos</option>
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"
+                            th:selected="${status == s}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-lg-2">
+                    <label for="paymentStatus" class="form-label fw-semibold">Pagamento</label>
+                    <select id="paymentStatus" name="paymentStatus" class="form-select">
+                        <option value="">Todos</option>
+                        <option th:each="s : ${paymentStatuses}" th:value="${s}" th:text="${s.label}"
+                            th:selected="${paymentStatus == s}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-lg-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary d-flex align-items-center">
+                        <i class="bi bi-search me-2"></i>Buscar
+                    </button>
+                    <a th:href="@{/serviceExecution/list}" class="btn btn-outline-secondary d-flex align-items-center">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Limpar
+                    </a>
+                </div>
+            </form>
         </div>
 
-        <nav th:if="${services.totalPages > 1}" aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" th:classappend="${services.first} ? 'disabled'">
-                    <a class="page-link"
-                        th:href="@{/serviceExecution/list(page=${services.number - 1}, size=${services.size}, name=${name})}">Anterior</a>
-                </li>
+        <!-- Services Table -->
+        <div class="border rounded">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Data</th>
+                            <th scope="col">Pet</th>
+                            <th scope="col">Tutor</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="service : ${services.content}" class="clickable-row"
+                            th:data-href="@{/serviceExecution/{id}(id=${service.id})}">
 
-                <li th:each="i : ${#numbers.sequence(0, services.totalPages - 1)}" class="page-item"
-                    th:classappend="${i == services.number} ? 'active'">
-                    <a class="page-link"
-                        th:href="@{/serviceExecution/list(page=${i}, size=${services.size}, name=${name})}"
-                        th:text="${i + 1}"></a>
-                </li>
+                            <td class="fw" th:text="${#temporals.format(service.date, 'dd/MM/yyyy')}"></td>
 
-                <li class="page-item" th:classappend="${services.last} ? 'disabled'">
-                    <a class="page-link"
-                        th:href="@{/serviceExecution/list(page=${services.number + 1}, size=${services.size}, name=${name})}">Próxima</a>
-                </li>
-            </ul>
-        </nav>
+                            <td th:text="${service.pet.name}"></td>
+                            <td th:text="${service.tutor.name}"></td>
+
+                            <td>
+                                <span th:text="${service.serviceStatus.label}" class="badge fw-bold" th:classappend="${service.serviceStatus.label == 'Pendente' ? ' bg-secondary' :
+                                         service.serviceStatus.label == 'Em execução' ? ' bg-warning text-dark' :
+                                         service.serviceStatus.label == 'Finalizado' ? ' bg-success' :
+                                         service.serviceStatus.label == 'Cancelado' ? ' bg-danger' :
+                                         service.serviceStatus.label == 'Baixado' ? ' bg-primary' : ''}">
+                                </span>
+                            </td>
+
+                            <td class="text-end"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(service.calculateTotal(), 1, 'POINT', 2, 'COMMA')}">
+                            </td>
+                        </tr>
+                        <tr th:if="${services.isEmpty()}" style="pointer-events: none;">
+                            <td colspan="5" class="text-center text-muted py-5">
+                                <i class="bi bi-clipboard-x fs-1 mb-3 d-block"></i>
+                                <h6 class="text-muted">Nenhum atendimento encontrado</h6>
+                                <p class="text-muted small mb-0">Tente ajustar os filtros de busca</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${services.totalPages > 1}" aria-label="Page navigation" class="p-3 border-top">
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item" th:classappend="${services.first} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/serviceExecution/list(page=${services.number - 1}, size=${services.size}, name=${name})}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+
+                    <li th:each="i : ${#numbers.sequence(0, services.totalPages - 1)}" class="page-item"
+                        th:classappend="${i == services.number} ? 'active'">
+                        <a class="page-link"
+                            th:href="@{/serviceExecution/list(page=${i}, size=${services.size}, name=${name})}"
+                            th:text="${i + 1}"></a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${services.last} ? 'disabled'">
+                        <a class="page-link"
+                            th:href="@{/serviceExecution/list(page=${services.number + 1}, size=${services.size}, name=${name})}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
         <script>
-
-            if ($(".clickable-row").length) {
-                $(".clickable-row").on("click", function (event) {
-                    if ($(event.target).closest('a.badge').length === 0) {
-                        window.location = $(this).data("href");
-                    }
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.clickable-row').forEach(row => {
+                    row.addEventListener('click', function (event) {
+                        window.location = this.getAttribute('data-href');
+                    });
                 });
-            }
-
+            });
         </script>
+    </div>
 </body>
 
 </html>

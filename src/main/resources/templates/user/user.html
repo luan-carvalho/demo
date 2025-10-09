@@ -1,20 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <body>
+    <main class="container" th:fragment="content">
 
-    <main th:fragment="content">
-        <!-- Header with actions - Matches standard pattern -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h4 mb-1" th:text="${user.id == null} ? 'Novo Usuário' : 'Editar Usuário'"></h1>
+                    <div class="d-flex align-items-center text-muted mb-1">
+                        <a th:href="@{/user}" class="text-decoration-none text-muted small fs-6">Usuários</a>
+                        <i class="bi bi-chevron-right mx-2 small"></i>
+                        <span class="text-dark fw-semibold" th:text="${user.id != null} ? ${user.name} : 'Novo'"></span>
+                    </div>
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">
@@ -24,66 +21,75 @@
                         <span th:text="${user.id != null} ? 'Salvar' : 'Cadastrar'"></span>
                     </button>
 
-                    <a th:href="@{/user}" class="btn btn-secondary btn-sm d-flex align-items-center px-3">
+                    <a th:href="@{/user}" class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
                         <i class="bi bi-arrow-left me-2"></i> Voltar
                     </a>
 
                     <a th:if="${user.id != null and user.status.name() == 'ACTIVE'}"
                         th:href="@{/user/{id}/inactivate(id=${user.id})}"
-                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3">
+                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2">
                         <i class="bi bi-person-x me-2"></i> Inativar
                     </a>
 
                     <a th:if="${user.id != null and user.status.name() == 'INACTIVE'}"
                         th:href="@{/user/{id}/activate(id=${user.id})}"
-                        class="btn btn-outline-success btn-sm d-flex align-items-center px-3">
+                        class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
                         <i class="bi bi-person-check me-2"></i> Reativar
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Form - Matches standard structure -->
+        <!-- Form -->
         <form id="userForm" th:action="${user.id != null} ? @{/user/update} : @{/user/new}" method="post"
             th:object="${user}">
             <input type="hidden" th:if="${user.id != null}" th:field="*{id}" />
 
             <div class="row g-4">
                 <div class="col-lg-6">
-                    <!-- Main card - Consistent with standard -->
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0"><i class="bi bi-person-badge me-2"></i>Informações do Usuário
-                            </h5>
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                                <i class="bi bi-person-badge text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="h5 mb-1 text-dark fw-bold">Informações do Usuário</h3>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <!-- ID display (only for existing users) -->
-                                <div class="col-12" th:if="${user.id != null}">
-                                    <label for="id" class="form-label">ID</label>
-                                    <div class="border rounded bg-light px-3 py-2">
-                                        <span class="text-muted fw-semibold" th:text="${user.id}"></span>
-                                    </div>
-                                </div>
-
-                                <!-- Name field -->
-                                <div class="col-12">
-                                    <label for="name" class="form-label">Nome</label>
-                                    <input type="text" class="form-control" id="name" th:field="*{name}"
-                                        placeholder="Nome completo do usuário" required />
-                                </div>
-
-                                <!-- Role selection -->
-                                <div class="col-12">
-                                    <label for="roleId" class="form-label">Perfil de Acesso</label>
-                                    <select class="form-select" id="roleId" name="roleId" required>
-                                        <option value="">Selecione um perfil...</option>
-                                        <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.label}"
-                                            th:selected="${user.roleId != null and role.id == user.roleId}">
-                                        </option>
-                                    </select>
+                        <div class="row g-3">
+                            <!-- ID display (only for existing users) -->
+                            <div class="col-2" th:if="${user.id != null}">
+                                <label for="id" class="form-label fw-semibold">ID</label>
+                                <div class="border rounded bg-light px-3 py-2">
+                                    <span class="text-muted fw-semibold" th:text="${user.id}"></span>
                                 </div>
                             </div>
+
+                            <div class="col-10">
+                                <label for="roleId" class="form-label fw-semibold">
+                                    Perfil de Acesso
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="roleId" name="roleId" required>
+                                    <option value="">Selecione um perfil...</option>
+                                    <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.label}"
+                                        th:selected="${user.roleId != null and role.id == user.roleId}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Name field -->
+                            <div class="col-12">
+                                <label for="name" class="form-label fw-semibold">
+                                    Nome
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="name" th:field="*{name}"
+                                    placeholder="Nome completo do usuário" required />
+                            </div>
+
+                            <!-- Role selection -->
+
                         </div>
                     </div>
                 </div>
@@ -91,7 +97,6 @@
         </form>
 
     </main>
-
 </body>
 
 </html>

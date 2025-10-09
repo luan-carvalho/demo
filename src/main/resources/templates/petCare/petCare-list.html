@@ -2,88 +2,104 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <div th:fragment="content">
+    <div class="container" th:fragment="content">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">Serviços</h1>
-            <a th:href="@{/petCare/new}" class="btn btn-primary d-flex align-items-center">
-                <i class="bi bi-plus-lg me-2"></i>
-                Novo Serviço
-            </a>
-        </div>
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-dark fw-semibold fs-6 mb-1">Serviços</p>
+                </div>
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <form th:action="@{/petCare}" method="get" class="row g-2 align-items-end">
-                    <div class="col-lg-6">
-                        <label for="description" class="form-label">Buscar pela descrição</label>
-                        <input type="text" id="description" name="description" class="form-control"
-                            placeholder="Descrição do serviço..." th:value="${description}">
-                    </div>
-                    <div class="col-lg-3">
-                        <label for="status" class="form-label">Status</label>
-                        <select id="status" name="status" class="form-select">
-                            <option th:each="s : ${statuses}" th:value="${s}"
-                                th:text="${s.name() == 'ACTIVE'} ? 'Ativo' : 'Inativo'" th:selected="${status == s}">
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-lg-3 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-search"></i>
-                        </button>
-                        <a th:href="@{/petCare}" class="btn btn-secondary">
-                            <i class="bi bi-x-lg"></i>
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th scope="col">Descrição</th>
-                                <th scope="col">Grupo</th>
-                                <th scope="col" class="text-end">Preço</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="petCare : ${petCarePage.content}" class="clickable-row"
-                                th:data-href="@{/petCare/{id}(id=${petCare.id})}">
-
-                                <td class="fw" th:text="${petCare.description}"></td>
-
-                                <td>
-                                    <span th:if="${petCare.group != null}"
-                                        th:text="${petCare.group.description}"></span>
-                                    <em th:if="${petCare.group == null}" class="text-muted">Nenhum</em>
-                                </td>
-
-                                <td class="text-end"
-                                    th:text="'R$ ' + ${#numbers.formatDecimal(petCare.price, 1, 'POINT', 2, 'COMMA')}">
-                                </td>
-                            </tr>
-
-                            <tr th:if="${petCarePage.isEmpty()}">
-                                <td colspan="4" class="text-center text-muted py-4">
-                                    Nenhum serviço cadastrado.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="d-flex flex-wrap gap-2">
+                    <a th:href="@{/petCare/new}" class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-plus-lg me-1"></i> Novo
+                    </a>
                 </div>
             </div>
-            <nav th:if="${petCarePage.totalPages > 1}" aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
+        </div>
+
+        <!-- Search Section -->
+        <div class="mb-4 mt-3">
+            <form th:action="@{/petCare}" method="get" class="row g-3 align-items-end">
+                <div class="col-lg-6">
+                    <label for="description" class="form-label fw-semibold">Buscar pela Descrição</label>
+                    <input type="text" id="description" name="description" class="form-control"
+                        placeholder="Descrição do serviço..." th:value="${description}">
+                </div>
+                <div class="col-lg-2">
+                    <label for="status" class="form-label fw-semibold">Status</label>
+                    <select id="status" name="status" class="form-select">
+                        <option th:each="s : ${statuses}" th:value="${s}"
+                            th:text="${s.name() == 'ACTIVE'} ? 'Ativo' : 'Inativo'" th:selected="${status == s}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-lg-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary d-flex align-items-center">
+                        <i class="bi bi-search me-2"></i>Buscar
+                    </button>
+                    <a th:href="@{/petCare}" class="btn btn-outline-secondary d-flex align-items-center">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Services Table -->
+        <div class="border rounded">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Grupo</th>
+                            <th scope="col" class="text-end">Preço</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="petCare : ${petCarePage.content}" class="clickable-row"
+                            th:data-href="@{/petCare/{id}(id=${petCare.id})}">
+
+                            <td>
+                                <a th:href="@{/petCare/{id}(id=${petCare.id})}"
+                                    class="text-decoration-none d-flex align-items-center"
+                                    th:classappend="${!petCare.isActive} ? 'text-decoration-line-through text-muted' : 'text-dark'">
+                                    <span th:text="${petCare.description}"></span>
+                                    <span th:if="${!petCare.isActive}" class="badge bg-danger ms-2">Inativo</span>
+                                </a>
+                            </td>
+
+                            <td>
+                                <span th:if="${petCare.group != null}" class="badge bg-secondary"
+                                    th:text="${petCare.group.description}"></span>
+                                <em th:if="${petCare.group == null}" class="text-muted small">Nenhum</em>
+                            </td>
+
+                            <td class="text-end"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(petCare.price, 1, 'POINT', 2, 'COMMA')}">
+                            </td>
+                        </tr>
+
+                        <tr th:if="${petCarePage.isEmpty()}" style="pointer-events: none;">
+                            <td colspan="3" class="text-center text-muted py-5">
+                                <i class="bi bi-tools fs-1 mb-3 d-block"></i>
+                                <h6 class="text-muted">Nenhum serviço cadastrado</h6>
+                                <p class="text-muted small mb-0">Comece cadastrando o primeiro serviço</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${petCarePage.totalPages > 1}" aria-label="Page navigation" class="p-3 border-top">
+                <ul class="pagination justify-content-center mb-0">
                     <li class="page-item" th:classappend="${petCarePage.first} ? 'disabled'">
                         <a class="page-link"
-                            th:href="@{/petCare(page=${petCarePage.number - 1}, size=${petCarePage.size}, description=${description})}">Anterior</a>
+                            th:href="@{/petCare(page=${petCarePage.number - 1}, size=${petCarePage.size}, description=${description})}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
                     </li>
-
 
                     <li th:each="i : ${#numbers.sequence(0, petCarePage.totalPages - 1)}" class="page-item"
                         th:classappend="${i == petCarePage.number} ? 'active'">
@@ -94,22 +110,22 @@
 
                     <li class="page-item" th:classappend="${petCarePage.last} ? 'disabled'">
                         <a class="page-link"
-                            th:href="@{/petCare(page=${petCarePage.number + 1}, size=${petCarePage.size}, description=${description})}">Próxima</a>
+                            th:href="@{/petCare(page=${petCarePage.number + 1}, size=${petCarePage.size}, description=${description})}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
                     </li>
-
                 </ul>
             </nav>
         </div>
+
         <script>
-
-            if ($(".clickable-row").length) {
-                $(".clickable-row").on("click", function (event) {
-                    if ($(event.target).closest('a.badge').length === 0) {
-                        window.location = $(this).data("href");
-                    }
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.clickable-row').forEach(row => {
+                    row.addEventListener('click', function (event) {
+                        window.location = this.getAttribute('data-href');
+                    });
                 });
-            }
-
+            });
         </script>
     </div>
 </body>
