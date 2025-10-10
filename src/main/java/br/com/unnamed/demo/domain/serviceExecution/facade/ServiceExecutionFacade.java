@@ -100,14 +100,6 @@ public class ServiceExecutionFacade {
 
     }
 
-    // public void updateServiceExecution(Long serviceExecutionId,
-    // List<ServiceExecutionChecklistItem> checklist,
-    // String obs) {
-
-    // service.updateInfo(serviceExecutionId, checklist, obs);
-
-    // }
-
     public void updateServiceExecution(Long serviceExecutionId, List<Long> selectedItems, String obs) {
 
         service.updateInfo(serviceExecutionId, selectedItems, obs);

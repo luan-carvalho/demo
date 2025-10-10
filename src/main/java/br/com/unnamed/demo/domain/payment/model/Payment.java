@@ -50,7 +50,7 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    public Payment(PaymentMethod paymentMethod,
+    public Payment(ServiceExecution serviceExecution, PaymentMethod paymentMethod,
             BigDecimal amount) {
 
         if (amount.compareTo(BigDecimal.ZERO) < 0)

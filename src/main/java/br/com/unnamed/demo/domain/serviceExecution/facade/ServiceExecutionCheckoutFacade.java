@@ -36,10 +36,11 @@ public class ServiceExecutionCheckoutFacade {
     public void addPayment(Long serviceExecutionId, Long typeId, BigDecimal amount, Integer installments) {
 
         PaymentMethod method = paymentService.findPaymentMethodById(typeId);
+        ServiceExecution s = service.findById(serviceExecutionId);
 
         if (installments == null || installments.compareTo(1) == 0) {
 
-            service.addPayment(serviceExecutionId, new Payment(method, amount));
+            service.addPayment(s, new Payment(s, method, amount));
             return;
 
         }
@@ -47,9 +48,9 @@ public class ServiceExecutionCheckoutFacade {
         List<Payment> payments = InstallmentsCalculator
                 .calculateInstallmentsDistributed(amount, installments)
                 .stream()
-                .map(a -> new Payment(method, a)).toList();
+                .map(a -> new Payment(s, method, a)).toList();
 
-        service.addPayments(serviceExecutionId, payments);
+        service.addPayments(s, payments);
 
     }
 

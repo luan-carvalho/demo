@@ -91,17 +91,15 @@ public class ServiceExecutionService {
 
     }
 
-    public void addPayment(Long serviceExecutionId, Payment payment) {
+    public void addPayment(ServiceExecution serviceExecution, Payment payment) {
 
-        ServiceExecution serviceExecution = findById(serviceExecutionId);
         serviceExecution.addPayment(payment);
         repo.save(serviceExecution);
 
     }
 
-    public void addPayments(Long serviceExecutionId, List<Payment> payments) {
+    public void addPayments(ServiceExecution serviceExecution, List<Payment> payments) {
 
-        ServiceExecution serviceExecution = findById(serviceExecutionId);
         serviceExecution.addPayments(payments);
         repo.save(serviceExecution);
 
