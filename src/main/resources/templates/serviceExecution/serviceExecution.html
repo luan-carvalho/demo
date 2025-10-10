@@ -1,93 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
 <body>
     <main class="container py-4" th:fragment="content">
 
-        <!-- Header / Actions -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <!-- Breadcrumb + Actions -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div class="text-muted small d-flex align-items-center">
+                <a th:href="@{/serviceExecution}" class="text-decoration-none text-muted">Atendimentos</a>
+                <i class="bi bi-chevron-right mx-2 small"></i>
+                <span class="text-dark fw-semibold" th:text="'Atendimento #' + ${serviceExecution.id}"></span>
+            </div>
 
-                <!-- Title & Date -->
-                <div class="d-flex align-items-center gap-2">
-                    <h1 class="h4 mb-0" th:text="'Atendimento #' + ${serviceExecution.id}"></h1>
-                    <small class="badge bg-primary fs-7" th:if="${serviceExecution.date != null}"
-                        th:text="${#temporals.format(serviceExecution.date, 'dd/MM/yy')}"></small>
-                </div>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2"
+                    form="serviceExecutionForm"
+                    th:if="${not #lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}">
+                    <i class="bi bi-save2 me-2"></i>Salvar
+                </button>
 
-                <!-- Status Badge -->
-                <span th:text="${serviceExecution.status.label}" class="badge fw-bold fs-6"
-                    th:classappend="${serviceExecution.status.label == 'Pendente' ? ' bg-secondary' :
-                                    serviceExecution.status.label == 'Em execução' ? ' bg-primary' :
-                                    serviceExecution.status.label == 'Finalizado' ? ' bg-success' :
-                                    serviceExecution.status.label == 'Cancelado' ? ' bg-danger' :
-                                    serviceExecution.status.label == 'Baixado' ? ' bg-primary' : ' bg-light text-dark'}">
-                </span>
-
-                <!-- Actions -->
-                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-center">
-                    <!-- Save -->
-                    <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2"
-                        form="serviceExecutionForm"
-                        th:if="${not #lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}">
-                        <i class="bi bi-save2 me-2"></i> Salvar
+                <form
+                    th:if="${serviceExecution.status.label == 'Pendente' and not serviceExecution.selectedPetCareIds.isEmpty()}"
+                    th:action="@{/serviceExecution/{id}/start(id=${serviceExecution.id}, src='editPage')}" method="post"
+                    class="m-0">
+                    <button type="submit" class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-play-circle me-2"></i>Iniciar
                     </button>
+                </form>
 
-                    <!-- Workflow -->
-                    <form
-                        th:if="${serviceExecution.status.label == 'Pendente' and not serviceExecution.selectedPetCareIds.isEmpty()}"
-                        th:action="@{/serviceExecution/{id}/start(id=${serviceExecution.id}, src='editPage')}"
-                        method="post" class="m-0">
-                        <button type="submit"
-                            class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
-                            <i class="bi bi-play-circle me-2"></i> Iniciar
-                        </button>
-                    </form>
-
-                    <form th:if="${serviceExecution.status.label == 'Em execução'}"
-                        th:action="@{/serviceExecution/{id}/markAsDone(id=${serviceExecution.id}, src='editPage')}"
-                        method="post" class="m-0">
-                        <button type="submit"
-                            class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
-                            <i class="bi bi-check-lg me-2"></i> Finalizar
-                        </button>
-                    </form>
-
-                    <a th:if="${serviceExecution.status.label == 'Finalizado'}"
-                        th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}"
-                        class="btn btn-success btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-currency-dollar me-2"></i> Baixar
-                    </a>
-
-                    <!-- Cancel -->
-                    <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
-                        th:if="${serviceExecution.status.label != 'Cancelado'}" type="button"
-                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
-                        data-bs-target="#cancelConfirmModal">
-                        <i class="bi bi-trash me-1"></i> Cancelar
+                <form th:if="${serviceExecution.status.label == 'Em execução'}"
+                    th:action="@{/serviceExecution/{id}/markAsDone(id=${serviceExecution.id}, src='editPage')}"
+                    method="post" class="m-0">
+                    <button type="submit" class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-check-lg me-2"></i>Finalizar
                     </button>
+                </form>
 
-                    <!-- Back -->
-                    <a th:href="@{/serviceExecution}"
-                        class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-arrow-left-circle me-2"></i> Voltar
-                    </a>
-                </div>
+                <a th:if="${serviceExecution.status.label == 'Finalizado'}"
+                    th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}"
+                    class="btn btn-success btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-currency-dollar me-2"></i>Baixar
+                </a>
+
+                <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
+                    th:if="${serviceExecution.status.label != 'Cancelado'}" type="button"
+                    class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
+                    data-bs-target="#cancelConfirmModal">
+                    <i class="bi bi-trash me-1"></i>Cancelar
+                </button>
+
+                <a th:href="@{/serviceExecution}" class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-arrow-left-circle me-2"></i>Voltar
+                </a>
             </div>
         </div>
 
-        <!-- Cancel Modal (unchanged, just spacing improved) -->
+        <!-- Cancel Modal -->
         <div class="modal fade" id="cancelConfirmModal" tabindex="-1" aria-labelledby="cancelConfirmModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow">
                     <div class="modal-header bg-danger text-white">
                         <h5 class="modal-title" id="cancelConfirmModalLabel">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmar Cancelamento
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Cancelamento
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body fs-6">
-                        Tem certeza que deseja <strong>cancelar este atendimento</strong>? Essa ação não poderá ser
-                        desfeita.
+                        Tem certeza que deseja cancelar este atendimento? Essa ação não poderá ser desfeita.
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary px-3 py-2"
@@ -106,111 +86,125 @@
             method="post" th:object="${serviceExecution}">
 
             <div class="row g-4">
+                <!-- LEFT COLUMN -->
+                <div class="col-lg-8">
+                    <!-- Atendimento Info -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-dark mb-3">
+                            <i class="bi bi-info-circle me-2 text-primary"></i>Detalhes do Atendimento
+                        </h5>
 
-                <section class="col-lg-8">
-
-                    <div class="card shadow-sm mb-3">
-                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Cliente</h5>
-                            <a th:if="${not #lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}"
-                                th:href="@{/serviceExecution/clientSelection?context=update(serviceExecutionId = ${serviceExecution.id})}"
-                                class="btn btn-outline-secondary btn-sm d-flex align-items-center px-3 py-2">
-                                <i class="bi bi-pencil-square me-2"></i> Editar
-                            </a>
-                        </div>
-                        <div class="card-body py-3 fs-6">
-                            <p class="mb-1"><span class="text-muted">Pet:</span> <strong
-                                    th:text="${serviceExecution.petName}"></strong></p>
-                            <p class="mb-0"><span class="text-muted">Tutor:</span> <strong
-                                    th:text="${serviceExecution.tutorName}"></strong></p>
-                        </div>
-                    </div>
-
-                    <div class="card shadow-sm mb-3">
-                        <div class="card-header py-3">
-                            <h5 class="card-title mb-0"><i class="bi bi-list me-2"></i>Serviços selecionados</h5>
-                        </div>
-                        <div class="card-body py-3">
-                           
-                        </div>
-                    </div>
-
-
-
-                    <div class="card shadow-sm mb-3">
-                        <div class="card-header py-3">
-                            <h5 class="card-title mb-0"><i class="bi bi-chat-text me-2"></i>Observações</h5>
-                        </div>
-                        <div class="card-body py-3">
-                            <textarea class="form-control form-control-md" id="observations" th:field="*{obs}" rows="4"
-                                placeholder="Adicione observações relevantes sobre o atendimento..."
-                                th:attr="disabled=${#lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}"></textarea>
-                        </div>
-                    </div>
-
-                </section>
-
-                <aside class="col-lg-4">
-
-                    <div class="card shadow-sm mb-3 text-center">
-                        <div class="card-header bg-light py-3">
-                            <h5 class="card-title mb-0"><i class="bi bi-cash-coin me-2"></i>Valor Total</h5>
-                        </div>
-                        <div class="card-body py-3">
-                            <h4 class="fw-bold text-dark mb-0 fs-4"
-                                th:text="'R$ ' + ${#numbers.formatDecimal(serviceExecution.total, 1, 'POINT', 2, 'COMMA')}">
-                            </h4>
-                        </div>
-                    </div>
-
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0"><i class="bi bi-cash-stack me-2"></i>Pagamentos</h5>
-                            <a th:if="${not #lists.contains({'Finalizado','Baixado','Cancelado'}, serviceExecution.status.label) and not serviceExecution.selectedPetCareIds.isEmpty()}"
-                                class="btn btn-outline-primary btn-sm px-3 py-2"
-                                th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}">
-                                <i class="bi bi-credit-card me-2"></i> Adiantamento
-                            </a>
-                        </div>
-                        <div class="card-body p-2">
-                            <div class="list-group list-group-flush"
-                                th:if="${!serviceExecution.payments    .isEmpty()}">
-                                <div class="list-group-item d-flex justify-content-between align-items-center py-2"
-                                    th:each="payment : ${serviceExecution.payments}">
-                                    <span class="fs-6">
-                                        <span th:switch="${payment.type}">
-                                            <i th:case="'Cartão de crédito'"
-                                                class="bi bi-credit-card-2-front text-muted me-2"></i>
-                                            <i th:case="'Cartão de débito'"
-                                                class="bi bi-credit-card text-muted me-2"></i>
-                                            <span th:case="'PIX'">
-                                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path
-                                                        d="M11.917 11.71a2.046 2.046 0 0 1-1.454-.602l-2.1-2.1a.4.4 0 0 0-.551 0l-2.108 2.108a2.044 2.044 0 0 1-1.454.602h-.414l2.66 2.66c.83.83 2.177.83 3.007 0l2.667-2.668h-.253zM4.25 4.282c.55 0 1.066.214 1.454.602l2.108 2.108a.39.39 0 0 0 .552 0l2.1-2.1a2.044 2.044 0 0 1 1.453-.602h.253L9.503 1.623a2.127 2.127 0 0 0-3.007 0l-2.66 2.66h.414z" />
-                                                    <path
-                                                        d="m14.377 6.496-1.612-1.612a.307.307 0 0 1-.114.023h-.733c-.379 0-.75.154-1.017.422l-2.1 2.1a1.005 1.005 0 0 1-1.425 0L5.268 5.32a1.448 1.448 0 0 0-1.018-.422h-.9a.306.306 0 0 1-.109-.021L1.623 6.496c-.83.83-.83 2.177 0 3.008l1.618 1.618a.305.305 0 0 1 .108-.022h.901c.38 0 .75-.153 1.018-.421L7.375 8.57a1.034 1.034 0 0 1 1.426 0l2.1 2.1c.267.268.638.421 1.017.421h.733c.04 0 .079.01.114.024l1.612-1.612c.83-.83.83-2.178 0-3.008z" />
-                                                </svg>
-                                            </span>
-                                            <i th:case="'Permuta'" class="bi bi-arrow-left-right text-muted me-2"></i>
-                                            <i th:case="'Dinheiro'" class="bi bi-cash text-muted me-2"></i>
-                                        </span>
-                                        <span th:text="${payment.type}"></span>
-                                    </span>
-                                    <span class="badge bg-light text-dark fs-6">
-                                        <span
-                                            th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}"></span>
-                                    </span>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small mb-1">Status</label>
+                                <div class="fw-semibold" th:text="${serviceExecution.status.label}"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small mb-1">Data</label>
+                                <div class="fw-semibold"
+                                    th:text="${#temporals.format(serviceExecution.date, 'dd/MM/yyyy')}"></div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <label class="form-label text-muted small mb-1">Valor Total</label>
+                                <div class="fs-4 fw-bold text-success"
+                                    th:text="'R$ ' + ${#numbers.formatDecimal(serviceExecution.total, 1, 'POINT', 2, 'COMMA')}">
                                 </div>
                             </div>
-                            <p class="text-center text-muted py-3 fs-6" th:if="${serviceExecution.payments.isEmpty()}">
-                                Nenhum pagamento
-                                adicionado.</p>
                         </div>
                     </div>
 
-                </aside>
+                    <!-- Cliente -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="fw-bold text-dark mb-0">
+                                <i class="bi bi-person-fill me-2 text-primary"></i>Cliente
+                            </h5>
+                            <a th:if="${not #lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}"
+                                th:href="@{/serviceExecution/clientSelection?context=update(serviceExecutionId=${serviceExecution.id})}"
+                                class="btn btn-outline-secondary btn-sm px-2 py-1 d-flex align-items-center">
+                                <i class="bi bi-pencil me-1"></i>Editar
+                            </a>
+                        </div>
+                        <p class="mb-1"><span class="text-muted small">Pet:</span> <strong
+                                th:text="${serviceExecution.petName}"></strong></p>
+                        <p class="mb-0"><span class="text-muted small">Tutor:</span> <strong
+                                th:text="${serviceExecution.tutorName}"></strong></p>
+                    </div>
 
+                    <!-- Serviços Selecionados -->
+                    <section class="mb-4">
+                        <h5 class="fw-semibold text-dark mb-3">
+                            <i class="bi bi-list-check me-2 text-primary"></i>Serviços Selecionados
+                        </h5>
+
+                        <!-- Iterate over groups -->
+                        <div th:each="group : ${all_pet_care_groups}" class="mb-4">
+                            <!-- Group title -->
+                            <h6 class="fw-semibold text-secondary border-bottom pb-1 mb-2 small"
+                                th:text="${group.description}"></h6>
+
+                            <!-- List of services for this group -->
+                            <div class="d-flex flex-column gap-1">
+                                <div class="form-check d-flex justify-content-between align-items-center ps-3 pe-2 py-1 rounded hover-bg-light"
+                                    th:each="petcare : ${group.petcares}">
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-check-input me-2 service-checkbox" type="checkbox"
+                                            th:field="*{selectedPetCareIds}" th:value="${petcare.id}"
+                                            th:id="'petcare-' + ${petcare.id}"
+                                            th:attr="data-price=${petcare.price}, disabled=${#lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}" />
+                                        <label class="form-check-label small fw-medium text-dark"
+                                            th:for="'petcare-' + ${petcare.id}"
+                                            th:text="${petcare.description}"></label>
+                                    </div>
+                                    <span class="text-muted small"
+                                        th:text="'R$ ' + ${#numbers.formatDecimal(petcare.price, 1, 'POINT', 2, 'COMMA')}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+
+
+                    <!-- Observações -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-dark mb-2">
+                            <i class="bi bi-chat-left-text me-2 text-primary"></i>Observações
+                        </h5>
+                        <textarea class="form-control form-control-sm" id="observations" th:field="*{obs}" rows="3"
+                            placeholder="Adicione observações..."
+                            th:attr="disabled=${#lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}"></textarea>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="col-lg-4">
+                    <!-- Pagamentos -->
+                    <h5 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-cash-stack me-2 text-primary"></i>Pagamentos
+                    </h5>
+                    <div class="border rounded p-3 bg-light">
+                        <div th:if="${!serviceExecution.payments.isEmpty()}">
+                            <div th:each="payment : ${serviceExecution.payments}"
+                                class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted" th:text="${payment.type}"></span>
+                                <span class="fw-semibold"
+                                    th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}"></span>
+                            </div>
+                        </div>
+                        <p th:if="${serviceExecution.payments.isEmpty()}" class="text-muted fst-italic small mb-0">
+                            Nenhum pagamento registrado.
+                        </p>
+                    </div>
+
+                    <a th:if="${not #lists.contains({'Finalizado','Baixado','Cancelado'}, serviceExecution.status.label) and not serviceExecution.selectedPetCareIds.isEmpty()}"
+                        class="btn btn-outline-primary btn-sm d-flex align-items-center mt-3"
+                        th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}">
+                        <i class="bi bi-credit-card me-2"></i> Adiantamento
+                    </a>
+                </div>
             </div>
         </form>
     </main>
 </body>
+
+</html>
