@@ -4,33 +4,45 @@
 <body>
     <div class="container" th:fragment="content">
         <!-- Header -->
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center text-muted mb-1">
-                    <span th:if="${serviceExecutionId == null}" class="text-decoration-none text-muted small fs-6"> Novo
-                        Atendimento</span>
-                    <a th:if="${serviceExecutionId != null}" th:text="'Atendimento #' + ${serviceExecutionId}"
-                        class="text-decoration-none text-muted small fs-6"
-                        th:href="@{/serviceExecution/{id}(id=${serviceExecutionId})}"></a>
-                    <i class="bi bi-chevron-right mx-2 small"></i>
-                    <span class="text-muted">Selecionar Cliente</span>
-                </div>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <!-- Left Side: Breadcrumb (Updated) -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 d-flex align-items-center">
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/serviceExecution}"
+                            class="text-decoration-none text-muted small fs-6">Atendimentos</a>
+                    </li>
+                    <!-- Conditional breadcrumb for New vs. Existing Service -->
+                    <li th:if="${serviceExecutionId == null}" class="breadcrumb-item">
+                        <span class="text-decoration-none text-muted small fs-6">Novo Atendimento</span>
+                    </li>
+                    <li th:if="${serviceExecutionId != null}" class="breadcrumb-item">
+                        <a th:href="@{/serviceExecution/{id}(id=${serviceExecutionId})}"
+                            class="text-decoration-none text-muted small fs-6"
+                            th:text="'Atendimento #' + ${serviceExecutionId}"></a>
+                    </li>
+                    <!-- Active Page -->
+                    <li class="breadcrumb-item active text-dark fw-semibold small fs-6" aria-current="page">
+                        Selecionar Cliente
+                    </li>
+                </ol>
+            </nav>
 
-                <div class="d-flex flex-wrap gap-2">
-                    <a th:href="@{/tutor/new(context=${context},serviceId=${serviceExecutionId})}"
-                        class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-person-plus-fill me-2"></i>
-                        Novo Tutor
-                    </a>
-                    <a th:href="@{/serviceExecution/{id}(id=${serviceExecutionId})}"
-                        class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-arrow-left me-2"></i> Voltar
-                    </a>
-                </div>
+            <!-- Right Side: Action Buttons (Unchanged) -->
+            <div class="d-flex flex-wrap gap-2">
+                <a th:href="@{/tutor/new(context=${context},serviceId=${serviceExecutionId})}"
+                    class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-person-plus-fill me-2"></i>
+                    Novo Tutor
+                </a>
+                <a th:href="${serviceExecutionId == null} ? @{/serviceExecution} : @{/serviceExecution/{id}(id=${serviceExecutionId})}"
+                    class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-arrow-left me-2"></i> Voltar
+                </a>
             </div>
         </div>
 
-        <!-- Search Section -->
+        <!-- Search Section (Unchanged) -->
         <div class="mb-4 mt-3">
             <form th:action="@{/serviceExecution/clientSelection}" method="get" class="row g-3 align-items-end">
                 <input type="hidden" name="context" th:value="${context}">
@@ -53,7 +65,7 @@
             </form>
         </div>
 
-        <!-- Tutors Table -->
+        <!-- Tutors Table (Unchanged) -->
         <div class="border rounded">
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
@@ -71,7 +83,7 @@
                                     <div class="d-flex flex-wrap gap-3 align-items-center">
                                         <th:block th:each="pet : ${tutor.getActivePets()}">
                                             <form
-                                                th:action="${serviceExecutionId == null} ? @{/serviceExecution/create} : @{/serviceExecution/updateClient}"
+                                                th:action="${serviceExecutionId == null} ? @{/serviceExecution} : @{/serviceExecution/{id}/updateClient(id=${serviceExecutionId})}"
                                                 method="post" class="m-0">
                                                 <input th:if="${serviceExecutionId != null}" type="hidden"
                                                     name="serviceExecutionId" th:value="${serviceExecutionId}" />
@@ -92,7 +104,7 @@
                                             <div class="modal-dialog modal-dialog-centered modal-sm">
                                                 <div class="modal-content">
                                                     <form
-                                                        th:action="${serviceExecutionId == null} ? @{/serviceExecution/create} : @{/serviceExecution/updateClient}"
+                                                        th:action="${serviceExecutionId == null} ? @{/serviceExecution} : @{/serviceExecution/{id}/updateClient(id=${serviceExecutionId})}"
                                                         method="post">
                                                         <div class="modal-header">
                                                             <h6 class="modal-title">Novo Pet
@@ -138,7 +150,7 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
+            <!-- Pagination (Unchanged)-->
             <nav th:if="${tutorsPage.totalPages > 1}" aria-label="Page navigation" class="p-3 border-top">
                 <ul class="pagination justify-content-center mb-0">
                     <li class="page-item" th:classappend="${tutorsPage.first} ? 'disabled'">

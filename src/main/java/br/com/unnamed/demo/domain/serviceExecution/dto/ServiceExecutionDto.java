@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import br.com.unnamed.demo.domain.payment.dto.PaymentSimpleListDto;
+import br.com.unnamed.demo.domain.petCare.model.PetCareGroup;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
+import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionChecklistItem;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 
 public record ServiceExecutionDto(
@@ -14,10 +16,11 @@ public record ServiceExecutionDto(
         ServiceStatus status,
         String tutorName,
         String petName,
-        List<Long> selectedPetCareIds,
+        List<ServiceExecutionChecklistItem> checklist,
         List<PaymentSimpleListDto> payments,
         String obs,
-        BigDecimal total) {
+        BigDecimal total,
+        boolean canBeUpdated) {
 
     public ServiceExecutionDto(ServiceExecution s) {
 
@@ -27,10 +30,17 @@ public record ServiceExecutionDto(
                 s.getServiceStatus(),
                 s.getTutor().getName(),
                 s.getPet().getName(),
-                s.getExecutedServices().stream().map(ex -> ex.getPetCare().getId()).toList(),
+                s.getChecklist(),
                 s.getPayments().stream().map(p -> new PaymentSimpleListDto(p)).toList(),
                 s.getObs(),
-                s.calculateTotal());
+                s.calculateTotal(),
+                s.canBeUpdated());
+
+    }
+
+    public List<ServiceExecutionChecklistItem> getByGroup(PetCareGroup group) {
+
+        return this.checklist.stream().filter(item -> item.getPetCare().getGroup().equals(group)).toList();
 
     }
 

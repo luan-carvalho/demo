@@ -9,9 +9,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 
 @Entity
-public class ServiceExecutionItem {
+@Getter
+public class ServiceExecutionChecklistItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,28 +24,18 @@ public class ServiceExecutionItem {
     private PetCare petCare;
     private BigDecimal unitPrice;
 
-    public ServiceExecutionItem() {
+    private boolean selected;
+
+    public ServiceExecutionChecklistItem() {
 
     }
 
-    public ServiceExecutionItem(PetCare petCare) {
-        
+    public ServiceExecutionChecklistItem(PetCare petCare) {
+
         this.petCare = petCare;
         this.unitPrice = petCare.getPrice();
+        this.selected = false;
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public PetCare getPetCare() {
-        return petCare;
-    }
-
-
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
     }
 
     @Override
@@ -51,6 +43,16 @@ public class ServiceExecutionItem {
         return petCare.getDescription();
     }
 
-    
+    public void check() {
+
+        this.selected = true;
+
+    }
+
+    public void uncheck() {
+
+        this.selected = false;
+
+    }
 
 }

@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
-import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -24,9 +24,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class ServiceExecution {
 
     @Id
@@ -52,7 +54,7 @@ public class ServiceExecution {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "service_execution_id")
-    private List<ServiceExecutionItem> executedServices;
+    private List<ServiceExecutionChecklistItem> checklist;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -63,26 +65,16 @@ public class ServiceExecution {
     @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments;
 
-    public ServiceExecution() {
+    public ServiceExecution(Tutor tutor, Pet pet, List<PetCare> petCares) {
 
-        this.executedServices = new ArrayList<>();
+        this.tutor = tutor;
+        this.pet = pet;
         this.date = LocalDate.now();
         this.serviceStatus = ServiceStatus.PENDING;
-        this.payments = new ArrayList<>();
         this.paymentStatus = ServicePaymentStatus.NOT_PAID;
-
-    }
-
-    public ServiceExecution(ServiceExecutionBuilder builder) {
-
-        this.id = builder.getId();
-        this.tutor = builder.getTutor();
-        this.pet = builder.getPet();
-        this.date = builder.getDate();
-        this.serviceStatus = builder.getStatus();
-        this.executedServices = new ArrayList<>();
+        this.checklist = new ArrayList<>();
         this.payments = new ArrayList<>();
-        this.paymentStatus = builder.getPaymentStatus();
+        petCares.stream().forEach(p -> checklist.add(new ServiceExecutionChecklistItem(p)));
 
     }
 
@@ -153,11 +145,11 @@ public class ServiceExecution {
 
     }
 
-    public void markAsPaid() {
+    public void finish() {
 
         this.paymentStatus = ServicePaymentStatus.PAID;
         this.serviceStatus = ServiceStatus.COMPLETED;
-
+        this.checklist.removeIf(Predicate.not(ServiceExecutionChecklistItem::isSelected));
         this.payments
                 .stream()
                 .forEach(Payment::markAsFinal);
@@ -166,18 +158,19 @@ public class ServiceExecution {
 
     public void addService(PetCare petCare) {
 
-        this.executedServices.add(new ServiceExecutionItem(petCare));
+        this.checklist.add(new ServiceExecutionChecklistItem(petCare));
 
     }
 
     public BigDecimal calculateTotal() {
 
-        if (this.executedServices == null || this.executedServices.isEmpty()) {
+        if (this.checklist == null || this.checklist.isEmpty()) {
             return BigDecimal.ZERO;
         }
 
-        return this.executedServices.stream().map(ServiceExecutionItem::getUnitPrice).reduce(BigDecimal.ZERO,
-                BigDecimal::add);
+        return this.checklist.stream().filter(ServiceExecutionChecklistItem::isSelected)
+                .map(ServiceExecutionChecklistItem::getUnitPrice).reduce(BigDecimal.ZERO,
+                        BigDecimal::add);
 
     }
 
@@ -188,16 +181,23 @@ public class ServiceExecution {
 
     }
 
-    public void updateExecutedServices(List<ServiceExecutionItem> newExecutedServices) {
+    // public void updateChecklist(List<ServiceExecutionChecklistItem> checklist) {
 
-        this.executedServices.clear();
-        this.executedServices.addAll(newExecutedServices);
+    // this.checklist = checklist;
+
+    // }
+
+    public void updateChecklist(List<Long> selectedItems) {
+
+        this.checklist.stream().forEach(ServiceExecutionChecklistItem::uncheck);
+        this.checklist.stream().filter(item -> selectedItems.contains(item.getId()))
+                .forEach(ServiceExecutionChecklistItem::check);
 
     }
 
     public boolean isEmpty() {
 
-        return this.executedServices.isEmpty();
+        return this.checklist.isEmpty();
 
     }
 
@@ -210,6 +210,12 @@ public class ServiceExecution {
     public boolean canBeFinished() {
 
         return isFullyPaid() && serviceStatus == ServiceStatus.DONE;
+
+    }
+
+    public boolean canBeUpdated() {
+
+        return this.serviceStatus != ServiceStatus.COMPLETED && this.serviceStatus != ServiceStatus.CANCELLED;
 
     }
 

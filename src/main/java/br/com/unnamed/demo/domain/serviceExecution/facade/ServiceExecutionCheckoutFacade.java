@@ -37,7 +37,7 @@ public class ServiceExecutionCheckoutFacade {
 
         PaymentMethod method = paymentService.findPaymentMethodById(typeId);
 
-        if (installments.compareTo(1) == 0) {
+        if (installments == null || installments.compareTo(1) == 0) {
 
             service.addPayment(serviceExecutionId, new Payment(method, amount));
             return;

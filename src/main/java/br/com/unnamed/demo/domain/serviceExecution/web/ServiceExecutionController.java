@@ -1,6 +1,7 @@
 package br.com.unnamed.demo.domain.serviceExecution.web;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -131,9 +132,8 @@ public class ServiceExecutionController {
 
         ServiceExecution s = facade.findServiceExecutionById(id);
 
-        model.addAttribute("all_pet_care_groups", facade.findAllPetCareGroups());
-
         model.addAttribute("serviceExecution", new ServiceExecutionDto(s));
+        model.addAttribute("petCareGroups", facade.findAllPetCareGroups());
 
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecution");
@@ -166,31 +166,32 @@ public class ServiceExecutionController {
 
     }
 
-    @PostMapping("/updateClient")
-    public String updateClient(Long serviceExecutionId, Long tutorId,
+    @PostMapping("/{serviceExecutionId}/updateClient")
+    public String updateClient(@PathVariable Long serviceExecutionId, Long tutorId,
             @RequestParam(required = false) Long petId,
             @RequestParam(required = false) String petName, RedirectAttributes attributes) {
 
         if (petId == null && petName != null && !petName.isBlank()) {
 
             facade.updateClientWithNewPet(serviceExecutionId, tutorId, petName);
-            attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
+            attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
             return "redirect:/serviceExecution/" + serviceExecutionId;
 
         }
 
         facade.updateClient(serviceExecutionId, tutorId, petId);
 
-        attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
+        attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
         return "redirect:/serviceExecution/" + serviceExecutionId;
 
     }
 
     @PostMapping("/{serviceExecutionId}")
-    public String save(@PathVariable Long serviceExecutionId, Model model, ServiceExecutionDto s,
+    public String save(@PathVariable Long serviceExecutionId, Model model, @RequestParam String obs,
+            @RequestParam List<Long> selectedItems,
             RedirectAttributes attributes) {
 
-        facade.updateServiceExecution(serviceExecutionId, s.selectedPetCareIds(), s.obs());
+        facade.updateServiceExecution(serviceExecutionId, selectedItems, obs);
         attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
         return "redirect:/serviceExecution/" + serviceExecutionId;
 

@@ -66,7 +66,8 @@ public class ServiceExecutionFacade {
 
         Tutor tutor = tutorService.findById(tutorId);
         Pet pet = tutorService.findByTutorAndPetId(tutorId, petId);
-        ServiceExecution created = service.create(tutor, pet);
+        List<PetCare> petCares = petCareService.findAllActive();
+        ServiceExecution created = service.create(tutor, pet, petCares);
 
         return created;
 
@@ -76,7 +77,8 @@ public class ServiceExecutionFacade {
 
         Tutor tutor = tutorService.findById(tutorId);
         Pet pet = tutorService.createPetAndSaveToTutor(tutorId, petName);
-        ServiceExecution created = service.create(tutor, pet);
+        List<PetCare> petCares = petCareService.findAllActive();
+        ServiceExecution created = service.create(tutor, pet, petCares);
 
         return created;
 
@@ -98,11 +100,17 @@ public class ServiceExecutionFacade {
 
     }
 
-    public void updateServiceExecution(Long serviceExecutionId, List<Long> selectedPetCareIds, String obs) {
+    // public void updateServiceExecution(Long serviceExecutionId,
+    // List<ServiceExecutionChecklistItem> checklist,
+    // String obs) {
 
-        List<PetCare> petCares = selectedPetCareIds.stream().map(id -> petCareService.findById(serviceExecutionId))
-                .toList();
-        service.updateInfo(serviceExecutionId, petCares, obs);
+    // service.updateInfo(serviceExecutionId, checklist, obs);
+
+    // }
+
+    public void updateServiceExecution(Long serviceExecutionId, List<Long> selectedItems, String obs) {
+
+        service.updateInfo(serviceExecutionId, selectedItems, obs);
 
     }
 

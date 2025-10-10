@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
-import br.com.unnamed.demo.domain.serviceExecution.builder.ServiceExecutionBuilder;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionItem;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRepository;
@@ -120,31 +118,35 @@ public class ServiceExecutionService {
     public void finish(Long serviceId) {
 
         ServiceExecution service = findById(serviceId);
-        service.markAsPaid();
+        service.finish();
         repo.save(service);
 
     }
 
-    public ServiceExecution create(Tutor tutor, Pet pet) {
+    public ServiceExecution create(Tutor tutor, Pet pet, List<PetCare> petCares) {
 
-        return repo.save(
-                new ServiceExecutionBuilder()
-                        .tutor(tutor)
-                        .pet(pet)
-                        .date(LocalDate.now())
-                        .status(ServiceStatus.PENDING)
-                        .paymentStatus(ServicePaymentStatus.NOT_PAID)
-                        .build());
+        return repo.save(new ServiceExecution(tutor, pet, petCares));
 
     }
 
-    public void updateInfo(Long serviceExecutionId, List<PetCare> petCares, String obs) {
+    public void updateInfo(Long serviceExecutionId, List<Long> selectedItems,
+            String obs) {
 
         ServiceExecution toBeUpdated = findById(serviceExecutionId);
-        toBeUpdated.updateExecutedServices(petCares.stream().map(p -> new ServiceExecutionItem(p)).toList());
+        toBeUpdated.updateChecklist(selectedItems);
         toBeUpdated.updateObservation(obs);
         repo.save(toBeUpdated);
 
     }
+
+    // public void updateInfo(Long serviceExecutionId,
+    // List<ServiceExecutionChecklistItem> checklist, String obs) {
+
+    // ServiceExecution toBeUpdated = findById(serviceExecutionId);
+    // toBeUpdated.updateChecklist(checklist);
+    // toBeUpdated.updateObservation(obs);
+    // repo.save(toBeUpdated);
+
+    // }
 
 }

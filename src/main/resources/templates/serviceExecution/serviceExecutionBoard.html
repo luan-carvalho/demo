@@ -2,15 +2,28 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <div th:fragment="content">
+    <div th:fragment="content" class="container">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">Quadro de execução</h1>
-            <a th:href="@{/serviceExecution/new}" class="btn btn-primary shadow-sm">
-                <i class="bi bi-plus-lg me-1"></i> Novo
-            </a>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 d-flex align-items-center">
+                    <li class="breadcrumb-item active text-dark fw-semibold small fs-6" aria-current="page">Atendimentos
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- Right Side: Action Buttons -->
+            <div class="d-flex flex-wrap gap-2">
+                <a th:href="@{/serviceExecution/new}"
+                    class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-plus-lg me-1"></i> Novo Atendimento
+                </a>
+            </div>
         </div>
-        <div th:if="${existsNotPaid}" class="alert alert-warning shadow-sm" role="alert" sec:authorize="hasRole('ADMIN')">
+
+        <!-- Alert Box (Unchanged) -->
+        <div th:if="${existsNotPaid}" class="alert alert-warning shadow-sm" role="alert"
+            sec:authorize="hasRole('ADMIN')">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -22,6 +35,7 @@
             </div>
         </div>
 
+        <!-- Kanban Board (Unchanged) -->
         <div class="kanban-board d-flex flex-column flex-lg-row gap-4">
             <div class="kanban-column shadow-sm">
                 <div class="kanban-column-header">

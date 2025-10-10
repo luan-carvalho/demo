@@ -3,67 +3,78 @@
 
 <body>
     <div th:fragment="content" class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 d-flex align-items-center">
+                    <th:block th:if="${context == null}">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/tutor}" class="text-decoration-none text-muted small fs-6">Clientes</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/tutor/{id}(id=${tutorId})}"
+                                class="text-decoration-none text-muted small fs-6" th:text="${tutorName}"></a>
+                        </li>
+                        <li class="breadcrumb-item active text-dark fw-semibold small fs-6" aria-current="page"
+                            th:text="${mode == 'update'} ? ${pet.name} : 'Novo Pet'"></li>
+                    </th:block>
 
-        <!-- Path Style Header -->
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div th:if="${context == null}">
-                    <div class="d-flex align-items-center text-muted mb-1">
-                        <a th:href="@{/tutor}" class="text-decoration-none text-muted small fs-6">Clientes</a>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <a th:href="@{/tutor/{id}(id=${tutorId})}" class="text-decoration-none text-muted small fs-6"
-                            th:text="${tutorName}"></a>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <span class="text-dark fw-semibold"
-                            th:text="${mode == 'update'} ? ${pet.name} : 'Novo pet'"></span>
-                    </div>
-                </div>
+                    <th:block th:if="${context != null}">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/serviceExecution}"
+                                class="text-decoration-none text-muted small fs-6">Atendimentos</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a th:if="${serviceId != null}" th:href="@{/serviceExecution/{id}(id=${serviceId})}"
+                                class="text-decoration-none text-muted small fs-6"
+                                th:text="'Atendimento #' + ${serviceId}"></a>
+                            <span th:if="${serviceId == null}" class="text-decoration-none text-muted small fs-6">Novo
+                                Atendimento</span>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/serviceExecution/clientSelection(context=${context}, serviceExecutionId=${serviceId})}"
+                                class="text-decoration-none text-muted small fs-6">Selecionar Cliente</a>
+                        </li>
+                        <li class="breadcrumb-item text-decoration-none text-muted small fs-6" th:text="${tutorName}">
+                        </li>
+                        <li class="breadcrumb-item active text-dark fw-semibold small fs-6" aria-current="page">
+                            Novo Pet
+                        </li>
+                    </th:block>
+                </ol>
+            </nav>
 
-                <div th:if="${context != null}">
-                    <div class="d-flex align-items-center text-muted mb-1">
-                        <span th:if="${serviceId == null}" class="text-decoration-none text-muted small fs-6">
-                            Novo
-                            Atendimento</span>
-                        <a th:if="${serviceId != null}" th:text="'Atendimento #' + ${serviceId}"
-                            class="text-decoration-none text-muted small fs-6"
-                            th:href="@{/serviceExecution/{id}(id=${serviceId})}"></a>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <span class="text-muted">Selecionar cliente</span>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <span class="text-muted" th:text="${tutorName}"></span>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <span class="text-muted">Novo pet</span>
-                    </div>
-                </div>
+            <!-- Right Side: Action Buttons -->
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                <button type="submit" form="petForm" class="btn btn-primary btn-sm px-3 py-2 d-flex align-items-center">
+                    <i class="bi bi-save me-2"></i>
+                    <span th:text="${mode == 'update'} ? 'Salvar' : 'Cadastrar'"></span>
+                </button>
 
-                <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <button type="submit" form="petForm"
-                        class="btn btn-primary btn-sm px-3 py-2 d-flex align-items-center">
-                        <i class="bi bi-save me-2"></i>
-                        <span th:text="${mode == 'update'} ? 'Salvar' : 'Cadastrar'"></span>
-                    </button>
+                <!-- Updated "Voltar" button with corrected logic -->
+                <a th:if="${context == null}" th:href="@{/tutor/{id}(id=${tutorId})}"
+                    class="btn btn-secondary btn-sm px-3 py-2 d-flex align-items-center">
+                    <i class="bi bi-arrow-left me-2"></i> Voltar
+                </a>
+                <a th:if="${context != null}"
+                    th:href="@{/serviceExecution/clientSelection(context=${context}, serviceExecutionId=${serviceId})}"
+                    class="btn btn-secondary btn-sm px-3 py-2 d-flex align-items-center">
+                    <i class="bi bi-arrow-left me-2"></i> Voltar
+                </a>
 
-                    <a th:href="@{/tutor/{id}(id=${tutorId})}"
-                        class="btn btn-secondary btn-sm px-3 py-2 d-flex align-items-center">
-                        <i class="bi bi-arrow-left me-2"></i> Voltar
-                    </a>
-
-
-                    <a sec:authorize="hasRole('ADMIN')" th:if="${mode == 'update' and pet.isActive}"
-                        th:href="@{/tutor/{tutorId}/pet/{petId}/inactivate(tutorId=${tutorId}, petId=${pet.id})}"
-                        class="btn btn-outline-danger btn-sm px-3 py-2 d-flex align-items-center">
-                        <i class="bi bi-archive me-2"></i> Inativar
-                    </a>
-
-                    <a sec:authorize="hasRole('ADMIN')" th:if="${mode == 'update' and !pet.isActive}"
-                        th:href="@{/tutor/{tutorId}/pet/{petId}/activate(tutorId=${tutorId}, petId=${pet.id})}"
-                        class="btn btn-outline-success btn-sm px-3 py-2 d-flex align-items-center">
-                        <i class="bi bi-check-circle me-2"></i> Reativar
-                    </a>
-                </div>
+                <a sec:authorize="hasRole('ADMIN')" th:if="${mode == 'update' and pet.isActive}"
+                    th:href="@{/tutor/{tutorId}/pet/{petId}/inactivate(tutorId=${tutorId}, petId=${pet.id})}"
+                    class="btn btn-outline-danger btn-sm px-3 py-2 d-flex align-items-center">
+                    <i class="bi bi-archive me-2"></i> Inativar
+                </a>
+                <a sec:authorize="hasRole('ADMIN')" th:if="${mode == 'update' and !pet.isActive}"
+                    th:href="@{/tutor/{tutorId}/pet/{petId}/activate(tutorId=${tutorId}, petId=${pet.id})}"
+                    class="btn btn-outline-success btn-sm px-3 py-2 d-flex align-items-center">
+                    <i class="bi bi-check-circle me-2"></i> Reativar
+                </a>
             </div>
         </div>
 
+        <!-- Form (Unchanged) -->
         <form id="petForm" th:action="${mode == 'update'} ? @{/tutor/{tutorId}/pet/{petId}(tutorId=${tutorId}, petId=${pet.id})} 
                                           : @{/tutor/{tutorId}/pet(tutorId=${tutorId})}" method="post"
             th:object="${pet}">

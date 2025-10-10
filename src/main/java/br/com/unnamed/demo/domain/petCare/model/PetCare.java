@@ -12,8 +12,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class PetCare {
 
     @Id
@@ -70,20 +72,10 @@ public class PetCare {
 
     }
 
-    public Long getId() {
-        return id;
-    }
+    public boolean belongsToGroup(PetCareGroup group) {
 
-    public String getDescription() {
-        return description;
-    }
+        return this.group.equals(group);
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public PetCareGroup getGroup() {
-        return group;
     }
 
     public boolean isActive() {
@@ -108,10 +100,6 @@ public class PetCare {
 
         this.status = Status.ACTIVE;
 
-    }
-
-    public Status getStatus() {
-        return status;
     }
 
     @Override

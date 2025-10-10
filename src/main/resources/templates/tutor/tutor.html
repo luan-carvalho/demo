@@ -4,65 +4,84 @@
 <body>
     <main class="container" th:fragment="content">
 
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div th:if="${context == null}">
-                    <div class="d-flex align-items-center text-muted mb-1">
-                        <a th:href="@{/tutor}" class="text-decoration-none text-muted small fs-6">Clientes</a>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <span class="text-dark fw-semibold"
-                            th:text="${mode == 'update'} ? ${tutor.name} : 'Novo'"></span>
-                    </div>
-                </div>
+        <!-- HEADER: Updated to use Bootstrap breadcrumbs and handle both contexts -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <!-- Left Side: Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 d-flex align-items-center">
+                    <!-- Standard Flow: Navigating from /tutor -->
+                    <th:block th:if="${context == null}">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/tutor}" class="text-decoration-none text-muted small fs-6">Clientes</a>
+                        </li>
+                        <li class="breadcrumb-item active text-dark fw-semibold small fs-6" aria-current="page"
+                            th:text="${mode == 'update'} ? ${tutor.name} : 'Novo Cliente'">
+                        </li>
+                    </th:block>
 
-                <div th:if="${context != null}">
-                    <div class="d-flex align-items-center text-muted mb-1">
-                        <span th:if="${serviceId == null}" class="text-decoration-none text-muted small fs-6">
-                            Novo
-                            Atendimento</span>
-                        <a th:if="${serviceId != null}" th:text="'Atendimento #' + ${serviceId}"
-                            class="text-decoration-none text-muted small fs-6"
-                            th:href="@{/serviceExecution/{id}(id=${serviceId})}"></a>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <span class="text-muted">Selecionar cliente</span>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <span class="text-muted">Novo</span>
-                    </div>
-                </div>
+                    <!-- Atendimento Flow: Navigating from /serviceExecution/... -->
+                    <th:block th:if="${context != null}">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/serviceExecution}"
+                                class="text-decoration-none text-muted small fs-6">Atendimentos</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a th:if="${serviceId != null}" th:href="@{/serviceExecution/{id}(id=${serviceId})}"
+                                class="text-decoration-none text-muted small fs-6"
+                                th:text="'Atendimento #' + ${serviceId}"></a>
+                            <span th:if="${serviceId == null}" class="text-decoration-none text-muted small fs-6">Novo
+                                Atendimento</span>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/serviceExecution/clientSelection(context=${context}, serviceExecutionId=${serviceId})}"
+                                class="text-decoration-none text-muted small fs-6">Selecionar Cliente</a>
+                        </li>
+                        <li class="breadcrumb-item active text-dark fw-semibold small fs-6" aria-current="page">
+                            Novo Cliente
+                        </li>
+                    </th:block>
+                </ol>
+            </nav>
 
-                <div class="d-flex flex-wrap gap-2">
-                    <button type="submit" form="tutorForm"
-                        class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-save me-2"></i>
-                        <span th:text="${mode == 'update'} ? 'Salvar' : 'Cadastrar'"></span>
-                    </button>
+            <!-- Right Side: Action Buttons -->
+            <div class="d-flex flex-wrap gap-2">
+                <button type="submit" form="tutorForm"
+                    class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-save me-2"></i>
+                    <span th:text="${mode == 'update'} ? 'Salvar' : 'Cadastrar'"></span>
+                </button>
 
-                    <a th:href="@{/tutor}" class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-arrow-left me-2"></i> Voltar
-                    </a>
+                <!-- Updated "Voltar" button with corrected logic -->
+                <a th:if="${context == null}" th:href="@{/tutor}"
+                    class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-arrow-left me-2"></i> Voltar
+                </a>
+                <a th:if="${context != null}"
+                    th:href="@{/serviceExecution/clientSelection(context=${context}, serviceExecutionId=${serviceId})}"
+                    class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-arrow-left me-2"></i> Voltar
+                </a>
 
-                    <a th:if="${mode == 'update' and tutor.isActive}" sec:authorize="hasRole('ADMIN')"
-                        th:href="@{/tutor/{id}/inactivate (id=${tutor.id})}"
-                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-archive me-2"></i> Inativar
-                    </a>
-
-                    <a th:if="${mode == 'update' and !tutor.isActive}" sec:authorize="hasRole('ADMIN')"
-                        th:href="@{/tutor/{id}/activate (id=${tutor.id})}"
-                        class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-person-check me-2"></i> Reativar
-                    </a>
-                </div>
+                <a th:if="${mode == 'update' and tutor.isActive}" sec:authorize="hasRole('ADMIN')"
+                    th:href="@{/tutor/{id}/inactivate (id=${tutor.id})}"
+                    class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-archive me-2"></i> Inativar
+                </a>
+                <a th:if="${mode == 'update' and !tutor.isActive}" sec:authorize="hasRole('ADMIN')"
+                    th:href="@{/tutor/{id}/activate (id=${tutor.id})}"
+                    class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-person-check me-2"></i> Reativar
+                </a>
             </div>
         </div>
 
-        <!-- Form -->
+
+        <!-- Form (Unchanged) -->
         <form id="tutorForm" th:action="${mode == 'update'} ? @{/tutor/{id}(id=${tutor.id})} : @{/tutor}" method="post"
             th:object="${tutor}">
 
             <input type="hidden" th:if="${mode == 'update'}" th:field="*{id}" />
             <input type="hidden" th:if="${context}" name="context" th:value="${context}" />
-            <h1 th:text="${context}"></h1>
             <input type="hidden" th:if="${serviceId}" name="serviceId" th:value="${serviceId}" />
             <div class="row g-4">
                 <div class="col-lg-6">
@@ -162,10 +181,10 @@
                         </div>
                     </div>
                 </div>
-
+            </div>
         </form>
 
-        <!-- New Group Modal -->
+        <!-- New Group Modal (Unchanged) -->
         <div class="modal fade" id="newGroupModal" tabindex="-1" aria-labelledby="newGroupModalLabel" aria-hidden="true"
             th:if="${mode == 'update'}">
             <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -193,6 +212,7 @@
             </div>
         </div>
 
+        <!-- Script (Unchanged) -->
         <script>
             const phoneElement = document.getElementById('phone');
             IMask(phoneElement, {
