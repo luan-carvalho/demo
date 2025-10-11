@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.domain.authentication.dto.UserCreationDto;
-import br.com.unnamed.demo.domain.authentication.dto.UserEditionDto;
 import br.com.unnamed.demo.domain.authentication.model.Role;
 import br.com.unnamed.demo.domain.authentication.model.User;
 import br.com.unnamed.demo.domain.authentication.repository.RoleRepository;
@@ -47,37 +45,33 @@ public class UserService {
 
     }
 
-    public User createUser(UserCreationDto user) {
+    public Role findRoleById(Long roleId) {
 
-        Role role = roleRepo.findById(user.roleId()).orElseThrow(() -> new NoSuchElementException("Role not found"));
-        String name = user.name();
-        String password = passwordEncoder.encode("12345678");
+        return roleRepo.findById(roleId).orElseThrow(() -> new NoSuchElementException("Role not found"));
 
-        User newUser = new User(null, name, Status.ACTIVE, password, role);
+    }
 
+    public User createUser(String name, Long roleId) {
+
+        String encodedPassword = passwordEncoder.encode("12345678");
+        Role role = findRoleById(roleId);
+        User newUser = new User(name, encodedPassword, role);
         return userRepo.save(newUser);
 
     }
 
-    public void updateInfo(UserEditionDto user) {
+    public void updateInfo(Long userId, String name, Long roleId) {
 
-        User existingUser = userRepo
-                .findById(user.id())
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
-
-        Role role = roleRepo
-                .findById(user.roleId())
-                .orElseThrow(() -> new NoSuchElementException("Role not found"));
-
-        existingUser.updateInfo(user.name(), role);
-
+        User existingUser = findById(userId);
+        Role role = findRoleById(roleId);
+        existingUser.updateInfo(name, role);
         userRepo.save(existingUser);
 
     }
 
     public void activateUser(Long id) {
 
-        User user = userRepo.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
+        User user = findById(id);
         user.activate();
         userRepo.save(user);
 
@@ -85,7 +79,7 @@ public class UserService {
 
     public void deactivateUser(Long id) {
 
-        User user = userRepo.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
+        User user = findById(id);
         user.deactivate();
         userRepo.save(user);
 
@@ -93,11 +87,11 @@ public class UserService {
 
     public void updatePassword(Long id, String newPassword) {
 
-        User user = userRepo.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
+        User user = findById(id);
         String encodedPassword = passwordEncoder.encode(newPassword);
         user.updatePassword(encodedPassword);
         userRepo.save(user);
 
-    }   
+    }
 
 }

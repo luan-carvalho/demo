@@ -13,9 +13,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class PetCare {
 
     @Id
@@ -34,18 +36,11 @@ public class PetCare {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public PetCare() {
-
-        status = Status.ACTIVE;
-
-    }
-
-    public PetCare(Long id, String description, BigDecimal price, PetCareGroup group, Status status) {
-        this.id = id;
+    public PetCare(String description, BigDecimal price, PetCareGroup group) {
         this.description = description;
         this.price = price;
         this.group = group;
-        this.status = status;
+        this.status = Status.ACTIVE;
     }
 
     public void updateDescription(String description) {

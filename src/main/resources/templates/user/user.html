@@ -4,46 +4,46 @@
 <body>
     <main class="container" th:fragment="content">
 
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="d-flex align-items-center text-muted mb-1">
+        <!-- HEADER: Updated to the standard breadcrumb navigation -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <!-- Left Side: Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 d-flex align-items-center">
+                    <li class="breadcrumb-item">
                         <a th:href="@{/user}" class="text-decoration-none text-muted small fs-6">Usuários</a>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <span class="text-dark fw-semibold" th:text="${user.id != null} ? ${user.name} : 'Novo'"></span>
-                    </div>
-                </div>
+                    </li>
+                    <li class="breadcrumb-item active text-dark fw-semibold small fs-6" aria-current="page"
+                        th:text="${user.id != null} ? ${user.name} : 'Novo Usuário'">
+                    </li>
+                </ol>
+            </nav>
 
-                <div class="d-flex flex-wrap gap-2">
-                    <button type="submit" form="userForm"
-                        class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-save me-2"></i>
-                        <span th:text="${user.id != null} ? 'Salvar' : 'Cadastrar'"></span>
-                    </button>
-
-                    <a th:href="@{/user}" class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-arrow-left me-2"></i> Voltar
-                    </a>
-
-                    <a th:if="${user.id != null and user.status.name() == 'ACTIVE'}"
-                        th:href="@{/user/{id}/inactivate(id=${user.id})}"
-                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-person-x me-2"></i> Inativar
-                    </a>
-
-                    <a th:if="${user.id != null and user.status.name() == 'INACTIVE'}"
-                        th:href="@{/user/{id}/activate(id=${user.id})}"
-                        class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-person-check me-2"></i> Reativar
-                    </a>
-                </div>
+            <!-- Right Side: Action Buttons (Unchanged) -->
+            <div class="d-flex flex-wrap gap-2">
+                <button type="submit" form="userForm"
+                    class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-save me-2"></i>
+                    <span th:text="${user.id != null} ? 'Salvar' : 'Cadastrar'"></span>
+                </button>
+                <a th:href="@{/user}" class="btn btn-secondary btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-arrow-left me-2"></i> Voltar
+                </a>
+                <a th:if="${user.id != null and user.status.name() == 'ACTIVE'}"
+                    th:href="@{/user/{id}/inactivate(id=${user.id})}"
+                    class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-person-x me-2"></i> Inativar
+                </a>
+                <a th:if="${user.id != null and user.status.name() == 'INACTIVE'}"
+                    th:href="@{/user/{id}/activate(id=${user.id})}"
+                    class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
+                    <i class="bi bi-person-check me-2"></i> Reativar
+                </a>
             </div>
         </div>
 
-        <!-- Form -->
-        <form id="userForm" th:action="${user.id != null} ? @{/user/update} : @{/user/new}" method="post"
+        <!-- Form (Unchanged) -->
+        <form id="userForm" th:action="${user.id != null} ? @{/user/{id}(id=${user.id})} : @{/user}" method="post"
             th:object="${user}">
-            <input type="hidden" th:if="${user.id != null}" th:field="*{id}" />
 
             <div class="row g-4">
                 <div class="col-lg-6">
@@ -87,8 +87,6 @@
                                 <input type="text" class="form-control" id="name" th:field="*{name}"
                                     placeholder="Nome completo do usuário" required />
                             </div>
-
-                            <!-- Role selection -->
 
                         </div>
                     </div>

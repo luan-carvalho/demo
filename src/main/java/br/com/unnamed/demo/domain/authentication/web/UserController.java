@@ -5,17 +5,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.unnamed.demo.domain.authentication.dto.UserCreationDto;
-import br.com.unnamed.demo.domain.authentication.dto.UserEditionDto;
+import br.com.unnamed.demo.domain.authentication.dto.UserFormDto;
 import br.com.unnamed.demo.domain.authentication.model.CustomUserDetails;
+import br.com.unnamed.demo.domain.authentication.model.User;
 import br.com.unnamed.demo.domain.authentication.service.UserService;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/user")
@@ -54,9 +57,7 @@ public class UserController {
     @GetMapping("{id}")
     public String getUser(@PathVariable Long id, Model model) {
 
-        UserEditionDto u = UserEditionDto.toDto(userService.findById(id));
-
-        model.addAttribute("user", u);
+        model.addAttribute("user", new UserFormDto(userService.findById(id)));
         model.addAttribute("roles", userService.findAllRoles());
 
         model.addAttribute("view", "user/user");
@@ -69,7 +70,7 @@ public class UserController {
     @GetMapping("new")
     public String getNewUserForm(Model model) {
 
-        model.addAttribute("user", new UserCreationDto(null, null, null));
+        model.addAttribute("user", UserFormDto.empty());
         model.addAttribute("roles", userService.findAllRoles());
 
         model.addAttribute("view", "user/user");
@@ -79,38 +80,46 @@ public class UserController {
 
     }
 
-    @PostMapping("new")
-    public String postNewUser(UserCreationDto user) {
+    @PostMapping
+    public String postNewUser(
+            @Valid UserFormDto user,
+            RedirectAttributes attributes,
+            BindingResult bindingResult) {
 
-        userService.createUser(user);
-        return "redirect:/user";
+        User created = userService.createUser(user.name(), user.roleId());
+        attributes.addFlashAttribute("successMessage", "Usuário cadastrado!");
+        return "redirect:/user/" + created.getId();
 
     }
 
-    @PostMapping("update")
-    public String postUpdateUser(UserEditionDto user) {
+    @PostMapping("/{userId}")
+    public String postUpdateUser(@PathVariable Long userId,
+            @Valid UserFormDto user,
+            RedirectAttributes attributes,
+            BindingResult bindingResult) {
 
-        System.out.println("ID: " + user.id());
-        System.out.println("Name: " + user.name());
-        System.out.println("Role ID: " + user.roleId());
-
-        userService.updateInfo(user);
-        return "redirect:/user";
+        userService.updateInfo(userId, user.name(), user.roleId());
+        attributes.addFlashAttribute("successMessage", "Alterações salvas!");
+        return "redirect:/user/" + userId;
 
     }
 
     @GetMapping("/{userId}/inactivate")
-    public String deactivateUser(@PathVariable Long userId) {
+    public String deactivateUser(@PathVariable Long userId,
+            RedirectAttributes attributes) {
 
         userService.deactivateUser(userId);
+        attributes.addFlashAttribute("successMessage", "Usuário inativado!");
         return "redirect:/user";
 
     }
 
     @GetMapping("/{userId}/activate")
-    public String activateUser(@PathVariable Long userId) {
+    public String activateUser(@PathVariable Long userId,
+            RedirectAttributes attributes) {
 
         userService.activateUser(userId);
+        attributes.addFlashAttribute("successMessage", "Usuário reativado!");
         return "redirect:/user";
 
     }

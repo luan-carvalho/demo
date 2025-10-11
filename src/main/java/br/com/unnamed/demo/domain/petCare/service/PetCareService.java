@@ -1,5 +1,6 @@
 package br.com.unnamed.demo.domain.petCare.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -37,13 +38,13 @@ public class PetCareService {
 
     public PetCare findById(Long id) {
 
-        return repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Pet care group not found"));
+        return repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Pet care not found"));
 
     }
 
-    public void save(PetCare petCare) {
+    public PetCareGroup findGroupById(Long id) {
 
-        repo.save(petCare);
+        return groupRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Pet care group not found"));
 
     }
 
@@ -51,7 +52,7 @@ public class PetCareService {
 
         PetCare toBeDeactivated = findById(id);
         toBeDeactivated.deactivate();
-        save(toBeDeactivated);
+        repo.save(toBeDeactivated);
 
     }
 
@@ -59,7 +60,7 @@ public class PetCareService {
 
         PetCare toBeActivated = findById(id);
         toBeActivated.activate();
-        save(toBeActivated);
+        repo.save(toBeActivated);
 
     }
 
@@ -67,6 +68,32 @@ public class PetCareService {
             Pageable pageable) {
 
         return repo.searchWithOptionalFilters(description, status, group, pageable);
+
+    }
+
+    public PetCare createPetCare(String description, Long groupId, BigDecimal price) {
+
+        PetCareGroup group = null;
+
+        if (groupId != null)
+            group = findGroupById(groupId);
+
+        PetCare petCare = new PetCare(description, price, group);
+        return repo.save(petCare);
+
+    }
+
+    public void updatePetCareInfo(Long petCareId, String description, Long groupId, BigDecimal price) {
+
+        PetCare petCare = findById(petCareId);
+        petCare.updatePrice(price);
+        petCare.updateDescription(description);
+        if (groupId != null) {
+
+            PetCareGroup group = findGroupById(groupId);
+            petCare.updateGroup(group);
+        }
+        repo.save(petCare);
 
     }
 
