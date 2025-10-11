@@ -60,6 +60,7 @@ public class Payment {
         this.paymentMethod = paymentMethod;
         this.amount = amount;
         this.status = PaymentStatus.TEMPORARY;
+        this.serviceExecution = serviceExecution;
 
     }
 

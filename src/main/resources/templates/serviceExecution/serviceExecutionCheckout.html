@@ -24,6 +24,7 @@
                 </ol>
             </nav>
 
+
             <!-- Right Side: Action Buttons -->
             <div class="d-flex flex-wrap gap-2 align-items-center">
                 <a th:href="@{/serviceExecution/{id}(id=${serviceExecution.id})}"
@@ -73,7 +74,7 @@
                     <div class="col-lg-3">
                         <label for="type" class="form-label fw-semibold">Forma de Pagamento</label>
                         <select id="type" name="typeId" class="form-select"
-                            th:disabled="${serviceExecution.isFullyPaid}" required>
+                            th:attr="disabled=${serviceExecution.isFullyPaid or serviceExecution.isFinished}" required>
                             <option value="">-- Selecione --</option>
                             <option th:each="pt : ${all_payment_types}" th:value="${pt.id}" th:text="${pt.description}">
                             </option>
@@ -84,13 +85,14 @@
                         <div class="input-group">
                             <span class="input-group-text">R$</span>
                             <input type="number" step="0.01" min="0" class="form-control" id="amount" name="amount"
-                                placeholder="0,00" required th:disabled="${serviceExecution.isFullyPaid}" />
+                                placeholder="0,00" required
+                                th:attr="disabled=${serviceExecution.isFullyPaid or serviceExecution.isFinished}" />
                         </div>
                     </div>
                     <div class="col-lg-2">
                         <label for="installments" class="form-label fw-semibold">Parcelas</label>
                         <input type="number" min="1" class="form-control" id="installments" name="installments"
-                            placeholder="1" th:disabled="${serviceExecution.isFullyPaid}" />
+                            th:attr="disabled=${serviceExecution.isFullyPaid or serviceExecution.isFinished}" />
                     </div>
                     <div class="col-lg-2">
                         <button type="submit" class="btn btn-primary d-flex align-items-center"
@@ -128,16 +130,22 @@
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
                                         <button type="button" class="btn btn-outline-secondary" title="Editar"
-                                            th:if="${not serviceExecution.isCompleted() and not serviceExecution.isCancelled()}"
                                             data-bs-toggle="modal"
-                                            th:data-bs-target="'#editPaymentModal-' + ${payment.id}">
+                                            th:data-bs-target="'#editPaymentModal-' + ${payment.id}"
+                                            th:if="${not serviceExecution.isFinished}">
+
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button type="button" class="btn btn-outline-danger" title="Excluir"
-                                            th:if="${not serviceExecution.isCompleted() and not serviceExecution.isCancelled()}"
                                             data-bs-toggle="modal"
-                                            th:data-bs-target="'#deletePaymentModal-' + ${payment.id}">
+                                            th:data-bs-target="'#deletePaymentModal-' + ${payment.id}"
+                                            th:if="${not serviceExecution.isFinished}">
                                             <i class="bi bi-trash"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" title="Reabrir pagamentos"
+                                            th:if="${serviceExecution.isFinished}" data-bs-toggle="modal"
+                                            th:data-bs-target="'#returnToDoneModal'">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -217,7 +225,36 @@
             </div>
         </div>
 
-        <!-- Script (Unchanged) -->
+        <div th:each="payment : ${serviceExecution.payments}">
+            <!-- Delete Modal -->
+            <div class="modal fade" th:id="returnToDoneModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar
+                                reabertura do atendimento</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            Tem certeza que deseja <strong>reabrir este atendimento</strong>? Essa ação não poderá ser
+                            desfeita.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                            <form
+                                th:action="@{/serviceExecution/{serviceExecutionId}/checkout/reopen(serviceExecutionId=${serviceExecution.id})}"
+                                method="post">
+                                <button type="submit" class="btn btn-danger">Confirmar reabertura</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Script (Unchanged) -->
+
+        </div>
+
         <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', function () {
                 const amountInput = document.getElementById('amount');

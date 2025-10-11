@@ -140,9 +140,8 @@
                                                         th:text="${#temporals.format(service.date, 'dd/MM/yyyy')}">
                                                     </div>
                                                     <div class="small text-muted">
-                                                        <span th:each="item, stat : ${service.executedServices}">
+                                                        <span th:each="item: ${service.executedServices}">
                                                             <span th:text="${item.petCare.description}"></span>
-                                                            <span th:if="${!stat.last}">, </span>
                                                         </span>
                                                     </div>
                                                 </div>

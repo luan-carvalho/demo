@@ -75,4 +75,10 @@ public class ServiceExecutionCheckoutFacade {
 
     }
 
+    public void reopenServiceExecution(Long serviceId) {
+        
+        service.reopenServiceExecution(serviceId);
+
+    }
+
 }

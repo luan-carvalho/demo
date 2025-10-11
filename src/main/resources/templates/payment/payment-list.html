@@ -58,7 +58,7 @@
         <!-- Payments Table -->
         <div class="border rounded">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table align-middle mb-0">
                     <thead class="table-light">
                         <tr>
                             <th scope="col">Data</th>
@@ -69,13 +69,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="payment : ${payments}" class="clickable-row"
-                            th:data-href="@{/payment/{id}(id=${payment.id})}">
+                        <tr th:each="payment : ${payments}">
 
-                            <td class="fw-semibold" th:text="${#temporals.format(payment.date, 'dd/MM/yyyy')}"></td>
+                            <td class="fw" th:text="${#temporals.format(payment.date, 'dd/MM/yyyy')}"></td>
 
                             <td>
-                                <div class="fw-semibold" th:text="${payment.serviceExecution.tutor.name}"></div>
+                                <div class="fw" th:text="${payment.serviceExecution.tutor.name}"></div>
                                 <div class="small text-muted" th:text="${payment.serviceExecution.pet.name}">
                                 </div>
                             </td>
@@ -89,7 +88,7 @@
                                 <span class="badge bg-secondary" th:text="${payment.paymentMethod.description}"></span>
                             </td>
 
-                            <td class="text-end fw-bold text-success"
+                            <td class="text-end"
                                 th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}">
                             </td>
                         </tr>

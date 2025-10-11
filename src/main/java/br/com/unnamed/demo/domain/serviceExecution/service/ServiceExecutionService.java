@@ -137,14 +137,12 @@ public class ServiceExecutionService {
 
     }
 
-    // public void updateInfo(Long serviceExecutionId,
-    // List<ServiceExecutionChecklistItem> checklist, String obs) {
+    public void reopenServiceExecution(Long serviceId) {
 
-    // ServiceExecution toBeUpdated = findById(serviceExecutionId);
-    // toBeUpdated.updateChecklist(checklist);
-    // toBeUpdated.updateObservation(obs);
-    // repo.save(toBeUpdated);
+        ServiceExecution s = findById(serviceId);
+        s.returnCompletedToDone();
+        repo.save(s);
 
-    // }
+    }
 
 }

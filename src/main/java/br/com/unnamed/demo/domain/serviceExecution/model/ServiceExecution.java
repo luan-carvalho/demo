@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
+import br.com.unnamed.demo.domain.serviceExecution.exception.ServiceExecutionStatusException;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -181,12 +182,6 @@ public class ServiceExecution {
 
     }
 
-    // public void updateChecklist(List<ServiceExecutionChecklistItem> checklist) {
-
-    // this.checklist = checklist;
-
-    // }
-
     public void updateChecklist(List<Long> selectedItems) {
 
         this.checklist.stream().forEach(ServiceExecutionChecklistItem::uncheck);
@@ -197,7 +192,7 @@ public class ServiceExecution {
 
     public boolean isEmpty() {
 
-        return this.checklist.isEmpty();
+        return this.checklist.stream().filter(ServiceExecutionChecklistItem::isSelected).count() == 0;
 
     }
 
@@ -209,13 +204,46 @@ public class ServiceExecution {
 
     public boolean canBeFinished() {
 
-        return isFullyPaid() && serviceStatus == ServiceStatus.DONE;
+        return isFullyPaid() && isDone();
+
+    }
+
+    public boolean isFinished() {
+
+        return this.serviceStatus == ServiceStatus.COMPLETED;
+
+    }
+
+    public boolean isDone() {
+
+        return this.serviceStatus == ServiceStatus.DONE;
+
+    }
+
+    public boolean isCanceled() {
+
+        return this.serviceStatus == ServiceStatus.CANCELLED;
 
     }
 
     public boolean canBeUpdated() {
 
-        return this.serviceStatus != ServiceStatus.COMPLETED && this.serviceStatus != ServiceStatus.CANCELLED;
+        return !isFinished() && !isCanceled();
+
+    }
+
+    public void returnCompletedToDone() {
+
+        if (this.serviceStatus != ServiceStatus.COMPLETED && !isFullyPaid())
+            throw new ServiceExecutionStatusException("This service execution is not available for this operation");
+
+        this.serviceStatus = ServiceStatus.DONE;
+
+    }
+
+    public List<ServiceExecutionChecklistItem> getExecutedServices() {
+
+        return this.checklist.stream().filter(ServiceExecutionChecklistItem::isSelected).toList();
 
     }
 

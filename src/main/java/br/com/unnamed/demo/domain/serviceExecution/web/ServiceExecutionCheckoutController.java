@@ -15,7 +15,7 @@ import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionCheckoutD
 import br.com.unnamed.demo.domain.serviceExecution.facade.ServiceExecutionCheckoutFacade;
 
 @Controller
-@RequestMapping("serviceExecution/{serviceId}/checkout")
+@RequestMapping("serviceExecution/{serviceExecutionId}/checkout")
 public class ServiceExecutionCheckoutController {
 
     private final ServiceExecutionCheckoutFacade facade;
@@ -25,15 +25,15 @@ public class ServiceExecutionCheckoutController {
     }
 
     @GetMapping
-    public String checkout(@PathVariable Long serviceId, Model model) {
+    public String checkout(@PathVariable Long serviceExecutionId, Model model) {
 
         model.addAttribute("serviceExecution",
-                new ServiceExecutionCheckoutDto(facade.findServiceExecutionById(serviceId)));
+                new ServiceExecutionCheckoutDto(facade.findServiceExecutionById(serviceExecutionId)));
         model.addAttribute("all_payment_types",
                 facade.getAllPaymentMethods());
         model.addAttribute("activePage", "serviceExecution");
         model.addAttribute("view", "serviceExecution/serviceExecutionCheckout");
-        model.addAttribute("pageTitle", "Pagamento | Atendimento #" + serviceId);
+        model.addAttribute("pageTitle", "Pagamento | Atendimento #" + serviceExecutionId);
 
         return "layout/base-layout";
 
@@ -41,22 +41,23 @@ public class ServiceExecutionCheckoutController {
 
     @PostMapping("/addPayment")
     public String addPaymentToServiceExecution(
-            @PathVariable Long serviceId,
+            @PathVariable Long serviceExecutionId,
             Long typeId,
             BigDecimal amount,
             @RequestParam(required = false) Integer installments,
             RedirectAttributes attributes) {
 
-        facade.addPayment(serviceId, typeId, amount, installments);
+        facade.addPayment(serviceExecutionId, typeId, amount, installments);
         attributes.addFlashAttribute("successMessage", "Pagamento adicionado");
-        return "redirect:/serviceExecution/" + serviceId + "/checkout";
+        return "redirect:/serviceExecution/" + serviceExecutionId + "/checkout";
 
     }
 
     @PostMapping("/finish")
-    public String finishServiceExecution(@PathVariable Long serviceId, Model model, RedirectAttributes attributes) {
+    public String finishServiceExecution(@PathVariable Long serviceExecutionId, Model model,
+            RedirectAttributes attributes) {
 
-        facade.finishServiceExecution(serviceId);
+        facade.finishServiceExecution(serviceExecutionId);
 
         attributes.addFlashAttribute("successMessage", "Atendimento concluído");
         return "redirect:/serviceExecution";
@@ -64,26 +65,36 @@ public class ServiceExecutionCheckoutController {
     }
 
     @PostMapping("/payment/{paymentId}/delete")
-    public String removePayment(@PathVariable Long serviceId, @PathVariable Long paymentId,
+    public String removePayment(@PathVariable Long serviceExecutionId, @PathVariable Long paymentId,
             RedirectAttributes attributes) {
 
-        facade.removePayment(serviceId, paymentId);
+        facade.removePayment(serviceExecutionId, paymentId);
         attributes.addFlashAttribute("errorMessage", "Pagamento removido");
-        return "redirect:/serviceExecution/" + serviceId + "/checkout";
+        return "redirect:/serviceExecution/" + serviceExecutionId + "/checkout";
 
     }
 
     @PostMapping("/payment/{paymentId}/update")
-    public String updatePayment(@PathVariable Long serviceId,
+    public String updatePayment(@PathVariable Long serviceExecutionId,
             @PathVariable Long paymentId,
             @RequestParam(required = false) BigDecimal amount,
             @RequestParam(required = false) Long methodId,
             RedirectAttributes attributes) {
 
-        facade.updatePaymentInfo(serviceId, paymentId, methodId, amount);
+        facade.updatePaymentInfo(serviceExecutionId, paymentId, methodId, amount);
 
         attributes.addFlashAttribute("successMessage", "Pagamento atualizado");
-        return "redirect:/serviceExecution/" + serviceId + "/checkout";
+        return "redirect:/serviceExecution/" + serviceExecutionId + "/checkout";
+
+    }
+
+    @PostMapping("/reopen")
+    public String reopen(@PathVariable Long serviceExecutionId, RedirectAttributes attributes) {
+
+        facade.reopenServiceExecution(serviceExecutionId);
+        attributes.addFlashAttribute("successMessage", "Atendimento reaberto!");
+
+        return "redirect:/serviceExecution/" + serviceExecutionId + "/checkout";
 
     }
 

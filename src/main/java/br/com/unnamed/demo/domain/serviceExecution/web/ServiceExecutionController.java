@@ -187,12 +187,17 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/{serviceExecutionId}")
-    public String save(@PathVariable Long serviceExecutionId, Model model, @RequestParam String obs,
-            @RequestParam List<Long> selectedItems,
+    public String save(@PathVariable Long serviceExecutionId, Model model, @RequestParam(required = false) String obs,
+            @RequestParam(required = false) List<Long> selectedItems,
             RedirectAttributes attributes) {
 
-        facade.updateServiceExecution(serviceExecutionId, selectedItems, obs);
-        attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
+        if (selectedItems != null || (obs != null && !obs.isBlank())) {
+
+            facade.updateServiceExecution(serviceExecutionId, selectedItems, obs);
+            attributes.addFlashAttribute("successMessage", "Atendimento atualizado com sucesso!");
+
+        }
+
         return "redirect:/serviceExecution/" + serviceExecutionId;
 
     }

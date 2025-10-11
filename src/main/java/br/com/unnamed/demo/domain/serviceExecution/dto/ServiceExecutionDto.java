@@ -20,7 +20,9 @@ public record ServiceExecutionDto(
         List<PaymentSimpleListDto> payments,
         String obs,
         BigDecimal total,
-        boolean canBeUpdated) {
+        boolean canBeUpdated,
+        boolean isEmpty,
+        boolean isDone) {
 
     public ServiceExecutionDto(ServiceExecution s) {
 
@@ -34,7 +36,9 @@ public record ServiceExecutionDto(
                 s.getPayments().stream().map(p -> new PaymentSimpleListDto(p)).toList(),
                 s.getObs(),
                 s.calculateTotal(),
-                s.canBeUpdated());
+                s.canBeUpdated(),
+                s.isEmpty(),
+                s.isDone());
 
     }
 
