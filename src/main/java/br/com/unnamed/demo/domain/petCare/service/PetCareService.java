@@ -1,5 +1,6 @@
 package br.com.unnamed.demo.domain.petCare.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -35,15 +36,33 @@ public class PetCareService {
 
     }
 
-    public PetCare findById(Long id) {
+    public PetCareGroup findGroupById(Long id) {
 
-        return repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Pet care group not found"));
+        return groupRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Pet care group not found"));
 
     }
 
-    public void save(PetCare petCare) {
+    public PetCare findById(Long id) {
 
-        repo.save(petCare);
+        return repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Pet care not found"));
+
+    }
+
+    public PetCare createPetCare(String description, BigDecimal price, Long groupId) {
+
+        PetCareGroup group = findGroupById(groupId);
+        return repo.save(new PetCare(description, price, group));
+
+    }
+
+    public void updatePetCare(Long petCareId, String description, BigDecimal price, Long groupId) {
+
+        PetCareGroup group = findGroupById(groupId);
+        PetCare toBeUpdated = findById(petCareId);
+        toBeUpdated.updateDescription(description);
+        toBeUpdated.updatePrice(price);
+        toBeUpdated.updateGroup(group);
+        repo.save(toBeUpdated);
 
     }
 
@@ -51,7 +70,7 @@ public class PetCareService {
 
         PetCare toBeDeactivated = findById(id);
         toBeDeactivated.deactivate();
-        save(toBeDeactivated);
+        repo.save(toBeDeactivated);
 
     }
 
@@ -59,7 +78,7 @@ public class PetCareService {
 
         PetCare toBeActivated = findById(id);
         toBeActivated.activate();
-        save(toBeActivated);
+        repo.save(toBeActivated);
 
     }
 

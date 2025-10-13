@@ -34,10 +34,9 @@ public class User {
 
     }
 
-    public User(Long id, String name, Status status, String password, Role role) {
-        this.id = id;
+    public User(String name, String password, Role role) {
         this.name = name;
-        this.status = status;
+        this.status = Status.ACTIVE;
         this.password = password;
         this.role = role;
     }

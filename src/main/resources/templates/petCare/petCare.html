@@ -27,25 +27,77 @@
                         <i class="bi bi-arrow-left me-2"></i> Voltar
                     </a>
 
-                    <a th:if="${petCare.id != null and petCare.status.name() == 'ACTIVE'}"
-                        th:href="@{/petCare/{id}/inactivate(id=${petCare.id})}"
-                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-archive me-2"></i> Inativar
-                    </a>
+                    <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
+                        th:if="${petCare.id != null and petCare.status.name() == 'ACTIVE'}" type="button"
+                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
+                        data-bs-target="#inactiveModal">
+                        <i class="bi bi-person-x me-2"></i> Inativar
+                    </button>
 
-                    <a th:if="${petCare.id != null and petCare.status.name() == 'INACTIVE'}"
-                        th:href="@{/petCare/{id}/activate(id=${petCare.id})}"
-                        class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-check-circle me-2"></i> Reativar
-                    </a>
+                    <div class="modal fade" id="inactiveModal" tabindex="-1" aria-labelledby="inactiveModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="inactiveModalLabel">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar ação
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body fs-6">
+                                    Tem certeza que deseja inativar este serviço?.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary px-3 py-2"
+                                        data-bs-dismiss="modal">Voltar</button>
+                                    <form th:action="@{/petCare/{id}/inactivate(id=${petCare.id})}" method="post">
+                                        <button type="submit" class="btn btn-danger px-3 py-2">Confirmar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
+                        th:if="${petCare.id != null and petCare.status.name() == 'INACTIVE'}" type="button"
+                        class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2"
+                        data-bs-toggle="modal" data-bs-target="#activateModal">
+                        <i class="bi bi-person-check me-2"></i> Ativar
+                    </button>
+
+                    <div class="modal fade" id="activateModal" tabindex="-1" aria-labelledby="activateModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="activateModalLabel">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar ação
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body fs-6">
+                                    Tem certeza que deseja ativar este serviço?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary px-3 py-2"
+                                        data-bs-dismiss="modal">Voltar</button>
+                                    <form th:action="@{/petCare/{id}/activate(id=${petCare.id})}" method="post">
+                                        <button type="submit" class="btn btn-danger px-3 py-2">Confirmar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Form -->
         <form id="petCareForm" th:action="@{/petCare}" method="post" th:object="${petCare}">
-            <input type="hidden" th:field="*{id}" />
-            <input type="hidden" th:if="*{id != null}" th:field="*{status}" />
 
             <div class="row g-4">
                 <div class="col-lg-6">
@@ -85,11 +137,11 @@
 
                             <div class="col-md-6">
                                 <label for="group" class="form-label fw-semibold">Grupo</label>
-                                <select class="form-select" id="group" name="group">
+                                <select class="form-select" id="group" th:field="*{groupId}">
                                     <option value="">Selecione o grupo...</option>
                                     <option th:each="group : ${petCareGroups}" th:value="${group.id}"
                                         th:text="${group.description}"
-                                        th:selected="${petCare.group != null and group.id == petCare.group.id}">
+                                        th:selected="${petCare.groupId != null and group.id == petCare.groupId}">
                                     </option>
                                 </select>
                             </div>

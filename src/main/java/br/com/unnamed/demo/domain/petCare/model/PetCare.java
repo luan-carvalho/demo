@@ -40,12 +40,11 @@ public class PetCare {
 
     }
 
-    public PetCare(Long id, String description, BigDecimal price, PetCareGroup group, Status status) {
-        this.id = id;
+    public PetCare(String description, BigDecimal price, PetCareGroup group) {
         this.description = description;
         this.price = price;
         this.group = group;
-        this.status = status;
+        this.status = Status.ACTIVE;
     }
 
     public void updateDescription(String description) {

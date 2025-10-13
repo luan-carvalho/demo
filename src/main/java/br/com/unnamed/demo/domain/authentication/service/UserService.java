@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.domain.authentication.dto.UserCreationDto;
-import br.com.unnamed.demo.domain.authentication.dto.UserEditionDto;
 import br.com.unnamed.demo.domain.authentication.model.Role;
 import br.com.unnamed.demo.domain.authentication.model.User;
 import br.com.unnamed.demo.domain.authentication.repository.RoleRepository;
@@ -41,36 +39,33 @@ public class UserService {
 
     }
 
+    public Role findRoleById(Long roleId) {
+
+        return roleRepo.findById(roleId).orElseThrow(() -> new NoSuchElementException("Role not found"));
+
+    }
+
     public Page<User> searchWithOptionalFilters(Pageable p, String name, Status status) {
 
         return userRepo.searchWithOptionalFilters(p, name, status);
 
     }
 
-    public User createUser(UserCreationDto user) {
+    public User createUser(String name, Long roleId) {
 
-        Role role = roleRepo.findById(user.roleId()).orElseThrow(() -> new NoSuchElementException("Role not found"));
-        String name = user.name();
+        Role role = findRoleById(roleId);
         String password = passwordEncoder.encode("12345678");
-
-        User newUser = new User(null, name, Status.ACTIVE, password, role);
-
+        User newUser = new User(name, password, role);
         return userRepo.save(newUser);
 
     }
 
-    public void updateInfo(UserEditionDto user) {
+    public void updateInfo(Long userId, String name, Long roleId) {
 
-        User existingUser = userRepo
-                .findById(user.id())
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+        User existingUser = findById(roleId);
+        Role role = findRoleById(roleId);
 
-        Role role = roleRepo
-                .findById(user.roleId())
-                .orElseThrow(() -> new NoSuchElementException("Role not found"));
-
-        existingUser.updateInfo(user.name(), role);
-
+        existingUser.updateInfo(name, role);
         userRepo.save(existingUser);
 
     }
@@ -98,6 +93,6 @@ public class UserService {
         user.updatePassword(encodedPassword);
         userRepo.save(user);
 
-    }   
+    }
 
 }

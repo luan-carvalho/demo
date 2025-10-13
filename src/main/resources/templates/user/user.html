@@ -25,25 +25,79 @@
                         <i class="bi bi-arrow-left me-2"></i> Voltar
                     </a>
 
-                    <a th:if="${user.id != null and user.status.name() == 'ACTIVE'}"
-                        th:href="@{/user/{id}/inactivate(id=${user.id})}"
-                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2">
+                    <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
+                        th:if="${user.id != null and user.status.name() == 'ACTIVE'}" type="button"
+                        class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
+                        data-bs-target="#inactiveModal">
                         <i class="bi bi-person-x me-2"></i> Inativar
-                    </a>
+                    </button>
 
-                    <a th:if="${user.id != null and user.status.name() == 'INACTIVE'}"
-                        th:href="@{/user/{id}/activate(id=${user.id})}"
-                        class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2">
-                        <i class="bi bi-person-check me-2"></i> Reativar
-                    </a>
+                    <div class="modal fade" id="inactiveModal" tabindex="-1" aria-labelledby="inactiveModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="inactiveModalLabel">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar ação
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body fs-6">
+                                    Tem certeza que deseja inativar este usuário?.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary px-3 py-2"
+                                        data-bs-dismiss="modal">Voltar</button>
+                                    <form th:action="@{/user/{id}/inactivate(id=${user.id})}" method="post">
+                                        <button type="submit" class="btn btn-danger px-3 py-2">Confirmar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
+                        th:if="${user.id != null and user.status.name() == 'INACTIVE'}" type="button"
+                        class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2"
+                        data-bs-toggle="modal" data-bs-target="#activateModal">
+                        <i class="bi bi-person-check me-2"></i> Ativar
+                    </button>
+
+                    <div class="modal fade" id="activateModal" tabindex="-1" aria-labelledby="activateModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="activateModalLabel">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar ação
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body fs-6">
+                                    Tem certeza que deseja ativar este usuário?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary px-3 py-2"
+                                        data-bs-dismiss="modal">Voltar</button>
+                                    <form th:action="@{/user/{id}/activate(id=${user.id})}" method="post">
+                                        <button type="submit" class="btn btn-danger px-3 py-2">Confirmar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
 
         <!-- Form -->
-        <form id="userForm" th:action="${user.id != null} ? @{/user/update} : @{/user/new}" method="post"
+        <form id="userForm" th:action="${user.id == null} ? @{/user} : @{/user/{id}(id=${user.id})}" method="post"
             th:object="${user}">
-            <input type="hidden" th:if="${user.id != null}" th:field="*{id}" />
 
             <div class="row g-4">
                 <div class="col-lg-6">
@@ -65,12 +119,12 @@
                                 </div>
                             </div>
 
-                            <div class="col-10">
+                            <div class="col-8">
                                 <label for="roleId" class="form-label fw-semibold">
                                     Perfil de Acesso
                                     <span class="text-danger">*</span>
                                 </label>
-                                <select class="form-select" id="roleId" name="roleId" required>
+                                <select class="form-select py-2" id="roleId" name="roleId" required>
                                     <option value="">Selecione um perfil...</option>
                                     <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.label}"
                                         th:selected="${user.roleId != null and role.id == user.roleId}">
@@ -79,7 +133,7 @@
                             </div>
 
                             <!-- Name field -->
-                            <div class="col-12">
+                            <div class="col-10">
                                 <label for="name" class="form-label fw-semibold">
                                     Nome
                                     <span class="text-danger">*</span>

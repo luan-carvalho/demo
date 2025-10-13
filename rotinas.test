@@ -1,0 +1,20 @@
+CLIENTE
+
+[ ] Pesquisar clientes ativos -> trazer todos os clientes ativos
+[ ] Pesquisar clientes ativos -> trazer todos os clientes inativos
+[ ] Pesquisar cliente por nome e ativo -> trazer o cliente específico
+[ ] Pesquisar cliente por nome e inativo -> trazer o cliente específico
+[ ] Pesquisar cliente inexistente -> apresentar lista vazia
+[ ] Cadastrar novo cliente com grupo -> cadastrar e ir para cadastro de pet
+[ ] Cadastrar novo cliente sem grupo -> cadastrar e ir para cadastro de pet
+[ ] Cadastrar novo cliente com novo grupo -> cadastrar grupo e cliente e ir para cadastro de pet
+[ ] Cadastrar pet
+[ ] Inativar cliente -> pesquisar e confirmar inativação
+[ ] Reativar cliente -> pesquisar e confirmar reativação
+[ ] Inativar pet -> verificar no cadastro do tutor se está inativo
+[ ] Reativar pet -> verificar no cadastro do tutor se está ativos
+[ ] Cadastrar novo pet -> cadastrar e verificar no cadastro do tutor se será listado
+[ ] Atualizar nome do tutor
+[ ] Atualizar telefone do tutor
+[ ] Atualizar grupo com grupo existente
+[ ] Atualizar grupo com novo grupo

@@ -1,6 +1,5 @@
 package br.com.unnamed.demo.domain.authentication.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,14 +8,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import br.com.unnamed.demo.domain.authentication.service.IUserDetailsService;
 import br.com.unnamed.demo.domain.authentication.web.LoginSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-        @Autowired
-        private UserDetailsConfig userDetailsConfig;
+        private final IUserDetailsService userDetailsService;
+
+        public SecurityConfiguration(IUserDetailsService userDetailsService) {
+                this.userDetailsService = userDetailsService;
+        }
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,14 +27,15 @@ public class SecurityConfiguration {
                 http.authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
                                 .requestMatchers("/user/updatePassword").authenticated()
-                                .requestMatchers("/payment/**", "/petcare/**", "/report/**", "/user/**").hasRole("ADMIN")
+                                .requestMatchers("/payment/**", "/petcare/**", "/report/**", "/user/**")
+                                .hasRole("ADMIN")
                                 .requestMatchers("/**").authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/login")
                                                 .successHandler(new LoginSuccessHandler())
                                                 .permitAll())
                                 .rememberMe(rememberMe -> rememberMe
-                                                .userDetailsService(userDetailsConfig)
+                                                .userDetailsService(userDetailsService)
                                                 .key("Q1b7UzLYkZ++kJaZGapB/r/SVn4Xq3tvG3ECXElGr1w=")
                                                 .tokenValiditySeconds(86400));
 

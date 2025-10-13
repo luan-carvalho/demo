@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.unnamed.demo.domain.authentication.dto.UserCreationDto;
-import br.com.unnamed.demo.domain.authentication.dto.UserEditionDto;
+import br.com.unnamed.demo.domain.authentication.dto.UserFormDto;
 import br.com.unnamed.demo.domain.authentication.model.CustomUserDetails;
+import br.com.unnamed.demo.domain.authentication.model.User;
 import br.com.unnamed.demo.domain.authentication.service.UserService;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
 
@@ -54,9 +55,7 @@ public class UserController {
     @GetMapping("{id}")
     public String getUser(@PathVariable Long id, Model model) {
 
-        UserEditionDto u = UserEditionDto.toDto(userService.findById(id));
-
-        model.addAttribute("user", u);
+        model.addAttribute("user", new UserFormDto(userService.findById(id)));
         model.addAttribute("roles", userService.findAllRoles());
 
         model.addAttribute("view", "user/user");
@@ -69,7 +68,7 @@ public class UserController {
     @GetMapping("new")
     public String getNewUserForm(Model model) {
 
-        model.addAttribute("user", new UserCreationDto(null, null, null));
+        model.addAttribute("user", UserFormDto.empty());
         model.addAttribute("roles", userService.findAllRoles());
 
         model.addAttribute("view", "user/user");
@@ -79,27 +78,27 @@ public class UserController {
 
     }
 
-    @PostMapping("new")
-    public String postNewUser(UserCreationDto user) {
+    @PostMapping
+    public String createUser(UserFormDto user,
+            RedirectAttributes attributes) {
 
-        userService.createUser(user);
-        return "redirect:/user";
-
-    }
-
-    @PostMapping("update")
-    public String postUpdateUser(UserEditionDto user) {
-
-        System.out.println("ID: " + user.id());
-        System.out.println("Name: " + user.name());
-        System.out.println("Role ID: " + user.roleId());
-
-        userService.updateInfo(user);
-        return "redirect:/user";
+        User created = userService.createUser(user.name(), user.roleId());
+        attributes.addFlashAttribute("successMessage", "Usuário cadastrado");
+        return "redirect:/user/" + created.getId();
 
     }
 
-    @GetMapping("/{userId}/inactivate")
+    @PostMapping("/{userId}")
+    public String updateUser(@PathVariable Long userId, UserFormDto user,
+            RedirectAttributes attributes) {
+
+        userService.updateInfo(user.id(), user.name(), user.roleId());
+        attributes.addFlashAttribute("successMessage", "Alterações salvas");
+        return "redirect:/user/" + userId;
+
+    }
+
+    @PostMapping("/{userId}/inactivate")
     public String deactivateUser(@PathVariable Long userId) {
 
         userService.deactivateUser(userId);
@@ -107,7 +106,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/{userId}/activate")
+    @PostMapping("/{userId}/activate")
     public String activateUser(@PathVariable Long userId) {
 
         userService.activateUser(userId);
@@ -126,7 +125,8 @@ public class UserController {
 
     @PostMapping("updatePassword")
     public String updatePassword(@AuthenticationPrincipal CustomUserDetails user, String newPassword,
-            String confirmPassword) {
+            String confirmPassword,
+            RedirectAttributes attributes) {
 
         if (!newPassword.equals(confirmPassword)) {
             throw new IllegalArgumentException("As senhas não coincidem.");
@@ -134,6 +134,7 @@ public class UserController {
 
         userService.updatePassword(Long.parseLong(user.getUsername()), newPassword);
 
+        attributes.addFlashAttribute("successMessage", "Senha atualizada");
         return "redirect:/";
 
     }

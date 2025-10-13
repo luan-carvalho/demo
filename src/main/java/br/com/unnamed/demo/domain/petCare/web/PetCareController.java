@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.com.unnamed.demo.domain.petCare.dto.PetCareFormDto;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.petCare.model.PetCareGroup;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
@@ -54,7 +55,7 @@ public class PetCareController {
     public String newPetCareForm(Model model) {
 
         model.addAttribute("petCareGroups", petCareService.findAllGroups());
-        model.addAttribute("petCare", new PetCare());
+        model.addAttribute("petCare", PetCareFormDto.empty());
         model.addAttribute("view", "petCare/petCare");
         model.addAttribute("activePage", "services");
         model.addAttribute("pageTitle", "Serviço | Novo");
@@ -65,43 +66,47 @@ public class PetCareController {
     @GetMapping("/{id}")
     public String getPetCare(@PathVariable Long id, Model model) {
 
-        PetCare p = petCareService.findById(id);
-
         model.addAttribute("petCareGroups", petCareService.findAllGroups());
-        model.addAttribute("petCare", p);
+        model.addAttribute("petCare", new PetCareFormDto(petCareService.findById(id)));
         model.addAttribute("view", "petCare/petCare");
         model.addAttribute("activePage", "services");
-        model.addAttribute("pageTitle", "Serviço | " + p.getDescription());
+        model.addAttribute("pageTitle", "Serviço");
         return "layout/base-layout";
     }
 
     @PostMapping
-    public String createPetCare(PetCare petCare, RedirectAttributes attributes) {
+    public String createPetCare(PetCareFormDto petCare, RedirectAttributes attributes) {
 
-        return "redirect:/petCare";
+        PetCare created = petCareService.createPetCare(petCare.description(), petCare.price(), petCare.groupId());
+        attributes.addFlashAttribute("successMessage", "Serviço cadastrado!");
+        return "redirect:/petCare/" + created.getId();
 
     }
 
     @PostMapping("{petCareId}")
-    public String updatePetCare(@PathVariable Long petCareId, PetCare petCare, RedirectAttributes attributes) {
+    public String updatePetCare(@PathVariable Long petCareId, PetCareFormDto petCare, RedirectAttributes attributes) {
 
+        petCareService.updatePetCare(petCare.id(), petCare.description(), petCare.price(), petCare.groupId());
+        attributes.addFlashAttribute("successMessage", "Serviço atualizado!");
         return "redirect:/petCare";
 
     }
 
-    @GetMapping("/{petCareId}/inactivate")
-    public String deactivatePetCare(@PathVariable Long petCareId) {
+    @PostMapping("/{petCareId}/inactivate")
+    public String deactivatePetCare(@PathVariable Long petCareId, RedirectAttributes attributes) {
 
         petCareService.deactivate(petCareId);
-        return "redirect:/petCare";
+        attributes.addFlashAttribute("successMessage", "Serviço inativado com sucesso!");
+        return "redirect:/petCare/" + petCareId;
 
     }
 
-    @GetMapping("/{petCareId}/activate")
-    public String activatePetCare(@PathVariable Long petCareId) {
+    @PostMapping("/{petCareId}/activate")
+    public String activatePetCare(@PathVariable Long petCareId, RedirectAttributes attributes) {
 
         petCareService.activate(petCareId);
-        return "redirect:/petCare";
+        attributes.addFlashAttribute("successMessage", "Serviço ativado com sucesso!");
+        return "redirect:/petCare/" + petCareId;
 
     }
 

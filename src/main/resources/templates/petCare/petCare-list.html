@@ -62,10 +62,8 @@
 
                             <td>
                                 <a th:href="@{/petCare/{id}(id=${petCare.id})}"
-                                    class="text-decoration-none d-flex align-items-center"
-                                    th:classappend="${!petCare.isActive} ? 'text-decoration-line-through text-muted' : 'text-dark'">
+                                    class="text-decoration-none d-flex align-items-center text-dark">
                                     <span th:text="${petCare.description}"></span>
-                                    <span th:if="${!petCare.isActive}" class="badge bg-danger ms-2">Inativo</span>
                                 </a>
                             </td>
 
