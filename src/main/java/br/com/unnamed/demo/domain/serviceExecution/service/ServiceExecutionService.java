@@ -71,9 +71,24 @@ public class ServiceExecutionService {
 
     }
 
+    public boolean isServiceExecutionEmpty(Long serviceExecutionId) {
+
+        ServiceExecution s = findById(serviceExecutionId);
+        return s.isEmpty();
+
+    }
+
     public void cancel(Long serviceExecutionId) {
 
         ServiceExecution s = findById(serviceExecutionId);
+
+        if (s.isEmpty()) {
+
+            repo.delete(s);
+            return;
+
+        }
+
         s.cancel();
         repo.save(s);
 

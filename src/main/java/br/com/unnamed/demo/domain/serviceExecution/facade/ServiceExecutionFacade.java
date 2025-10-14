@@ -122,4 +122,10 @@ public class ServiceExecutionFacade {
         return service.findTop10ByPetIdOrderByDateDesc(petId);
     }
 
+    public boolean isServiceExecutionEmpty(Long serviceId) {
+
+        return service.isServiceExecutionEmpty(serviceId);
+
+    }
+
 }

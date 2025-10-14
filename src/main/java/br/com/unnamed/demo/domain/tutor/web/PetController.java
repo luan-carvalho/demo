@@ -120,18 +120,20 @@ public class PetController {
 
     }
 
-    @GetMapping("/{petId}/inactivate")
-    public String deactivatePet(@PathVariable Long tutorId, @PathVariable Long petId) {
+    @PostMapping("/{petId}/inactivate")
+    public String deactivatePet(@PathVariable Long tutorId, @PathVariable Long petId, RedirectAttributes attributes) {
 
         tutorService.deactivatePet(tutorId, petId);
+        attributes.addFlashAttribute("successMessage", "Pet inativado com sucesso!");
         return "redirect:/tutor/" + tutorId;
 
     }
 
-    @GetMapping("/{petId}/activate")
-    public String activatePet(@PathVariable Long tutorId, @PathVariable Long petId) {
+    @PostMapping("/{petId}/activate")
+    public String activatePet(@PathVariable Long tutorId, @PathVariable Long petId, RedirectAttributes attributes) {
 
         tutorService.activatePet(tutorId, petId);
+        attributes.addFlashAttribute("successMessage", "Pet ativado com sucesso!");
         return "redirect:/tutor/" + tutorId;
 
     }

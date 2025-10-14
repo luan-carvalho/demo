@@ -132,18 +132,21 @@ public class TutorController {
         return "redirect:/tutor/" + tutorId;
     }
 
-    @GetMapping("/{id}/inactivate")
-    public String deactivateTutor(@PathVariable Long id) {
+    @PostMapping("/{id}/inactivate")
+    public String deactivateTutor(@PathVariable Long id, RedirectAttributes attributes) {
 
+        
         tutorService.deactivate(id);
+        attributes.addFlashAttribute("successMessage", "Tutor inativado com sucesso!");
         return "redirect:/tutor/" + id;
 
     }
 
-    @GetMapping("/{id}/activate")
-    public String activateTutor(@PathVariable Long id) {
+    @PostMapping("/{id}/activate")
+    public String activateTutor(@PathVariable Long id, RedirectAttributes attributes) {
 
         tutorService.activate(id);
+        attributes.addFlashAttribute("successMessage", "Tutor ativado com sucesso!");
         return "redirect:/tutor/" + id;
 
     }

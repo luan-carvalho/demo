@@ -35,13 +35,6 @@ public class ServiceExecutionController {
     }
 
     @GetMapping
-    public String redirectToBoard() {
-
-        return "redirect:/serviceExecution/board";
-
-    }
-
-    @GetMapping("/board")
     public String showServiceExecutionBoard(Model model) {
 
         model.addAttribute("existsNotPaid", facade.existsNotPaid());
@@ -203,52 +196,36 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/{serviceId}/cancel")
-    public String cancelService(@PathVariable Long serviceId,
-            @RequestParam(required = false) String src, RedirectAttributes attributes) {
+    public String cancelService(@PathVariable Long serviceId, RedirectAttributes attributes) {
 
-        facade.cancelServiceExecution(serviceId);
-        attributes.addFlashAttribute("errorMessage", "Atendimento cancelado!");
+        if (facade.isServiceExecutionEmpty(serviceId)) {
 
-        if (src != null && src.equals("editPage")) {
-
-            return "redirect:/serviceExecution/" + serviceId;
+            facade.cancelServiceExecution(serviceId);
+            attributes.addFlashAttribute("errorMessage", "Atendimento cancelado!");
+            return "redirect:/serviceExecution";
 
         }
 
-        return "redirect:/serviceExecution";
+        facade.cancelServiceExecution(serviceId);
+        attributes.addFlashAttribute("errorMessage", "Atendimento cancelado!");
+        return "redirect:/serviceExecution/" + serviceId;
 
     }
 
     @PostMapping("/{serviceId}/start")
-    public String startServiceExecution(@PathVariable Long serviceId,
-            @RequestParam(required = false) String src, RedirectAttributes attributes) {
+    public String startServiceExecution(@PathVariable Long serviceId, RedirectAttributes attributes) {
 
         facade.startServiceExecution(serviceId);
         attributes.addFlashAttribute("successMessage", "Atendimento iniciado!");
-
-        if (src != null && src.equals("editPage")) {
-
-            return "redirect:/serviceExecution/" + serviceId;
-
-        }
-
         return "redirect:/serviceExecution";
 
     }
 
     @PostMapping("/{serviceId}/markAsDone")
-    public String markAsDone(@PathVariable Long serviceId,
-            @RequestParam(required = false) String src, RedirectAttributes attributes) {
+    public String markAsDone(@PathVariable Long serviceId, RedirectAttributes attributes) {
 
         facade.markServiceExecutionAsDone(serviceId);
         attributes.addFlashAttribute("successMessage", "Atendimento finalizado!");
-
-        if (src != null && src.equals("editPage")) {
-
-            return "redirect:/serviceExecution/" + serviceId;
-
-        }
-
         return "redirect:/serviceExecution";
 
     }

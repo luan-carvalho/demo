@@ -93,6 +93,7 @@ public class ServiceExecution {
 
     public void cancel() {
 
+        cleanNotCheckedItems();
         this.serviceStatus = ServiceStatus.CANCELLED;
         this.payments.stream().forEach(Payment::markAsCancelled);
 
@@ -146,11 +147,17 @@ public class ServiceExecution {
 
     }
 
+    public void cleanNotCheckedItems() {
+
+        this.checklist.removeIf(Predicate.not(ServiceExecutionChecklistItem::isSelected));
+
+    }
+
     public void finish() {
 
         this.paymentStatus = ServicePaymentStatus.PAID;
         this.serviceStatus = ServiceStatus.COMPLETED;
-        this.checklist.removeIf(Predicate.not(ServiceExecutionChecklistItem::isSelected));
+        cleanNotCheckedItems();
         this.payments
                 .stream()
                 .forEach(Payment::markAsFinal);
