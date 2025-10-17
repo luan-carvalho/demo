@@ -39,13 +39,15 @@ public class CheckoutController {
     }
 
     @PostMapping("/addPayment")
-    public String addPaymentToServiceExecution(Long checkoutId, Long paymentMethodId, BigDecimal amount,
+    public String addPaymentToServiceExecution(@PathVariable Long checkoutId, Long paymentMethodId, BigDecimal amount,
             @RequestParam(required = false) Integer installments,
             RedirectAttributes attributes) {
 
+        installments = installments == null ? 1 : installments;
+
         facade.addPayment(checkoutId, paymentMethodId, amount, installments);
         attributes.addFlashAttribute("successMessage", "Pagamento adicionado");
-        return "redirect:/checkout" + checkoutId;
+        return "redirect:/checkout/" + checkoutId;
 
     }
 

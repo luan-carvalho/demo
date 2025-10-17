@@ -48,12 +48,13 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status;
 
-    public Payment(PaymentMethod paymentMethod,
+    public Payment(Checkout checkout, PaymentMethod paymentMethod,
             BigDecimal amount) {
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0)
             throw new IllegalArgumentException("Não é possível criar um pagamento com valor negativo ou 0");
 
+        this.checkout = checkout;
         this.date = LocalDate.now();
         this.paymentMethod = paymentMethod;
         this.amount = amount;

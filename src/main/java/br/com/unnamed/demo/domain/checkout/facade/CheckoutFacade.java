@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.checkout.model.Checkout;
 import br.com.unnamed.demo.domain.checkout.service.CheckoutService;
-import br.com.unnamed.demo.domain.checkout.util.InstallmentsCalculator;
-import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
 import br.com.unnamed.demo.domain.payment.service.PaymentService;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
@@ -56,17 +54,7 @@ public class CheckoutFacade {
 
         PaymentMethod method = paymentService.findPaymentMethodById(methodId);
 
-        if (installments.compareTo(1) == 0) {
-
-            checkoutService.addPayment(checkoutId, new Payment(method, amount));
-            return;
-
-        }
-
-        checkoutService.addPayments(checkoutId, InstallmentsCalculator
-                .calculateInstallmentsDistributed(amount, installments)
-                .stream()
-                .map(a -> new Payment(method, a)).toList());
+        checkoutService.addPayment(checkoutId, method, amount, installments);
 
     }
 

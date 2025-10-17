@@ -1,13 +1,15 @@
 package br.com.unnamed.demo.domain.checkout.service;
 
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
 import br.com.unnamed.demo.domain.checkout.model.Checkout;
 import br.com.unnamed.demo.domain.checkout.repository.CheckoutRepository;
+import br.com.unnamed.demo.domain.checkout.util.InstallmentsCalculator;
 import br.com.unnamed.demo.domain.payment.model.Payment;
+import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 
@@ -55,18 +57,23 @@ public class CheckoutService {
 
     }
 
-    public void addPayment(Long checkoutId, Payment payment) {
+    public void addPayment(Long checkoutId, PaymentMethod method, BigDecimal amount, Integer installments) {
 
         Checkout c = findById(checkoutId);
-        c.addPayment(payment);
-        repo.save(c);
 
-    }
+        if (installments.compareTo(1) == 0) {
 
-    public void addPayments(Long checkoutId, List<Payment> payments) {
+            c.addPayment(new Payment(c, method, amount));
+            repo.save(c);
+            return;
 
-        Checkout c = findById(checkoutId);
-        c.addPayments(payments);
+        }
+
+        c.addPayments(InstallmentsCalculator
+                .calculateInstallmentsDistributed(amount, installments)
+                .stream()
+                .map(a -> new Payment(c, method, a)).toList());
+
         repo.save(c);
 
     }
