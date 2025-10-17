@@ -7,11 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.com.unnamed.demo.domain.checkout.facade.CheckoutFacade;
+import br.com.unnamed.demo.domain.checkout.model.Checkout;
+import br.com.unnamed.demo.domain.checkout.service.CheckoutService;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.petCare.model.PetCareGroup;
 import br.com.unnamed.demo.domain.petCare.service.PetCareService;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.service.ServiceExecutionService;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -25,25 +27,25 @@ public class ServiceExecutionFacade {
     private final ServiceExecutionService service;
     private final PetCareService petCareService;
     private final TutorService tutorService;
+    private final CheckoutFacade checkoutFacade;
 
     public ServiceExecutionFacade(ServiceExecutionService service, PetCareService petCareService,
-            TutorService tutorService) {
+            TutorService tutorService, CheckoutFacade checkoutFacade) {
+
         this.service = service;
         this.petCareService = petCareService;
         this.tutorService = tutorService;
-    }
+        this.checkoutFacade = checkoutFacade;
 
-    public boolean existsNotPaid() {
-        return service.existsNotPaid();
     }
 
     public Object findByStatusAndDate(ServiceStatus serviceStatus) {
         return service.findByStatusAndDate(serviceStatus);
     }
 
-    public Page<ServiceExecution> searchWithOptionalFilters(String name, LocalDate date, ServiceStatus status,
-            ServicePaymentStatus paymentStatus, Pageable pageable) {
-        return service.searchWithOptionalFilters(name, date, status, paymentStatus, pageable);
+    public Page<ServiceExecution> searchWithOptionalFilters(String name,
+            LocalDate date, ServiceStatus status, Pageable pageable) {
+        return service.searchWithOptionalFilters(name, date, status, pageable);
     }
 
     public ServiceExecution findServiceExecutionById(Long serviceExecutionid) {
@@ -84,7 +86,8 @@ public class ServiceExecutionFacade {
 
     }
 
-    public void updateClientWithNewPet(Long serviceExecutionId, Long tutorId, String petName) {
+    public void updateClientWithNewPet(Long serviceExecutionId, Long tutorId,
+            String petName) {
 
         Tutor tutor = tutorService.findById(tutorId);
         Pet pet = tutorService.createPetAndSaveToTutor(tutorId, petName);
@@ -106,8 +109,8 @@ public class ServiceExecutionFacade {
 
     }
 
-    public void cancelServiceExecution(Long serviceId) {
-        service.cancel(serviceId);
+    public Long cancelServiceExecution(Long serviceId) {
+        return service.cancel(serviceId);
     }
 
     public void startServiceExecution(Long serviceId) {
@@ -118,14 +121,16 @@ public class ServiceExecutionFacade {
         service.markAsDone(serviceId);
     }
 
-    public List<ServiceExecution> findTop10ByPetIdOrderByDateDesc(Long petId) {
-        return service.findTop10ByPetIdOrderByDateDesc(petId);
+    public Checkout finish(Long serviceId) {
+
+        service.finish(serviceId);
+        ServiceExecution s = service.findById(serviceId);
+        return checkoutFacade.addItemToCheckout(s);
+
     }
 
-    public boolean isServiceExecutionEmpty(Long serviceId) {
-
-        return service.isServiceExecutionEmpty(serviceId);
-
+    public List<ServiceExecution> findTop10ByPetIdOrderByDateDesc(Long petId) {
+        return service.findTop10ByPetIdOrderByDateDesc(petId);
     }
 
 }

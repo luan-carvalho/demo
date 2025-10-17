@@ -5,13 +5,11 @@ import java.time.LocalDate;
 
 import br.com.unnamed.demo.domain.payment.model.Payment;
 
-public record PaymentReportDto(BigDecimal amount, String tutorName, String petName, LocalDate date,
-        Long serviceExecutionId, String methodDescription) {
+public record PaymentReportDto(BigDecimal amount, LocalDate date, String methodDescription) {
 
-    public static PaymentReportDto convert(Payment p) {
+    public PaymentReportDto(Payment p) {
 
-        return new PaymentReportDto(p.getAmount(), p.getTutorName(), p.getPetName(), p.getDate(),
-                p.getServiceExecution().getId(), p.getPaymentMethod().getDescription());
+        this(p.getAmount(), p.getDate(), p.getPaymentMethod().getDescription());
 
     }
 

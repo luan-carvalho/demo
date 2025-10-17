@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="content" class="container">
+
+        <!-- ======================= HEADER ======================= -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 d-flex align-items-center">
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/}" class="text-decoration-none text-muted small fs-6">Início</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark fw-semibold small fs-6" aria-current="page"
+                        th:text="'Fatura #' + ${checkout.id}">
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- Botão de Ação Principal -->
+            <div th:if="${checkout.balance().doubleValue() <= 0 and checkout.status.name() == 'PENDING'}">
+                <form th:action="@{/checkout/{id}/complete(id=${checkout.id})}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-success d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-check-circle-fill me-2"></i> Finalizar e Baixar Fatura
+                    </button>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="row g-4 g-lg-5">
+            <!-- ======================= COLUNA ESQUERDA (Detalhes da Fatura) ======================= -->
+            <div class="col-lg-7">
+                <!-- Card do Cliente -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                            <i class="bi bi-person text-primary"></i>
+                        </div>
+                        <h3 class="h5 mb-0 text-dark fw-bold">Cliente</h3>
+                    </div>
+                    <div class="ps-5">
+                        <h4 class="h6 text-dark" th:text="${checkout.tutor.name}"></h4>
+                    </div>
+                </div>
+
+                <!-- Card dos Itens na Fatura -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                            <i class="bi bi-receipt text-primary"></i>
+                        </div>
+                        <h3 class="h5 mb-0 text-dark fw-bold">Itens na Fatura</h3>
+                    </div>
+                    <div class="ps-5">
+                        <div class="list-group list-group-flush">
+                            <div th:each="item : ${checkout.items}"
+                                class="list-group-item d-flex justify-content-between align-items-center px-1 py-3">
+                                <div class="flex-grow-1">
+                                    <th:block th:if="${item.serviceExecution != null}">
+                                        <a class="fw-semibold text-dark text-decoration-none"
+                                            th:href="@{/serviceExecution/{id}(id=${item.serviceExecution.id})}"
+                                            th:text="'Atendimento #' + ${item.serviceExecution.id}"></a>
+                                        <small class="d-block text-muted"
+                                            th:text="'Pet: ' + ${item.serviceExecution.pet.name}"></small>
+                                    </th:block>
+                                    <th:block th:if="${item.packageClient != null}">
+                                        <a class="fw-semibold text-dark text-decoration-none"
+                                            th:href="@{/pacote/{id}(id=${item.packageClient.id})}"
+                                            th:text="'Compra de Pacote'"></a>
+                                        <small class="d-block text-muted"
+                                            th:text="${item.packageClient.petCarePackage.description}"></small>
+                                    </th:block>
+                                </div>
+                                <div class="fw-bold text-dark fs-6"
+                                    th:text="'R$ ' + ${#numbers.formatDecimal(item.amount, 1, 'POINT', 2, 'COMMA')}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ======================= COLUNA DIREITA (Pagamentos e Ações) ======================= -->
+            <div class="col-lg-5">
+                <!-- Card de Resumo Financeiro -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Valor Total</span>
+                            <span class="fw-bolder fs-5"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(checkout.total(), 1, 'POINT', 2, 'COMMA')}"></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Valor Pago</span>
+                            <span class="fw-bolder fs-5 text-success"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(checkout.paid(), 1, 'POINT', 2, 'COMMA')}"></span>
+                        </div>
+                        <hr class="my-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted fw-semibold">Valor Restante</span>
+                            <span class="fw-bolder fs-4 text-danger"
+                                th:text="'R$ ' + ${#numbers.formatDecimal(checkout.balance(), 1, 'POINT', 2, 'COMMA')}"></span>
+                        </div>
+                    </div>
+                    <div th:if="${checkout.status.name() == 'COMPLETED'}"
+                        class="card-footer bg-success-subtle border-0 text-success-emphasis small p-2 text-center">
+                        <i class="bi bi-check-circle-fill"></i> Fatura Finalizada
+                    </div>
+                </div>
+
+                <!-- Card de Ações de Pagamento -->
+                <div class="card shadow-sm border-0" th:if="${checkout.status.name() == 'PENDING'}">
+                    <div class="card-header bg-light border-0 py-3">
+                        <h5 class="mb-0 h6 d-flex align-items-center"><i class="bi bi-credit-card me-2"></i> Adicionar
+                            Pagamento</h5>
+                    </div>
+                    <div class="card-body p-3">
+                        <form th:action="@{/checkout/{id}/addPayment(id=${checkout.id})}" method="post" class="p-2">
+                            <div class="mb-3">
+                                <label for="type" class="form-label small fw-semibold">Forma de Pagamento</label>
+                                <select id="type" name="paymentMethodId" class="form-select" required>
+                                    <option value="">-- Selecione --</option>
+                                    <option th:each="pm : ${all_payment_types}" th:value="${pm.id}"
+                                        th:text="${pm.description}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="amount" class="form-label small fw-semibold">Valor</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" step="0.01" min="0.01" class="form-control" id="amount"
+                                        name="amount" placeholder="0,00" required />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="installments" class="form-label">Parcelas</label>
+                                <div class="input-group">
+                                    <input type="number" min="0" class="form-control" id="installments"
+                                        name="installments" placeholder="Qtde" />
+                                </div>
+                            </div>
+
+                            <button type="submit"
+                                class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-arrow-down-circle me-2"></i> Registrar Pagamento
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tabela de Pagamentos Registrados (se houver) -->
+                <div class="mt-4" th:if="${!checkout.payments.isEmpty()}">
+                    <h6 class="mb-3 text-muted">Histórico de Pagamentos</h6>
+                    <ul class="list-group list-group-flush">
+                        <li th:each="payment : ${checkout.payments}"
+                            class="list-group-item d-flex justify-content-between align-items-center px-1">
+                            <div>
+                                <span class="fw-semibold text-dark" th:text="${payment.method.description}"></span>
+                                <small class="d-block text-muted"
+                                    th:text="${#temporals.format(payment.date, 'dd/MM/yyyy')}"></small>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="fw-bold me-3"
+                                    th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}"></span>
+                                <div class="btn-group btn-group-sm" role="group"
+                                    th:if="${checkout.status.name() == 'PENDING'}">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" title="Editar"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#editPaymentModal-' + ${payment.id}"><i
+                                            class="bi bi-pencil"></i></button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Excluir"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#deletePaymentModal-' + ${payment.id}"><i
+                                            class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================= MODAIS E SCRIPT (Inalterados) ======================= -->
+        <!-- ... (cole aqui a seção de modais e script da sua versão anterior) ... -->
+
+    </div>
+</body>
+
+</html>

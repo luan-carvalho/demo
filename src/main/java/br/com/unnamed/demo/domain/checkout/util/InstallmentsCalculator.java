@@ -1,4 +1,4 @@
-package br.com.unnamed.demo.domain.serviceExecution.util;
+package br.com.unnamed.demo.domain.checkout.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

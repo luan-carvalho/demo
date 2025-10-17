@@ -21,8 +21,7 @@
             <p class="small text-muted mb-1 fw-semibold">Serviços</p>
             <div class="d-flex flex-wrap gap-1 overflow-hidden" style="max-height: 60px;">
                 <span th:each="item : ${service.executedServices}"
-                    class="badge bg-light text-dark border rounded-pill px-2"
-                    th:text="${item.petCare.description}"></span>
+                    class="badge bg-light text-dark border rounded-pill px-2" th:text="${item}"></span>
             </div>
             <div th:if="${#lists.size(service.executedServices) > 5}" class="small text-muted mt-1">
                 +<span th:text="${#lists.size(service.executedServices) - 5}"></span> mais
@@ -54,10 +53,11 @@
                 </form>
             </div>
             <div th:if="${service.serviceStatus.name() == 'DONE'}">
-                <a th:href="@{/serviceExecution/{id}/checkout(id = ${service.id})}" class="btn btn-sm btn-success"
-                    title="Registrar Pagamento">
-                    <i class="bi bi-currency-dollar"></i>
-                </a>
+                <form th:action="@{/serviceExecution/{id}/finish(id=${service.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-info text-dark" title="Cobrar atendimento">
+                        <i class="bi bi-currency-dollar"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import br.com.unnamed.demo.domain.payment.dto.PaymentSimpleListDto;
 import br.com.unnamed.demo.domain.petCare.model.PetCareGroup;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecutionChecklistItem;
@@ -17,12 +16,10 @@ public record ServiceExecutionDto(
         String tutorName,
         String petName,
         List<ServiceExecutionChecklistItem> checklist,
-        List<PaymentSimpleListDto> payments,
         String obs,
         BigDecimal total,
-        boolean canBeUpdated,
         boolean isEmpty,
-        boolean isDone) {
+        boolean canBeUpdated) {
 
     public ServiceExecutionDto(ServiceExecution s) {
 
@@ -33,12 +30,10 @@ public record ServiceExecutionDto(
                 s.getTutor().getName(),
                 s.getPet().getName(),
                 s.getChecklist(),
-                s.getPayments().stream().map(p -> new PaymentSimpleListDto(p)).toList(),
                 s.getObs(),
                 s.calculateTotal(),
-                s.canBeUpdated(),
                 s.isEmpty(),
-                s.isDone());
+                s.canBeUpdated());
 
     }
 

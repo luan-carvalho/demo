@@ -52,21 +52,12 @@
                     <label for="status" class="form-label fw-semibold">Status</label>
                     <select id="status" name="status" class="form-select">
                         <option value="">Todos</option>
-                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="#{${s.messageKey}}"
                             th:selected="${status == s}">
                         </option>
                     </select>
                 </div>
 
-                <div class="col-lg-2">
-                    <label for="paymentStatus" class="form-label fw-semibold">Pagamento</label>
-                    <select id="paymentStatus" name="paymentStatus" class="form-select">
-                        <option value="">Todos</option>
-                        <option th:each="s : ${paymentStatuses}" th:value="${s}" th:text="${s.label}"
-                            th:selected="${paymentStatus == s}">
-                        </option>
-                    </select>
-                </div>
                 <div class="col-lg-2 d-flex gap-2">
                     <button type="submit" class="btn btn-primary d-flex align-items-center">
                         <i class="bi bi-search me-2"></i>Buscar
@@ -101,11 +92,7 @@
                             <td th:text="${service.tutor.name}"></td>
 
                             <td>
-                                <span th:text="${service.serviceStatus.label}" class="badge fw-bold" th:classappend="${service.serviceStatus.label == 'Pendente' ? ' bg-secondary' :
-                                         service.serviceStatus.label == 'Em execução' ? ' bg-warning text-dark' :
-                                         service.serviceStatus.label == 'Finalizado' ? ' bg-success' :
-                                         service.serviceStatus.label == 'Cancelado' ? ' bg-danger' :
-                                         service.serviceStatus.label == 'Baixado' ? ' bg-primary' : ''}">
+                                <span th:text="#{${service.serviceStatus.messageKey}}" class="badge bg-primary">
                                 </span>
                             </td>
 

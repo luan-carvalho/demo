@@ -47,7 +47,7 @@ public class TutorController {
         model.addAttribute("view", "tutor/tutor-list");
         model.addAttribute("activePage", "clients");
         model.addAttribute("pageTitle", "Clientes");
-        model.addAttribute("pageScript", "/js/script.js");
+
         return "layout/base-layout";
 
     }
@@ -71,7 +71,7 @@ public class TutorController {
         model.addAttribute("activePage", "clients");
         model.addAttribute("mode", "create");
         model.addAttribute("view", "tutor/tutor");
-        model.addAttribute("pageScript", "/js/script.js");
+
         model.addAttribute("pageTitle", "Cliente | Novo");
         return "layout/base-layout";
 
@@ -99,7 +99,7 @@ public class TutorController {
         model.addAttribute("mode", "update");
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "tutor/tutor");
-        model.addAttribute("pageScript", "/js/script.js");
+
         model.addAttribute("pageTitle", "Cliente | Edição");
         return "layout/base-layout";
 
@@ -135,7 +135,6 @@ public class TutorController {
     @PostMapping("/{id}/inactivate")
     public String deactivateTutor(@PathVariable Long id, RedirectAttributes attributes) {
 
-        
         tutorService.deactivate(id);
         attributes.addFlashAttribute("successMessage", "Tutor inativado com sucesso!");
         return "redirect:/tutor/" + id;

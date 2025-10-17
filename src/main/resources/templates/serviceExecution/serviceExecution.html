@@ -14,11 +14,11 @@
             <div class="d-flex flex-wrap gap-2">
                 <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2"
                     form="serviceExecutionForm"
-                    th:if="${not #lists.contains({'Baixado','Cancelado'}, serviceExecution.status.label)}">
+                    th:if="${serviceExecution.canBeUpdated}">
                     <i class="bi bi-save2 me-2"></i>Salvar
                 </button>
                 <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
-                    th:if="${serviceExecution.status.label != 'Cancelado'}" type="button"
+                    th:if="${serviceExecution.canBeUpdated}" type="button"
                     class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
                     data-bs-target="#cancelConfirmModal">
                     <i class="bi bi-trash me-1"></i>Cancelar
@@ -30,8 +30,8 @@
         </div>
 
         <!-- Cancel Modal -->
-        <div class="modal fade" id="cancelConfirmModal" tabindex="-1" aria-labelledby="cancelConfirmModalLabel"
-            aria-hidden="true">
+        <div th:if="${serviceExecution.canBeUpdated}" class="modal fade" id="cancelConfirmModal" tabindex="-1"
+            aria-labelledby="cancelConfirmModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-danger text-white">
@@ -73,8 +73,8 @@
                         <div class="ps-5 d-flex flex-wrap gap-5">
                             <div>
                                 <label class="form-label text-muted small mb-1">Status</label>
-                                <div><span class="badge bg-info text-dark"
-                                        th:text="${serviceExecution.status.label}"></span></div>
+                                <div><span class="badge bg-primary"
+                                        th:text="#{${serviceExecution.status.messageKey}}"></span></div>
                             </div>
                             <div>
                                 <label class="form-label text-muted small mb-1">Data</label>
@@ -175,39 +175,6 @@
                         </div>
                     </div>
 
-                    <!-- Pagamentos Section -->
-                    <div th:if="${not serviceExecution.isEmpty}">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
-                                <i class="bi bi-cash-stack text-primary"></i>
-                            </div>
-                            <h3 class="h5 mb-0 text-dark fw-bold">Pagamentos</h3>
-                        </div>
-                        <div class="ps-5">
-                            <div th:if="${!serviceExecution.payments.isEmpty()}" class="list-group list-group-flush">
-                                <div th:each="payment : ${serviceExecution.payments}"
-                                    class="list-group-item d-flex justify-content-between align-items-center px-1">
-                                    <span class="text-muted" th:text="${payment.type}"></span>
-                                    <span class="fw-semibold text-dark"
-                                        th:text="'R$ ' + ${#numbers.formatDecimal(payment.amount, 1, 'POINT', 2, 'COMMA')}"></span>
-                                </div>
-                            </div>
-                            <div th:if="${serviceExecution.payments.isEmpty()}"
-                                class="text-center text-muted fst-italic py-3">
-                                Nenhum pagamento registrado.
-                            </div>
-                            <a th:if="${not serviceExecution.isEmpty and not serviceExecution.isDone and serviceExecution.canBeUpdated}"
-                                class="btn btn-outline-primary d-flex align-items-center justify-content-center w-80 py-2 mt-3"
-                                th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}">
-                                <i class="bi bi-credit-card me-2"></i> Adiantamento
-                            </a>
-                            <a th:if="${not serviceExecution.isEmpty and serviceExecution.isDone and serviceExecution.canBeUpdated}"
-                                class="btn btn-outline-primary d-flex align-items-center justify-content-center w-80 py-2 mt-3"
-                                th:href="@{/serviceExecution/{id}/checkout(id=${serviceExecution.id})}">
-                                <i class="bi bi-credit-card me-2"></i> Checkout
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </form>

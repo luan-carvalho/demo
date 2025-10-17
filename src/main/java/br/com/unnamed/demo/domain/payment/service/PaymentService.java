@@ -11,7 +11,6 @@ import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.payment.model.valueObjects.PaymentMethod;
 import br.com.unnamed.demo.domain.payment.repository.PaymentMethodRepository;
 import br.com.unnamed.demo.domain.payment.repository.PaymentRepository;
-import br.com.unnamed.demo.domain.serviceExecution.exception.PaymentDoesntBelongtoServiceExecutionException;
 
 @Service
 public class PaymentService {
@@ -43,11 +42,12 @@ public class PaymentService {
 
     }
 
-    public List<Payment> searchWithOptionalFilters(String name, LocalDate date, PaymentMethod paymentMethod) {
+    // public List<Payment> searchWithOptionalFilters(String name, LocalDate date,
+    // PaymentMethod paymentMethod) {
 
-        return payRepo.searchWithOptionalFilters(name, paymentMethod, date);
+    // return payRepo.searchWithOptionalFilters(name, paymentMethod, date);
 
-    }
+    // }
 
     public void updatePaymentInfo(Long paymentId, Long methodId, BigDecimal amount) {
 
@@ -56,15 +56,6 @@ public class PaymentService {
         toBeUpdated.updateAmount(amount);
         toBeUpdated.updatePaymentMethod(method);
         payRepo.save(toBeUpdated);
-
-    }
-
-    public void checkIfPaymentBelongsToServiceExecution(Long serviceExecutionId, Long paymentId) {
-
-        Payment toBeChecked = findById(paymentId);
-        if (!toBeChecked.belongsTo(serviceExecutionId))
-            throw new PaymentDoesntBelongtoServiceExecutionException(
-                    "This payment doesnt belong to the present service execution");
 
     }
 

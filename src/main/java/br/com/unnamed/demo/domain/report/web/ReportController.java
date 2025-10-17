@@ -33,70 +33,74 @@ public class ReportController {
         this.templateEngine = templateEngine;
     }
 
-    @GetMapping("/payments")
-    public String showPaymentsReport(Model model, @RequestParam(required = false) String period) {
+    // @GetMapping("/payments")
+    // public String showPaymentsReport(Model model, @RequestParam(required = false)
+    // String period) {
 
-        PaymentReportPeriod reportPeriod = switch (period) {
+    // PaymentReportPeriod reportPeriod = switch (period) {
 
-            case null -> new CurrentMonthPaymentsReport();
-            case "thisMonth" -> new CurrentMonthPaymentsReport();
-            case "lastMonth" -> new LastMonthPaymentsReport();
-            default -> new CurrentMonthPaymentsReport();
+    // case null -> new CurrentMonthPaymentsReport();
+    // case "thisMonth" -> new CurrentMonthPaymentsReport();
+    // case "lastMonth" -> new LastMonthPaymentsReport();
+    // default -> new CurrentMonthPaymentsReport();
 
-        };
+    // };
 
-        PaymentsReport report = paymentReportService.create(reportPeriod);
+    // PaymentsReport report = paymentReportService.create(reportPeriod);
 
-        List<String> paymentLabels = report.getPaymentMethods().stream()
-                .map(pm -> pm.getMethod().getDescription())
-                .toList();
+    // List<String> paymentLabels = report.getPaymentMethods().stream()
+    // .map(pm -> pm.getMethod().getDescription())
+    // .toList();
 
-        List<BigDecimal> paymentTotals = report.getPaymentMethods().stream()
-                .map(PaymentMethodReport::getTotal)
-                .toList();
+    // List<BigDecimal> paymentTotals = report.getPaymentMethods().stream()
+    // .map(PaymentMethodReport::getTotal)
+    // .toList();
 
-        model.addAttribute("paymentLabels", paymentLabels);
-        model.addAttribute("paymentTotals", paymentTotals);
+    // model.addAttribute("paymentLabels", paymentLabels);
+    // model.addAttribute("paymentTotals", paymentTotals);
 
-        model.addAttribute("report", report);
-        model.addAttribute("period", period == null ? "thisMonth" : period);
-        model.addAttribute("view", "report/payments-report");
-        model.addAttribute("activePage", "payments-report");
-        model.addAttribute("pageTitle", "Relatório | Recebimentos");
-        return "layout/base-layout";
+    // model.addAttribute("report", report);
+    // model.addAttribute("period", period == null ? "thisMonth" : period);
+    // model.addAttribute("view", "report/payments-report");
+    // model.addAttribute("activePage", "payments-report");
+    // model.addAttribute("pageTitle", "Relatório | Recebimentos");
+    // return "layout/base-layout";
 
-    }
+    // }
 
-    @GetMapping("/payments/export/pdf")
-    public void exportPdf(HttpServletResponse response, @RequestParam(required = false) String period)
-            throws Exception {
+    // @GetMapping("/payments/export/pdf")
+    // public void exportPdf(HttpServletResponse response, @RequestParam(required =
+    // false) String period)
+    // throws Exception {
 
-        PaymentReportPeriod reportPeriod = switch (period) {
+    // PaymentReportPeriod reportPeriod = switch (period) {
 
-            case null -> new CurrentMonthPaymentsReport();
-            case "thisMonth" -> new CurrentMonthPaymentsReport();
-            case "lastMonth" -> new LastMonthPaymentsReport();
-            default -> new CurrentMonthPaymentsReport();
+    // case null -> new CurrentMonthPaymentsReport();
+    // case "thisMonth" -> new CurrentMonthPaymentsReport();
+    // case "lastMonth" -> new LastMonthPaymentsReport();
+    // default -> new CurrentMonthPaymentsReport();
 
-        };
+    // };
 
-        PaymentsReport report = paymentReportService.create(reportPeriod);
+    // PaymentsReport report = paymentReportService.create(reportPeriod);
 
-        response.setContentType("application/pdf");
-        String filename = String.format("relatorio-pagamentos-%s-a-%s.pdf",
-                reportPeriod.getBeginInclusiveDate(), reportPeriod.getEndExclusiveDate().minusDays(1));
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + filename + "\"");
+    // response.setContentType("application/pdf");
+    // String filename = String.format("relatorio-pagamentos-%s-a-%s.pdf",
+    // reportPeriod.getBeginInclusiveDate(),
+    // reportPeriod.getEndExclusiveDate().minusDays(1));
+    // response.setHeader("Content-Disposition",
+    // "attachment; filename=\"" + filename + "\"");
 
-        Context context = new Context(Locale.getDefault());
-        context.setVariable("report", report);
+    // Context context = new Context(Locale.getDefault());
+    // context.setVariable("report", report);
 
-        String htmlContent = templateEngine.process("report/payments-report-pdf", context);
+    // String htmlContent = templateEngine.process("report/payments-report-pdf",
+    // context);
 
-        ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent);
-        renderer.layout();
-        renderer.createPDF(response.getOutputStream());
-    }
+    // ITextRenderer renderer = new ITextRenderer();
+    // renderer.setDocumentFromString(htmlContent);
+    // renderer.layout();
+    // renderer.createPDF(response.getOutputStream());
+    // }
 
 }

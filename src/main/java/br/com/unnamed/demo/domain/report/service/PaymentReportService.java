@@ -23,24 +23,25 @@ public class PaymentReportService {
         this.paymentMethodRepository = paymentMethodRepository;
     }
 
-    public PaymentsReport create(PaymentReportPeriod period) {
+    // public PaymentsReport create(PaymentReportPeriod period) {
 
-        LocalDate beginInclusive = period.getBeginInclusiveDate();
-        LocalDate endExclusive = period.getEndExclusiveDate();
-        long numberOfDays = period.getNumberOfDays();
-        List<PaymentReportDto> payments = paymentRepository.findBetweenPeriodConvertingToDto(beginInclusive,
-                endExclusive);
-        List<PaymentMethodReport> paymentMethodReport = paymentMethodRepository
-                .generatePaymentMethodSummary(beginInclusive, endExclusive);
-        String periodString = period.getPeriodString();
+    // LocalDate beginInclusive = period.getBeginInclusiveDate();
+    // LocalDate endExclusive = period.getEndExclusiveDate();
+    // long numberOfDays = period.getNumberOfDays();
+    // List<PaymentReportDto> payments =
+    // paymentRepository.findBetweenPeriodConvertingToDto(beginInclusive,
+    // endExclusive);
+    // List<PaymentMethodReport> paymentMethodReport = paymentMethodRepository
+    // .generatePaymentMethodSummary(beginInclusive, endExclusive);
+    // String periodString = period.getPeriodString();
 
-        PaymentsReport report = new PaymentsReport(periodString,
-                numberOfDays,
-                payments,
-                paymentMethodReport);
+    // PaymentsReport report = new PaymentsReport(periodString,
+    // numberOfDays,
+    // payments,
+    // paymentMethodReport);
 
-        return report;
+    // return report;
 
-    }
+    // }
 
 }

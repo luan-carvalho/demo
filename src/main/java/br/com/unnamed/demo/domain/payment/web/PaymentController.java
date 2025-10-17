@@ -22,27 +22,30 @@ public class PaymentController {
         this.service = service;
     }
 
-    @GetMapping
-    public String all(Model model,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(required = false) Long methodId,
-            @RequestParam(required = false) String name) {
+    // @GetMapping
+    // public String all(Model model,
+    // @RequestParam(required = false) @DateTimeFormat(iso =
+    // DateTimeFormat.ISO.DATE) LocalDate date,
+    // @RequestParam(required = false) Long methodId,
+    // @RequestParam(required = false) String name) {
 
-        PaymentMethod method = methodId != null ? service.findPaymentMethodById(methodId) : null;
+    // PaymentMethod method = methodId != null ?
+    // service.findPaymentMethodById(methodId) : null;
 
-        model.addAttribute("payments", service.searchWithOptionalFilters(name, date, method));
-        model.addAttribute("all_payment_methods", service.getAllPaymentMethods());
+    // model.addAttribute("payments", service.searchWithOptionalFilters(name, date,
+    // method));
+    // model.addAttribute("all_payment_methods", service.getAllPaymentMethods());
 
-        model.addAttribute("name", name);
-        model.addAttribute("date", date);
-        model.addAttribute("method", method);
+    // model.addAttribute("name", name);
+    // model.addAttribute("date", date);
+    // model.addAttribute("method", method);
 
-        model.addAttribute("pageTitle", "Pagamentos");
-        model.addAttribute("activePage", "pagamentos");
-        model.addAttribute("view", "payment/payment-list");
+    // model.addAttribute("pageTitle", "Pagamentos");
+    // model.addAttribute("activePage", "pagamentos");
+    // model.addAttribute("view", "payment/payment-list");
 
-        return "layout/base-layout";
+    // return "layout/base-layout";
 
-    }
+    // }
 
 }

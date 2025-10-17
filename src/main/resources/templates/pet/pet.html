@@ -62,14 +62,14 @@
                 </a>
 
                 <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
-                    th:if="${pet.id != null and pet.isActive}" type="button"
+                    th:if="${mode == 'update' and pet.isActive}" type="button"
                     class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
                     data-bs-target="#inactiveModal">
                     <i class="bi bi-person-x me-2"></i> Inativar
                 </button>
 
-                <div class="modal fade" id="inactiveModal" tabindex="-1" aria-labelledby="inactiveModalLabel"
-                    aria-hidden="true">
+                <div th:if="${mode == 'update' and pet.isActive}" class="modal fade" id="inactiveModal" tabindex="-1"
+                    aria-labelledby="inactiveModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header bg-danger text-white">
@@ -97,14 +97,14 @@
                 </div>
 
                 <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
-                    th:if="${pet.id != null and not pet.isActive}" type="button"
+                    th:if="${mode == 'update' and pet.isActive}" type="button"
                     class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
                     data-bs-target="#activateModal">
                     <i class="bi bi-person-check me-2"></i> Ativar
                 </button>
 
-                <div class="modal fade" id="activateModal" tabindex="-1" aria-labelledby="activateModalLabel"
-                    aria-hidden="true">
+                <div th:if="${mode == 'update' and pet.isActive}" class="modal fade" id="activateModal" tabindex="-1"
+                    aria-labelledby="activateModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header bg-danger text-white">

@@ -8,10 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.serviceExecution.repository.ServiceExecutionRepository;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
@@ -33,10 +31,9 @@ public class ServiceExecutionService {
     }
 
     public Page<ServiceExecution> searchWithOptionalFilters(String name,
-            LocalDate date, ServiceStatus status,
-            ServicePaymentStatus paymentStatus, Pageable pageable) {
+            LocalDate date, ServiceStatus status, Pageable pageable) {
 
-        return repo.findWithOptionalFilters(name, date, status, paymentStatus,
+        return repo.findWithOptionalFilters(name, date, status,
                 pageable);
 
     }
@@ -71,60 +68,26 @@ public class ServiceExecutionService {
 
     }
 
-    public boolean isServiceExecutionEmpty(Long serviceExecutionId) {
-
-        ServiceExecution s = findById(serviceExecutionId);
-        return s.isEmpty();
-
-    }
-
-    public void cancel(Long serviceExecutionId) {
+    public Long cancel(Long serviceExecutionId) {
 
         ServiceExecution s = findById(serviceExecutionId);
 
         if (s.isEmpty()) {
 
             repo.delete(s);
-            return;
+            return null;
 
         }
 
         s.cancel();
         repo.save(s);
-
-    }
-
-    public boolean existsNotPaid() {
-
-        return !repo.existsWithPendingPayment().isEmpty();
+        return serviceExecutionId;
 
     }
 
     public List<ServiceExecution> findTop10ByPetIdOrderByDateDesc(Long id) {
 
         return repo.findTop10ByPetIdOrderByDateDesc(id);
-
-    }
-
-    public void addPayment(ServiceExecution serviceExecution, Payment payment) {
-
-        serviceExecution.addPayment(payment);
-        repo.save(serviceExecution);
-
-    }
-
-    public void addPayments(ServiceExecution serviceExecution, List<Payment> payments) {
-
-        serviceExecution.addPayments(payments);
-        repo.save(serviceExecution);
-
-    }
-
-    public void removePayment(Long serviceExecutionId, Payment payment) {
-
-        ServiceExecution serviceExecution = findById(serviceExecutionId);
-        serviceExecution.removePayment(payment);
-        repo.save(serviceExecution);
 
     }
 
@@ -149,14 +112,6 @@ public class ServiceExecutionService {
         toBeUpdated.updateChecklist(selectedItems);
         toBeUpdated.updateObservation(obs);
         repo.save(toBeUpdated);
-
-    }
-
-    public void reopenServiceExecution(Long serviceId) {
-
-        ServiceExecution s = findById(serviceId);
-        s.returnCompletedToDone();
-        repo.save(s);
 
     }
 

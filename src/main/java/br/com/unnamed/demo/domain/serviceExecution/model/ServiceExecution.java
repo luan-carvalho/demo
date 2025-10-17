@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import br.com.unnamed.demo.domain.payment.model.Payment;
 import br.com.unnamed.demo.domain.petCare.model.PetCare;
-import br.com.unnamed.demo.domain.serviceExecution.exception.ServiceExecutionStatusException;
-import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Pet;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
@@ -23,7 +20,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,35 +32,24 @@ public class ServiceExecution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
-    @NotNull
     private Pet pet;
 
     @ManyToOne
     @JoinColumn(name = "tutor_id")
-    @NotNull
     private Tutor tutor;
-
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private ServicePaymentStatus paymentStatus;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "service_execution_id")
-    private List<ServiceExecutionChecklistItem> checklist;
+    private List<ServiceExecutionChecklistItem> checklist = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    @NotNull
     private ServiceStatus serviceStatus;
 
     private String obs;
-
-    @OneToMany(mappedBy = "serviceExecution", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Payment> payments;
 
     public ServiceExecution(Tutor tutor, Pet pet, List<PetCare> petCares) {
 
@@ -72,9 +57,6 @@ public class ServiceExecution {
         this.pet = pet;
         this.date = LocalDate.now();
         this.serviceStatus = ServiceStatus.PENDING;
-        this.paymentStatus = ServicePaymentStatus.NOT_PAID;
-        this.checklist = new ArrayList<>();
-        this.payments = new ArrayList<>();
         petCares.stream().forEach(p -> checklist.add(new ServiceExecutionChecklistItem(p)));
 
     }
@@ -95,55 +77,6 @@ public class ServiceExecution {
 
         cleanNotCheckedItems();
         this.serviceStatus = ServiceStatus.CANCELLED;
-        this.payments.stream().forEach(Payment::markAsCancelled);
-
-    }
-
-    public void addPayment(Payment payment) {
-
-        if (payment.getAmount().compareTo(BigDecimal.ZERO) < 0)
-            throw new IllegalArgumentException("Não é possível adicionar um pagamento com valor negativo");
-
-        if (payment.getAmount().compareTo(calculateTotal()) > 0)
-            throw new IllegalArgumentException(
-                    "Não é possível adicionar um pagamento maior que o valor total do atendimento");
-
-        if (getBalance().compareTo(payment.getAmount()) < 0)
-            throw new IllegalArgumentException(
-                    "Não é possível adicionar este pagamento, pois o serviço já foi totalmente pago");
-
-        this.payments.add(payment);
-
-    }
-
-    public void addPayments(List<Payment> payments) {
-
-        payments.forEach(p -> addPayment(p));
-
-    }
-
-    public void updateObservation(String content) {
-
-        this.obs = content;
-
-    }
-
-    public void removePayment(Payment payment) {
-
-        this.payments.remove(payment);
-
-    }
-
-    public BigDecimal getAmountPaid() {
-
-        return payments.stream().map(Payment::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-    }
-
-    public BigDecimal getBalance() {
-
-        return calculateTotal().subtract(getAmountPaid());
 
     }
 
@@ -155,18 +88,8 @@ public class ServiceExecution {
 
     public void finish() {
 
-        this.paymentStatus = ServicePaymentStatus.PAID;
-        this.serviceStatus = ServiceStatus.COMPLETED;
+        this.serviceStatus = ServiceStatus.FINISHED;
         cleanNotCheckedItems();
-        this.payments
-                .stream()
-                .forEach(Payment::markAsFinal);
-
-    }
-
-    public void addService(PetCare petCare) {
-
-        this.checklist.add(new ServiceExecutionChecklistItem(petCare));
 
     }
 
@@ -197,27 +120,27 @@ public class ServiceExecution {
 
     }
 
+    public void updateObservation(String obs) {
+
+        this.obs = obs;
+
+    }
+
     public boolean isEmpty() {
 
         return this.checklist.stream().filter(ServiceExecutionChecklistItem::isSelected).count() == 0;
 
     }
 
-    public boolean isFullyPaid() {
+    public boolean isPending() {
 
-        return getBalance().compareTo(BigDecimal.ZERO) == 0;
-
-    }
-
-    public boolean canBeFinished() {
-
-        return isFullyPaid() && isDone();
+        return this.serviceStatus == ServiceStatus.PENDING;
 
     }
 
-    public boolean isFinished() {
+    public boolean isInProgress() {
 
-        return this.serviceStatus == ServiceStatus.COMPLETED;
+        return this.serviceStatus == ServiceStatus.IN_PROGRESS;
 
     }
 
@@ -227,7 +150,13 @@ public class ServiceExecution {
 
     }
 
-    public boolean isCanceled() {
+    public boolean isFinished() {
+
+        return this.serviceStatus == ServiceStatus.FINISHED;
+
+    }
+
+    public boolean isCancelled() {
 
         return this.serviceStatus == ServiceStatus.CANCELLED;
 
@@ -235,16 +164,7 @@ public class ServiceExecution {
 
     public boolean canBeUpdated() {
 
-        return !isFinished() && !isCanceled();
-
-    }
-
-    public void returnCompletedToDone() {
-
-        if (this.serviceStatus != ServiceStatus.COMPLETED && !isFullyPaid())
-            throw new ServiceExecutionStatusException("This service execution is not available for this operation");
-
-        this.serviceStatus = ServiceStatus.DONE;
+        return !isCancelled() && !isFinished();
 
     }
 
@@ -252,6 +172,11 @@ public class ServiceExecution {
 
         return this.checklist.stream().filter(ServiceExecutionChecklistItem::isSelected).toList();
 
+    }
+
+    @Override
+    public String toString() {
+        return "Atendimento #" + id;
     }
 
 }

@@ -31,9 +31,11 @@ public class PetController {
     }
 
     @GetMapping("/{petId}")
-    public String findPet(@PathVariable Long tutorId, @PathVariable Long petId, Model model) {
+    public String findPet(@PathVariable Long tutorId, @PathVariable Long petId,
+            Model model) {
 
-        PetEditDto pet = new PetEditDto(tutorService.findByTutorAndPetId(tutorId, petId));
+        PetEditDto pet = new PetEditDto(tutorService.findByTutorAndPetId(tutorId,
+                petId));
         List<ServiceExecution> serviceHistory = facade.findTop10ByPetIdOrderByDateDesc(petId);
 
         model.addAttribute("tutorId", tutorId);
@@ -45,7 +47,7 @@ public class PetController {
         model.addAttribute("pageTitle", "Pet | " + pet.name());
         model.addAttribute("activePage", "clients");
         model.addAttribute("view", "pet/pet");
-        model.addAttribute("pageScript", "/js/pet.js");
+        
         return "layout/base-layout";
 
     }
@@ -86,37 +88,38 @@ public class PetController {
         model.addAttribute("mode", "create");
         model.addAttribute("view", "pet/pet");
         model.addAttribute("pageTitle", "Pet | Novo");
-        model.addAttribute("pageScript", "/js/pet.js");
+        
         return "layout/base-layout";
 
     }
 
     @PostMapping
     public String createPet(@PathVariable Long tutorId,
-            @Valid CreatePetDto petDto,
-            @RequestParam(required = false) String context,
-            @RequestParam(required = false) Long serviceId,
-            RedirectAttributes attributes) {
+    @Valid CreatePetDto petDto,
+    @RequestParam(required = false) String context,
+    @RequestParam(required = false) Long serviceId,
+    RedirectAttributes attributes) {
 
-        if (context != null && context.equals("create")) {
+    if (context != null && context.equals("create")) {
 
-            ServiceExecution created = facade.createServiceExecutionWithNewPet(tutorId, petDto.name());
-            attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
-            return "redirect:/serviceExecution/" + created.getId();
+    ServiceExecution created = facade.createServiceExecutionWithNewPet(tutorId,
+    petDto.name());
+    attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
+    return "redirect:/serviceExecution/" + created.getId();
 
-        }
+    }
 
-        if (context != null && context.equals("update") && serviceId != null) {
+    if (context != null && context.equals("update") && serviceId != null) {
 
-            facade.updateClientWithNewPet(serviceId, tutorId, petDto.name());
-            attributes.addFlashAttribute("successMessage", "Alterações salvas!");
-            return "redirect:/serviceExecution/" + serviceId;
+    facade.updateClientWithNewPet(serviceId, tutorId, petDto.name());
+    attributes.addFlashAttribute("successMessage", "Alterações salvas!");
+    return "redirect:/serviceExecution/" + serviceId;
 
-        }
+    }
 
-        tutorService.createPetAndSaveToTutor(tutorId, petDto.name());
-        attributes.addFlashAttribute("successMessage", "Cadastro realizado!");
-        return "redirect:/tutor/" + tutorId;
+    tutorService.createPetAndSaveToTutor(tutorId, petDto.name());
+    attributes.addFlashAttribute("successMessage", "Cadastro realizado!");
+    return "redirect:/tutor/" + tutorId;
 
     }
 

@@ -2,7 +2,9 @@ package br.com.unnamed.demo.domain.serviceExecution.web;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,15 +16,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.com.unnamed.demo.domain.checkout.model.Checkout;
 import br.com.unnamed.demo.domain.serviceExecution.dto.ServiceExecutionDto;
 import br.com.unnamed.demo.domain.serviceExecution.facade.ServiceExecutionFacade;
 import br.com.unnamed.demo.domain.serviceExecution.model.ServiceExecution;
-import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServicePaymentStatus;
 import br.com.unnamed.demo.domain.serviceExecution.model.enums.ServiceStatus;
 import br.com.unnamed.demo.domain.tutor.model.Tutor;
 import br.com.unnamed.demo.domain.tutor.model.enums.Status;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("serviceExecution")
@@ -34,10 +38,16 @@ public class ServiceExecutionController {
         this.facade = facade;
     }
 
+    @GetMapping("/debug-locale")
+    @ResponseBody
+    public String debugLocale(HttpServletRequest request) {
+        Locale locale = request.getLocale();
+        LocaleContextHolder.getLocale();
+        return "Request locale: " + locale + ", Context locale: " + LocaleContextHolder.getLocale();
+    }
+
     @GetMapping
     public String showServiceExecutionBoard(Model model) {
-
-        model.addAttribute("existsNotPaid", facade.existsNotPaid());
 
         model.addAttribute("pending_services",
                 facade.findByStatusAndDate(ServiceStatus.PENDING));
@@ -58,7 +68,6 @@ public class ServiceExecutionController {
     public String showServiceExecutionList(Model model,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) ServiceStatus status,
-            @RequestParam(required = false) ServicePaymentStatus paymentStatus,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -67,29 +76,18 @@ public class ServiceExecutionController {
 
         model.addAttribute("name", name);
         model.addAttribute("status", status);
-        model.addAttribute("paymentStatus", paymentStatus);
         model.addAttribute("date", date);
 
         model.addAttribute("statuses", ServiceStatus.values());
-        model.addAttribute("paymentStatuses", ServicePaymentStatus.values());
-        model.addAttribute("existsNotPaid", facade.existsNotPaid());
 
         model.addAttribute("services", facade.searchWithOptionalFilters(name, date,
-                status, paymentStatus, pageable));
+                status, pageable));
 
         model.addAttribute("pageTitle", "Serviços realizados");
         model.addAttribute("activePage", "serviceExecution-list");
         model.addAttribute("view", "serviceExecution/serviceExecutionList");
 
         return "layout/base-layout";
-
-    }
-
-    @GetMapping("/list/pendingPayment")
-    public String showServicesWithPendingPayment() {
-
-        return "redirect:/serviceExecution/list?paymentStatus=" +
-                ServicePaymentStatus.NOT_PAID;
 
     }
 
@@ -107,7 +105,8 @@ public class ServiceExecutionController {
 
         if (petId == null && petName != null && !petName.isBlank()) {
 
-            ServiceExecution created = facade.createServiceExecutionWithNewPet(tutorId, petName);
+            ServiceExecution created = facade.createServiceExecutionWithNewPet(tutorId,
+                    petName);
             attributes.addFlashAttribute("successMessage", "Atendimento criado com sucesso!");
             return "redirect:/serviceExecution/" + created.getId();
 
@@ -180,7 +179,8 @@ public class ServiceExecutionController {
     }
 
     @PostMapping("/{serviceExecutionId}")
-    public String save(@PathVariable Long serviceExecutionId, Model model, @RequestParam(required = false) String obs,
+    public String save(@PathVariable Long serviceExecutionId, Model model,
+            @RequestParam(required = false) String obs,
             @RequestParam(required = false) List<Long> selectedItems,
             RedirectAttributes attributes) {
 
@@ -198,22 +198,15 @@ public class ServiceExecutionController {
     @PostMapping("/{serviceId}/cancel")
     public String cancelService(@PathVariable Long serviceId, RedirectAttributes attributes) {
 
-        if (facade.isServiceExecutionEmpty(serviceId)) {
-
-            facade.cancelServiceExecution(serviceId);
-            attributes.addFlashAttribute("errorMessage", "Atendimento cancelado!");
-            return "redirect:/serviceExecution";
-
-        }
-
-        facade.cancelServiceExecution(serviceId);
+        Long returned = facade.cancelServiceExecution(serviceId);
         attributes.addFlashAttribute("errorMessage", "Atendimento cancelado!");
-        return "redirect:/serviceExecution/" + serviceId;
+        return "redirect:/serviceExecution" + (returned == null ? "" : "/" + returned);
 
     }
 
     @PostMapping("/{serviceId}/start")
-    public String startServiceExecution(@PathVariable Long serviceId, RedirectAttributes attributes) {
+    public String startServiceExecution(@PathVariable Long serviceId,
+            RedirectAttributes attributes) {
 
         facade.startServiceExecution(serviceId);
         attributes.addFlashAttribute("successMessage", "Atendimento iniciado!");
@@ -227,6 +220,14 @@ public class ServiceExecutionController {
         facade.markServiceExecutionAsDone(serviceId);
         attributes.addFlashAttribute("successMessage", "Atendimento finalizado!");
         return "redirect:/serviceExecution";
+
+    }
+
+    @PostMapping("/{serviceId}/finish")
+    public String finish(@PathVariable Long serviceId, RedirectAttributes attributes) {
+
+        Checkout c = facade.finish(serviceId);
+        return "redirect:/checkout/" + c.getId();
 
     }
 

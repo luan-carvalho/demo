@@ -2,20 +2,15 @@ package br.com.unnamed.demo.domain.serviceExecution.model.enums;
 
 public enum ServiceStatus {
 
-    CANCELLED("Cancelado"),
-    PENDING("Pendente"),
-    IN_PROGRESS("Em execução"),
-    DONE("Finalizado"),
-    COMPLETED("Baixado");
+    CANCELLED,
+    PENDING,
+    IN_PROGRESS,
+    DONE,
+    FINISHED;
 
-    private final String label;
+    public String getMessageKey() {
 
-    ServiceStatus(String label) {
-        this.label = label;
+        return "serviceStatus." + name();
+
     }
-
-    public String getLabel() {
-        return label;
-    }
-
 }
