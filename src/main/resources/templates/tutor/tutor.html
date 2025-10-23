@@ -95,7 +95,7 @@
                     <i class="bi bi-person-check me-2"></i> Ativar
                 </button>
 
-                <div th:if="${mode == 'update' and tutor.isActive}" class="modal fade" id="activateModal" tabindex="-1"
+                <div th:if="${mode == 'update' and not tutor.isActive}" class="modal fade" id="activateModal" tabindex="-1"
                     aria-labelledby="activateModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">

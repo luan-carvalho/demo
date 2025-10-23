@@ -97,13 +97,13 @@
                 </div>
 
                 <button sec:authorize="hasRole('ADMIN') or hasRole('ATTENDANT')"
-                    th:if="${mode == 'update' and pet.isActive}" type="button"
+                    th:if="${mode == 'update' and not pet.isActive}" type="button"
                     class="btn btn-outline-success btn-sm d-flex align-items-center px-3 py-2" data-bs-toggle="modal"
                     data-bs-target="#activateModal">
                     <i class="bi bi-person-check me-2"></i> Ativar
                 </button>
 
-                <div th:if="${mode == 'update' and pet.isActive}" class="modal fade" id="activateModal" tabindex="-1"
+                <div th:if="${mode == 'update' and not pet.isActive}" class="modal fade" id="activateModal" tabindex="-1"
                     aria-labelledby="activateModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">

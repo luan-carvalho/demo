@@ -6,13 +6,17 @@
 
         <div class="mb-4">
             <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="d-flex align-items-center text-muted mb-1">
-                        <a th:href="@{/user}" class="text-decoration-none text-muted small fs-6">Usuários</a>
-                        <i class="bi bi-chevron-right mx-2 small"></i>
-                        <span class="text-dark fw-semibold" th:text="${user.id != null} ? ${user.name} : 'Novo'"></span>
-                    </div>
-                </div>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 d-flex align-items-center">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/user}" class="text-decoration-none text-muted small fs-6">Usuários</a>
+                        </li>
+                        <li class="breadcrumb-item active text-dark fw-semibold small fs-6" aria-current="page"
+                            th:text="${user.id != null} ? ${user.name} : 'Novo'">
+                        </li>
+                    </ol>
+                </nav>
 
                 <div class="d-flex flex-wrap gap-2">
                     <button type="submit" form="userForm"
